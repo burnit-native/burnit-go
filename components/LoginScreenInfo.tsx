@@ -33,12 +33,13 @@ export default function LoginScreenInfo({ path }: { path: string }) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.getStartedContainer}>
           <Input
-            placeholder="user@domain.com"
+            label="Email"
+            placeholder="user@domain.om"
             value={email}
             onChange={(e) => handleChange(e, 'email')}
           />
           <Input
-            nativeID="password"
+            label="Password"
             placeholder="password"
             value={password}
             onChange={(e) => handleChange(e, 'password')}
