@@ -1,6 +1,8 @@
 import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import { Input, Button } from '@ui-kitten/components';
+import axios from 'axios';
+import * as asyncStorage from '../utils/asyncStorage';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -8,9 +10,9 @@ import {
   NativeSyntheticEvent,
   Keyboard,
 } from 'react-native';
+import config from '../constants/Config';
 
 import Colors from '../constants/Colors';
-import { MonoText } from './StyledText';
 import { Text, View } from './Themed';
 import { useState } from 'react';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -28,13 +30,29 @@ export default function LoginScreenInfo({ path }: { path: string }) {
     if (type === 'password') setPassword(value);
   };
 
+  const handleSubmit = async () => {
+    const response = await axios.post(config.loginPost, {
+      email,
+      password,
+    });
+
+    const storageResponse = await asyncStorage.storeData(
+      '@access_token',
+      response?.data?.result?.access_token,
+    );
+
+    if (storageResponse?.status === 'success') {
+      //reroute
+    }
+  };
+
   return (
     <View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.getStartedContainer}>
           <Input
             label="Email"
-            placeholder="user@domain.om"
+            placeholder="user@domain.com"
             value={email}
             onChange={(e) => handleChange(e, 'email')}
           />
@@ -48,7 +66,7 @@ export default function LoginScreenInfo({ path }: { path: string }) {
         </View>
       </TouchableWithoutFeedback>
       <View style={styles.helpContainer}>
-        <Button>Sign In</Button>
+        <Button onPressOut={handleSubmit}>Sign In</Button>
         <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
           <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
             Tap here to register.
