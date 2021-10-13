@@ -7,7 +7,10 @@ import axios from 'axios';
 
 const LoginContainer = ({ navigation, onLoginSuccess }) => {
     const [spinnerVisibility, setSpinnerVisibility] = React.useState(false)
-		const [username, setUsername] = React.useState('')
+    // test@test.com
+    // 123456
+    const [email, setEmail] = React.useState('')
+    const [password, setPassword] = React.useState('')
 
     return (<LoginScreen
 
@@ -32,16 +35,24 @@ const LoginContainer = ({ navigation, onLoginSuccess }) => {
             color: "#fdfdfd",
             fontFamily: "Now-Bold",
         }}
-        usernameOnChangeText={(v) => setUsername(v)}
+        usernameOnChangeText={(v) => setEmail(v)}
         onPressSettings={() => alert("Settings Button is pressed")}
         passwordOnChangeText={(v) => setPassword(v)}
         onPressLogin={async () => {
             try {
+                const response = await axios.post('http://caliboxs.com/api/v1/login', {
+                    email,
+                    password
+                })
+
                 setSpinnerVisibility(true);
                 setTimeout(() => {
                     setSpinnerVisibility(false);
                 }, 2000);
+
                 await AsyncStorage.setItem('isLoggedIn', "yes")
+                await AsyncStorage.setItem('accessToken', response.data.result.access_token)
+                
                 onLoginSuccess();
             } catch (e) {
                 console.log('THIS IS ERROR', e)
