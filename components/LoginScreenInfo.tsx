@@ -31,10 +31,13 @@ export default function LoginScreenInfo({ path }: { path: string }) {
   };
 
   const handleSubmit = async () => {
+    console.log('this is response')
     const response = await axios.post(config.loginPost, {
       email,
       password,
     });
+    
+    console.log('dfdsafd response', response)
 
     const storageResponse = await asyncStorage.storeData(
       '@access_token',
