@@ -19,7 +19,7 @@ class Main extends Component {
 			],
 		},
 		loading: true,
-		isLoggedIn: AsyncStorage.getItem('isLoggedIn') ?? false
+		isLoggedIn: AsyncStorage.getItem('isLoggedIn') === "yes" ? true : false
 	}
 
 
@@ -52,10 +52,10 @@ class Main extends Component {
 
 		return (
 			<>
-				{this.state.isLoggedIn
+				{!this.state.isLoggedIn 
 					?
 					(
-						<LoginContainer navigation={navigation} setState={this.setState} />
+						<LoginContainer navigation={navigation} onLoginSuccess={() => this.setState({ isLoggedIn: true })} />
 					)
 					:
 					(

@@ -4,8 +4,10 @@ import { connect } from 'react-redux'
 import { View, Text } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginContainer = ({ navigation, setState }) => {
+const LoginContainer = ({ navigation, onLoginSuccess }) => {
     const [spinnerVisibility, setSpinnerVisibility] = React.useState(false)
+    const [isLoggedIn, setIsLoggedIn] = React.useState("no")
+    React.useEffect(() => { }, [isLoggedIn])
     return (<LoginScreen
         // spinnerEnable
         // spinnerVisibility={spinnerVisibility}
@@ -33,14 +35,19 @@ const LoginContainer = ({ navigation, setState }) => {
         usernameOnChangeText={(username) => console.log("Username: ", username)}
         onPressSettings={() => alert("Settings Button is pressed")}
         passwordOnChangeText={(password) => console.log("Password: ", password)}
-        onPressLogin={() => {
-            setSpinnerVisibility(true);
-            setTimeout(() => {
-                setSpinnerVisibility(false);
-            }, 2000);
-            alert('thiswork')
-            AsyncStorage.setItem('isLoggedIn', true)
-            navigation.navigate('Main')
+        onPressLogin={async () => {
+            try {
+                setSpinnerVisibility(true);
+                setTimeout(() => {
+                    setSpinnerVisibility(false);
+                }, 2000);
+                await AsyncStorage.setItem('isLoggedIn', "yes")
+                setIsLoggedIn("yes")
+                onLoginSuccess();
+
+            } catch (e) {
+                console.log('THIS IS ERROR', e)
+            }
         }}
         onPressSignup={() => {
             console.log("onPressSignUp is pressed");
