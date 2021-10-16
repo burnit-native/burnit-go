@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const LoginContainer = ({ navigation, onLoginSuccess }) => {
     const [spinnerVisibility, setSpinnerVisibility] = React.useState(false)
-		const [username, setUsername] = React.useState('')
+    const [username, setUsername] = React.useState('')
 
     return (<LoginScreen
 
@@ -42,6 +42,8 @@ const LoginContainer = ({ navigation, onLoginSuccess }) => {
                     setSpinnerVisibility(false);
                 }, 2000);
                 await AsyncStorage.setItem('isLoggedIn', "yes")
+                const newUser = await axios.post("https://caliboxs.com/api/v1/login", { email: 'test@test.com', password: 'test' })
+                console.log('this is new user', newUser)
                 onLoginSuccess();
             } catch (e) {
                 console.log('THIS IS ERROR', e)
