@@ -37,7 +37,7 @@ const LoginContainer = ({ navigation, onLoginSuccess }) => {
 			}}
 			usernameOnChangeText={(v) => setEmail(v)}
 			onPressSettings={() => alert('Settings Button is pressed')}
-			passwordOnChangeText={(v) => setPassword(v)}
+			passwordOnChangeText={(v) => se + setPassword(v)}
 			onPressLogin={async () => {
 				try {
 					const response = await axios.post('http://caliboxs.com/api/v1/login', {
