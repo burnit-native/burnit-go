@@ -44,8 +44,15 @@ const LoginContainer = ({ onLoginSuccess }) => {
 		}
 	}
 
+	const errorParseResult = (errorObj) => {
+		let errorsArray = []
+		for (let errorFieldArray in errorObj) {
+			errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
+		}
+		return errorsArray.join('\n')
+	}
+
 	const handleCreateAccountPress = async () => {
-		console.log('created')
 		try {
 			const bodyFormData = new FormData()
 
@@ -55,12 +62,11 @@ const LoginContainer = ({ onLoginSuccess }) => {
 			bodyFormData.append('password', createPassword)
 			bodyFormData.append('password_confirmation', confirmPassword)
 
-			const response = await axios.post('http://caliboxs.com/api/v1/signup', bodyFormData, {
+			await axios.post('http://caliboxs.com/api/v1/signup', bodyFormData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 			})
-			console.log('response', response)
 
-			Alert.alert('Success', 'Your account has been created', [
+			Alert.alert('Success', `Your account has been created, ${name}.`, [
 				{
 					text: 'Ok',
 					onPress: setNeedAnAccount(false),
@@ -68,7 +74,17 @@ const LoginContainer = ({ onLoginSuccess }) => {
 				},
 			])
 		} catch (e) {
-			console.log('THIS IS ERROR', e)
+			console.log('Error at login', e.response.data.errors)
+			Alert.alert(
+				'Error',
+				`${e.response.data.message} ${errorParseResult(e.response.data.errors)}`,
+				[
+					{
+						text: 'Ok',
+						style: 'cancel',
+					},
+				],
+			)
 		}
 	}
 
@@ -76,6 +92,9 @@ const LoginContainer = ({ onLoginSuccess }) => {
 		<View style={styles.container}>
 			<Image style={styles.image} source='./assets/icon.png' />
 			<StatusBar style='auto' />
+			<View>
+				<Text style={styles.title}>{!needAnAccount ? 'Login' : 'Sign Up'}</Text>
+			</View>
 			{!needAnAccount ? (
 				<>
 					<View style={styles.inputView}>
@@ -163,7 +182,7 @@ const LoginContainer = ({ onLoginSuccess }) => {
 			) : (
 				<>
 					<TouchableOpacity onPress={() => setNeedAnAccount(false)}>
-						<Text style={styles.forgot_button}>I already have an account</Text>
+						<Text style={styles.forgot_button}>I already have an account.</Text>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.loginBtn} onPress={handleCreateAccountPress}>
 						<Text style={styles.loginText}>Create an account</Text>
@@ -182,12 +201,18 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 
-	image: {
+	title: {
 		marginBottom: 40,
+		fontSize: 40,
+	},
+
+	image: {
+		marginBottom: 0,
 	},
 
 	inputView: {
-		backgroundColor: '#D5C5C8',
+		backgroundColor: '#bdeaff',
+
 		borderRadius: 2,
 		width: '70%',
 		height: 45,
@@ -213,7 +238,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginTop: 40,
-		backgroundColor: '#E3C5BB',
+		backgroundColor: '#66bdff',
 	},
 })
 
