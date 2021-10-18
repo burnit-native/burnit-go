@@ -64,6 +64,10 @@ export const getTimeVariant = (number, verb, lang, translations) => {
 export const setCategories = (tasks, categories) => {
 	return Promise.all(
 		tasks.map((task) => {
+			// eliot - what this function is doing is finding the cateogry that exists and matching it to the category
+			// that the user attached to the product when first created b/c when the initial user creates the
+			// product, the category it attaches to is represented by ID. This function adds the whole cateory object
+			// to the key of category in the product object
 			let findCate
 			if (!isNaN(+task.category)) {
 				findCate = categories.find(({ id }) => +id === +task.category)
@@ -72,6 +76,7 @@ export const setCategories = (tasks, categories) => {
 			}
 
 			if (findCate) task.category = findCate
+			// IF there isn't a category set, then the default category attached will be the first in the categories array
 			else task.category = categories[0]
 		}),
 	).then(() => tasks)
