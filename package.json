@@ -1,17 +1,13 @@
 {
-	"name": "maker",
-	"description": "Maker is an advanced ToDo mobile application created with React Native and Expo framework. This app working with Android and iOS.",
-	"version": "2.6.0",
-	"author": "WebStrong (https://webstrong.pl)",
+	"name": "burnit",
+	"description": "Burnit is an advanced inventory mobile application built with React Native and Expo framework. This app working with Android and iOS.",
+	"version": "1",
+	"author": "coffee-crew",
 	"main": "node_modules/expo/AppEntry.js",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/webstrongteam/maker/issues"
-	},
-	"homepage": "https://webstrong.pl",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/webstrongteam/maker.git"
+		"url": "git+https://github.com/burnit-native/burnit-go"
 	},
 	"scripts": {
 		"start": "expo start",
@@ -44,6 +40,7 @@
 		"expo-permissions": "~10.0.0",
 		"expo-sharing": "~8.5.0",
 		"expo-sqlite": "~8.5.0",
+		"expo-status-bar": "~1.0.3",
 		"expo-web-browser": "~8.6.0",
 		"moment": "2.29.1",
 		"react": "16.13.1",

@@ -1,72 +1,245 @@
-import React from 'react';
-import LoginScreen from "react-native-login-screen";
-import { connect } from 'react-redux'
-import { View, Text } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import React, { useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
+import { StatusBar } from 'expo-status-bar'
+import {
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	TextInput,
+	Button,
+	TouchableOpacity,
+	Alert,
+} from 'react-native'
 
-const LoginContainer = ({ navigation, onLoginSuccess }) => {
-    const [spinnerVisibility, setSpinnerVisibility] = React.useState(false)
-    const [username, setUsername] = React.useState('')
+const LoginContainer = ({ onLoginSuccess }) => {
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [createEmail, setCreateEmail] = useState('')
+	const [createPassword, setCreatePassword] = useState('')
+	const [confirmPassword, setConfirmPassword] = useState('')
+	const [name, setName] = useState('')
+	const [phone, setPhone] = useState('')
 
-    return (<LoginScreen
+	const [needAnAccount, setNeedAnAccount] = useState(false)
 
-        labelTextStyle={{
-            color: "#adadad",
-            fontFamily: "Now-Bold",
-        }}
-        logoTextStyle={{
-            fontSize: 27,
-            color: "#fdfdfd",
-            fontFamily: "Now-Black",
-        }}
-        loginButtonTextStyle={{
-            color: "#fdfdfd",
-            fontFamily: "Now-Bold",
-        }}
-        textStyle={{
-            color: "#757575",
-            fontFamily: "Now-Regular",
-        }}
-        signupStyle={{
-            color: "#fdfdfd",
-            fontFamily: "Now-Bold",
-        }}
-        usernameOnChangeText={(v) => setUsername(v)}
-        onPressSettings={() => alert("Settings Button is pressed")}
-        passwordOnChangeText={(v) => setPassword(v)}
-        onPressLogin={async () => {
-            try {
-                setSpinnerVisibility(true);
-                setTimeout(() => {
-                    setSpinnerVisibility(false);
-                }, 2000);
-                await AsyncStorage.setItem('isLoggedIn', "yes")
-                const newUser = await axios.post("https://caliboxs.com/api/v1/login", { email: 'test@test.com', password: 'test' })
-                console.log('this is new user', newUser)
-                onLoginSuccess();
-            } catch (e) {
-                console.log('THIS IS ERROR', e)
-            }
-        }}
-        onPressSignup={() => {
-            console.log("onPressSignUp is pressed");
-        }}
-    >
-        {/* <View
-            style={{
-                position: "relative",
-                alignSelf: "center",
-                marginTop: 64,
-            }}
-        >
-            <Text style={{ color: "white", fontSize: 30 }}>
-                Inside Login Screen Component
-            </Text>
-        </View> */}
-    </LoginScreen>)
+	const handleCreateAccountView = () => {
+		setNeedAnAccount(true)
+	}
+
+	const handleLoginPress = async () => {
+		try {
+			const response = await axios.post('http://caliboxs.com/api/v1/login', {
+				email: 'e@e.com',
+				password: '123456',
+			})
+
+			await AsyncStorage.setItem('isLoggedIn', 'yes')
+			await AsyncStorage.setItem('accessToken', response.data.result.access_token)
+
+			onLoginSuccess()
+		} catch (e) {
+			console.log('THIS IS ERROR', e)
+		}
+	}
+
+	const errorParseResult = (errorObj) => {
+		let errorsArray = []
+		for (let errorFieldArray in errorObj) {
+			errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
+		}
+		return errorsArray.join('\n')
+	}
+
+	const handleCreateAccountPress = async () => {
+		try {
+			const bodyFormData = new FormData()
+
+			bodyFormData.append('name', name)
+			bodyFormData.append('email', createEmail)
+			bodyFormData.append('phone', phone)
+			bodyFormData.append('password', createPassword)
+			bodyFormData.append('password_confirmation', confirmPassword)
+
+			await axios.post('http://caliboxs.com/api/v1/signup', bodyFormData, {
+				headers: { 'Content-Type': 'multipart/form-data' },
+			})
+
+			Alert.alert('Success', `Your account has been created, ${name}.`, [
+				{
+					text: 'Ok',
+					onPress: setNeedAnAccount(false),
+					style: 'cancel',
+				},
+			])
+		} catch (e) {
+			console.log('Error at login', e.response.data.errors)
+			Alert.alert(
+				'Error',
+				`${e.response.data.message} ${errorParseResult(e.response.data.errors)}`,
+				[
+					{
+						text: 'Ok',
+						style: 'cancel',
+					},
+				],
+			)
+		}
+	}
+
+	return (
+		<View style={styles.container}>
+			<Image style={styles.image} source='./assets/icon.png' />
+			<StatusBar style='auto' />
+			<View>
+				<Text style={styles.title}>{!needAnAccount ? 'Login' : 'Sign Up'}</Text>
+			</View>
+			{!needAnAccount ? (
+				<>
+					<View style={styles.inputView}>
+						<TextInput
+							key='loginEmail'
+							style={styles.TextInput}
+							placeholder='Email'
+							placeholderTextColor='#003f5c'
+							onChangeText={(email) => setEmail(email)}
+							value={email}
+						/>
+					</View>
+					<View style={styles.inputView}>
+						<TextInput
+							key='loginPass'
+							style={styles.TextInput}
+							placeholder='Password'
+							placeholderTextColor='#003f5c'
+							secureTextEntry={true}
+							onChangeText={(password) => setPassword(password)}
+						/>
+					</View>
+				</>
+			) : (
+				<>
+					<View style={styles.inputView}>
+						<TextInput
+							key='createName'
+							style={styles.TextInput}
+							placeholder='Name'
+							placeholderTextColor='#003f5c'
+							onChangeText={(name) => setName(name)}
+						/>
+					</View>
+					<View style={styles.inputView}>
+						<TextInput
+							key='createEmail'
+							style={styles.TextInput}
+							placeholder='Email'
+							placeholderTextColor='#003f5c'
+							onChangeText={(createEmail) => setCreateEmail(createEmail)}
+						/>
+					</View>
+					<View style={styles.inputView}>
+						<TextInput
+							key='createPhone'
+							style={styles.TextInput}
+							placeholder='Phone'
+							placeholderTextColor='#003f5c'
+							onChangeText={(phone) => setPhone(phone)}
+						/>
+					</View>
+					<View style={styles.inputView}>
+						<TextInput
+							key='createPass'
+							style={styles.TextInput}
+							placeholder='Password'
+							placeholderTextColor='#003f5c'
+							secureTextEntry={true}
+							onChangeText={(createPassword) => setCreatePassword(createPassword)}
+						/>
+					</View>
+					<View style={styles.inputView}>
+						<TextInput
+							key='createPassConfirm'
+							style={styles.TextInput}
+							placeholder='Confirm Password'
+							placeholderTextColor='#003f5c'
+							secureTextEntry={true}
+							onChangeText={(confirmPassword) => setConfirmPassword(confirmPassword)}
+						/>
+					</View>
+				</>
+			)}
+
+			{!needAnAccount ? (
+				<>
+					<TouchableOpacity onPress={handleCreateAccountView}>
+						<Text style={styles.forgot_button}>Need an account?</Text>
+					</TouchableOpacity>
+					<TouchableOpacity style={styles.loginBtn} onPress={handleLoginPress}>
+						<Text style={styles.loginText}>LOGIN</Text>
+					</TouchableOpacity>
+				</>
+			) : (
+				<>
+					<TouchableOpacity onPress={() => setNeedAnAccount(false)}>
+						<Text style={styles.forgot_button}>I already have an account.</Text>
+					</TouchableOpacity>
+					<TouchableOpacity style={styles.loginBtn} onPress={handleCreateAccountPress}>
+						<Text style={styles.loginText}>Create an account</Text>
+					</TouchableOpacity>
+				</>
+			)}
+		</View>
+	)
 }
 
-const mapStateToProps = (state) => ({ primaryColor: state.theme.theme?.primaryColor })
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 
-export default connect(mapStateToProps)(LoginContainer)
+	title: {
+		marginBottom: 40,
+		fontSize: 40,
+	},
+
+	image: {
+		marginBottom: 0,
+	},
+
+	inputView: {
+		backgroundColor: '#bdeaff',
+
+		borderRadius: 2,
+		width: '70%',
+		height: 45,
+		marginBottom: 20,
+	},
+
+	TextInput: {
+		height: 50,
+		flex: 1,
+		padding: 10,
+		marginLeft: 20,
+	},
+
+	forgot_button: {
+		height: 30,
+		marginBottom: 30,
+	},
+
+	loginBtn: {
+		width: '80%',
+		borderRadius: 2,
+		height: 50,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginTop: 40,
+		backgroundColor: '#66bdff',
+	},
+})
+
+export default LoginContainer
