@@ -602,9 +602,8 @@ class TaskList extends Component {
 
 				const dateDifference = dateDiff(firstDate, secondDate, translations, settings.lang)
 				if (dateDifference) {
-					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${
-						dateDifference.prefix
-					})`
+					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${dateDifference.prefix
+						})`
 				}
 			}
 			return this.convertTimeCycle(task.date)
@@ -638,6 +637,9 @@ class TaskList extends Component {
 
 	getFilterData = () => {
 		const { data, visibleData } = this.state
+
+		// TODO
+		console.log('\n', 'this is filterData', '\n', data, '\n', ' :::: END')
 
 		return data.filter(({ task }, index) => {
 			if (index > visibleData) {
@@ -698,7 +700,7 @@ class TaskList extends Component {
 								<View
 									style={{
 										...styles.taskRowLeftElement,
-										backgroundColor: priorityColors[task.priority].bgColor,
+										// backgroundColor: priorityColors[task.priority].bgColor,
 									}}
 								/>
 							}
@@ -721,8 +723,8 @@ class TaskList extends Component {
 												color: task.finish
 													? theme.thirdTextColor
 													: div === translations.overdue
-													? theme.warningColor
-													: theme.thirdTextColor,
+														? theme.warningColor
+														: theme.thirdTextColor,
 											}}
 										>
 											{this.getTaskDateLabel(task)}
@@ -794,6 +796,9 @@ class TaskList extends Component {
 		const { theme, navigation, sortingType, settings, sorting, finished, translations } = this.props
 
 		const filterData = this.getFilterData()
+
+		// TODO
+		console.log('\n', 'this is upon render filtered data', '\n', filterData, '\n', ' :::: END')
 
 		return (
 			<View style={flex}>
@@ -877,6 +882,7 @@ class TaskList extends Component {
 
 				<Dialog {...dialog} theme={theme} showDialog={showDialog} />
 
+				{/* THIS IS WHERE THE ACTUAL RENDER OF THE LIST IS */}
 				<FlatList
 					ref={(e) => {
 						this.flatList = e
