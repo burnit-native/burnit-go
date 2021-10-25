@@ -73,14 +73,18 @@ export const setCategories = (products, categories) => {
 			if (!isNaN(+product.category_id)) {
 				findCategory = categories.find(({ id }) => +id === +product.category_id)
 			} else {
-				findCategory = categories.find(({ name }) => name === category.id)
+				findCategory = categories.find(({ name }) => name === product.id)
 			}
 
-			if (findCategory) task.category = findCategory
+			if (findCategory) {
+				product.category = findCategory
+				return product;
+			}
+
 			// IF there isn't a category set, then the default category attached will be the first in the categories array
-			else task.category = categories[0]
+			else product.category = categories[0]
 		}),
-	).then(() => categories)
+	).then((updatedProducts) => updatedProducts)
 }
 
 export const sortingData = (array, field, type) => {

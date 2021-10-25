@@ -347,12 +347,16 @@ class TaskList extends Component {
 		tasks &&
 			Promise.all(
 				tasks.map((task) => {
+					// TODO
+					// console.log('this is task happening:: ', task)
 					let div
-					if (task.finish) {
-						div = translations.finished
-						return division[div].push(task)
-					}
-					div = this.getDateDivision(task.date)
+					// if (task.finish) {
+					// 	div = translations.finished
+					// 	return division[div].push(task)
+					// }
+					div = this.getDateDivision(task?.created_at)
+					// TODO
+					console.log('this is task DIV FJDLS::: ', div)
 					return division[div].push(task)
 				}),
 			).then(() => {
@@ -636,11 +640,13 @@ class TaskList extends Component {
 	}
 
 	getFilterData = () => {
+		// This function helps with lazy loading since it looks for visible state and then only renders just as much
 		const { data, visibleData } = this.state
 
-		// TODO
-		console.log('\n', 'this is filterData', '\n', data, '\n', ' :::: END')
 
+		// console.log(':: data ::', data)
+
+		// console.log('\n', 'this is filterData', '\n', data, '\n', ' :::: END')
 		return data.filter(({ task }, index) => {
 			if (index > visibleData) {
 				return false
@@ -663,8 +669,13 @@ class TaskList extends Component {
 		const { priorityColors, animations } = this.state
 		const { translations, theme, navigation } = this.props
 
-		const moveValue = animations[`move${task.id}`] ? animations[`move${task.id}`] : 0
-		const hideTask = animations[`hide${task.id}`] ? 0 : 'auto'
+		// TODO
+		console.log('this is task :: ', task.id)
+
+		const moveValue = animations[`move${task?.id}`] ? animations[`move${task?.id}`] : 0
+		console.log('move value:: ', moveValue)
+		const hideTask = animations[`hide${task?.id}`] ? 0 : 'auto'
+		console.log('move hide task:: ', hideTask)
 
 		return (
 			<View>
@@ -684,7 +695,7 @@ class TaskList extends Component {
 						<ListItem
 							dense
 							onPress={() =>
-								navigation.navigate('ConfigTask', { task: task.id, finished: task.finish })
+								navigation.navigate('ConfigTask', { task: task?.id })
 							}
 							style={{
 								container: {
@@ -797,9 +808,6 @@ class TaskList extends Component {
 
 		const filterData = this.getFilterData()
 
-		// TODO
-		console.log('\n', 'this is upon render filtered data', '\n', filterData, '\n', ' :::: END')
-
 		return (
 			<View style={flex}>
 				<Toolbar
@@ -906,7 +914,14 @@ class TaskList extends Component {
 					onEndReachedThreshold={0.2}
 					onEndReached={this.loadNextData}
 					renderItem={({ item, index }) => this.renderTaskRow(item, index)}
-					keyExtractor={({ task }) => `${task.id}`}
+					keyExtractor={({ task }) => {
+						if (task && task.id) {
+							// console.log('thisis TASK FROM FLAT LIST::', task)
+							return `${task.id}`
+						} else {
+							return {}
+						}
+					}}
 					onRefresh={this.refreshComponent}
 					refreshing={loading}
 					ListFooterComponent={

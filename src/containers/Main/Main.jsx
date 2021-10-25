@@ -24,7 +24,6 @@ class Main extends Component {
 
 
 	componentDidMount() {
-		console.log('THIS IS ASYNC STORAGE', AsyncStorage.getItem('isLoggedIn'))
 		this.props.onInitTheme()
 		this.props.onInitCategories()
 		this.props.onInitProfile()
