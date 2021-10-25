@@ -30,7 +30,10 @@ class Input extends Component {
 		const { control } = this.state
 		const { changed } = this.props
 
+		console.log('this coming into checkValid', value)
+
 		if (initial && control.required && (value === '' || value === null || value === undefined)) {
+			console.log('this coming intor control required', value)
 			// Initial valid without label
 			control.error = true
 			changed('', control)
@@ -38,6 +41,8 @@ class Input extends Component {
 			this.setState({ control })
 		} else {
 			const { translations } = this.props
+			// TODO
+			console.log('this is value: ', value)
 			valid(control, value, translations, (newControl) => {
 				changed(value, newControl)
 				this.textField.setValue(value)

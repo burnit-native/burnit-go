@@ -19,6 +19,8 @@ class ConfigCategory extends Component {
 	}
 
 	componentDidMount() {
+		// TODO
+		console.log('this is config category mounting')
 		const { category } = this.props
 		this.initCategory(category)
 	}

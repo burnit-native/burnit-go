@@ -148,7 +148,17 @@
 		"sendButton": "Send"
 	},
 	"ConfigTask": {
-		"nameLabel": "Enter task name",
+		"nameLabel": "Enter product name",
+		"priceLabel": "Enter product price",
+		"colorLabel": "Enter product color",
+		"previousPriceLabel": "Enter previous product price",
+		"tagsLabel": "Enter product tags",
+		"sizeLabel": "",
+		"sizeQtyLabel": "",
+		"sizePriceLabel": "",
+		"featuresLabel": "",
+		"TypeLabel": "",
+		"affiliateLinkLabel": "Enter affiliate lnk",
 		"descriptionLabel": "Enter task description",
 		"noRepeat": "No repeat",
 		"onceDay": "Once a Day",

@@ -355,8 +355,6 @@ class TaskList extends Component {
 					// 	return division[div].push(task)
 					// }
 					div = this.getDateDivision(task?.created_at)
-					// TODO
-					console.log('this is task DIV FJDLS::: ', div)
 					return division[div].push(task)
 				}),
 			).then(() => {
@@ -560,7 +558,7 @@ class TaskList extends Component {
 								: { color: theme.thirdTextColor },
 						]}
 					>
-						{rowData.name}
+						{rowData.name + 'HELLOOdfd;lkfajdfk;lsjda;skdfj'}
 					</Text>
 					<Text
 						style={[
@@ -578,6 +576,10 @@ class TaskList extends Component {
 	}
 
 	updateTask = (task, action = null) => {
+		// TODO
+		console.log('THIS IS UPDATING TAKSS')
+
+
 		this.setState({ selectedTask: task }, () => {
 			if (action === 'delete') {
 				this.checkDeleteHandler()
@@ -654,8 +656,8 @@ class TaskList extends Component {
 
 			const searchText = this.state.searchText.toLowerCase()
 			if (searchText.length > 0 && task.name.toLowerCase().indexOf(searchText) < 0) {
-				if (task.description.toLowerCase().indexOf(searchText) < 0) {
-					if (task.category.name.toLowerCase().indexOf(searchText) < 0) {
+				if (task?.description.toLowerCase().indexOf(searchText) < 0) {
+					if (task?.category?.name.toLowerCase().indexOf(searchText) < 0) {
 						return false
 					}
 				}
@@ -669,13 +671,9 @@ class TaskList extends Component {
 		const { priorityColors, animations } = this.state
 		const { translations, theme, navigation } = this.props
 
-		// TODO
-		console.log('this is task :: ', task.id)
-
 		const moveValue = animations[`move${task?.id}`] ? animations[`move${task?.id}`] : 0
-		console.log('move value:: ', moveValue)
 		const hideTask = animations[`hide${task?.id}`] ? 0 : 'auto'
-		console.log('move hide task:: ', hideTask)
+
 
 		return (
 			<View>
@@ -724,7 +722,7 @@ class TaskList extends Component {
 											color: theme.secondaryTextColor,
 										}}
 									>
-										{task.name}
+										{task.name + ' HERE IS WHERE CLICK'}
 									</Text>
 									<View style={styles.taskDate}>
 										<Text
@@ -773,14 +771,14 @@ class TaskList extends Component {
 										name={task.finish ? 'replay' : 'done'}
 										onPress={() => this.updateTask(task)}
 									/>
-									{task.finish && (
+									{/* {task.finish && (
 										<IconToggle
 											onPress={() => this.updateTask(task, 'delete')}
 											name='delete'
 											color={theme.warningColor}
 											size={28}
 										/>
-									)}
+									)} */}
 								</View>
 							}
 						/>

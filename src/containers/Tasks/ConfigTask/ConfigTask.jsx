@@ -32,6 +32,66 @@ import { connect } from 'react-redux'
 class ConfigTask extends Component {
 	state = {
 		task: {
+			id: 0,
+			sku: "",
+			product_type: "normal",
+			affiliate_link: null,
+			user_id: 0,
+			categories: [],
+			category_id: 20,
+			subcategory_id: null,
+			childcategory_id: null,
+			attributes: null,
+			name: "",
+			slug: "",
+			photo: "",
+			thumbnail: "",
+			file: null,
+			size: "",
+			size_qty: "",
+			size_price: "",
+			color: "",
+			price: 0,
+			previous_price: 0,
+			details: "",
+			stock: 0,
+			policy: "",
+			status: 0,
+			views: 0,
+			tags: "",
+			features: "",
+			colors: "",
+			product_condition: 0,
+			ship: null,
+			is_meta: 0,
+			meta_tag: "",
+			meta_description: null,
+			youtube: null,
+			type: "Physical",
+			license: "",
+			license_qty: "",
+			link: null,
+			platform: null,
+			region: null,
+			licence_type: null,
+			measure: null,
+			featured: 0,
+			best: 0,
+			top: 0,
+			hot: 0,
+			latest: 0,
+			big: 0,
+			trending: 0,
+			sale: 0,
+			created_at: "2020-07-15T14:20:46.000000Z",
+			updated_at: "2021-10-22T23:02:23.000000Z",
+			is_discount: 0,
+			discount_date: null,
+			whole_sell_qty: "",
+			whole_sell_discount: "",
+			is_catalog: 0,
+			catalog_id: 0,
+			// ORIGINAL BELOW
 			id: false,
 			name: '',
 			description: '',
@@ -45,6 +105,26 @@ class ConfigTask extends Component {
 		controls: {
 			name: {
 				label: this.props.translations.nameLabel,
+				required: true,
+				characterRestriction: 40,
+			},
+			price: {
+				label: this.props.translations.priceLabel,
+				required: true,
+				characterRestriction: 40,
+			},
+			color: {
+				label: this.props.translations.colorLabel,
+				required: true,
+				characterRestriction: 40,
+			},
+			previousPrice: {
+				label: this.props.translations.previousPriceLabel,
+				required: true,
+				characterRestriction: 40,
+			},
+			tags: {
+				label: this.props.translations.tagsLabel,
 				required: true,
 				characterRestriction: 40,
 			},
@@ -74,18 +154,29 @@ class ConfigTask extends Component {
 		const finished = navigation.getParam('finished', false)
 		const category = navigation.getParam('category', false)
 
+		// TODO
+		console.log('THISIS COMPONETN MOUNTING FROM CONFIG')
+
+		// if (taskId !== false) {
+		// 	console.log('THISIS INSIDE TASK ID FALSE')
+		// 	if (finished) {
+		// 		onInitFinishedTask(taskId, (task) => {
+		// 			this.prepareTask({ ...task, event_id: null, notification_id: null })
+		// 		})
+		// 	} else {
+		// 		onInitTask(taskId, (task) => {
+		// 			this.prepareTask(task)
+		// 		})
+		// 	}
+		// 	return
+		// }
 		if (taskId !== false) {
-			if (finished) {
-				onInitFinishedTask(taskId, (task) => {
-					this.prepareTask({ ...task, event_id: null, notification_id: null })
-				})
-			} else {
-				onInitTask(taskId, (task) => {
-					this.prepareTask(task)
-				})
-			}
-			return
+			onInitTask(taskId, (task) => {
+				this.prepareTask(task)
+			})
 		}
+
+		console.log('AFTER COMPONENT MOUNT')
 
 		if (category && category.name !== translations.all) {
 			task.category = category
@@ -489,10 +580,43 @@ class ConfigTask extends Component {
 							}}
 						/>
 						<Input
+							elementConfig={controls.price}
+							focus={!editTask}
+							value={task.price}
+							changed={(value, control) => {
+								const { task, controls } = this.state
+								task.price = value
+								controls.price = control
+								this.setState({ task, controls })
+							}}
+						/>
+						<Input
+							elementConfig={controls.color}
+							focus={!editTask}
+							value={task.color}
+							changed={(value, control) => {
+								const { task, controls } = this.state
+								task.color = value
+								controls.color = control
+								this.setState({ task, controls })
+							}}
+						/>
+						<Input
+							elementConfig={controls.tags}
+							focus={!editTask}
+							value={task.tags}
+							changed={(value, control) => {
+								const { task, controls } = this.state
+								task.tags = value
+								controls.tags = control
+								this.setState({ task, controls })
+							}}
+						/>
+						{/* <Input
 							elementConfig={controls.description}
 							value={task.description}
 							changed={(value) => this.updateTask('description', value)}
-						/>
+						/> */}
 
 						<View style={styles.container}>
 							<Subheader text={translations.dueDate} />
