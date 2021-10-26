@@ -147,6 +147,8 @@ export const initTasks = () => {
 				},
 			})
 
+			const meId = await AsyncStorage.getItem('meId')
+
 			const filteredProducts = rawProducts.data.result
 			const filteredCategories = rawCategories.data.result
 
