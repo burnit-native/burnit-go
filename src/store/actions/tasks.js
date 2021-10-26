@@ -116,7 +116,6 @@ export const initToDo = (callback = () => null) => {
 
 			// console.log('this is filtered products  ::', filteredProducts, '\n')
 			// console.log('this is filtered Categories  ::', filteredCategories, '\n')
-			userFilteredCategories.forEach((cat) => console.log(`cat ID`, cat.name))
 			const updatedProducts = await setCategories(userFilteredProducts, userFilteredCategories)
 
 			callback(updatedProducts)
