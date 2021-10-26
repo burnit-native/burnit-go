@@ -78,6 +78,8 @@ class QuicklyList extends Component {
 	}
 
 	showDialog = (list_id) => {
+		// TODO
+		console.log('this is list coming into for delete::', list_id)
 		const { translations, onRemoveList } = this.props
 
 		const cancelHandler = () => this.setState({ showDialog: false })
@@ -116,9 +118,9 @@ class QuicklyList extends Component {
 		const { theme, navigation, translations, categories } = this.props
 
 		// todo 
-		console.log('this is data coming thorugh quicky render :', categories, '\n', data, ':: data')
+		// console.log('this is data coming thorugh quicky render :', categories, '\n', data, ':: data')
 
-		return data.map((list, index) => (
+		return categories.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
@@ -140,7 +142,9 @@ class QuicklyList extends Component {
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
-								onPress={() => this.showDialog(list.id, list.name)}
+								onPress={() => this.showDialog(list.id,
+									// list.name
+								)}
 								name='delete'
 								color={theme.warningColor}
 								size={26}
@@ -153,8 +157,11 @@ class QuicklyList extends Component {
 	}
 
 	render() {
-		const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
-		const { theme, navigation, settings, translations } = this.props
+		const { bottomHidden, searchText, showDialog, dialog,
+			// loading,
+		} = this.state
+		// const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
+		const { theme, navigation, settings, translations, categories } = this.props
 
 		const filterData = this.getFilterData()
 
@@ -193,7 +200,8 @@ class QuicklyList extends Component {
 
 				<Dialog {...dialog} theme={theme} showDialog={showDialog} />
 
-				{!loading ? (
+				{/* {!loading ? ( */}
+				{categories[0] ? (
 					<ScrollView
 						scrollEventThrottle={16}
 						keyboardShouldPersistTaps='always'
