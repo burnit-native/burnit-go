@@ -8,6 +8,7 @@ import EmptyList from '../../components/EmptyList/EmptyList'
 import Spinner from '../../components/Spinner/Spinner'
 import Dialog from '../../components/Dialog/Dialog'
 import styles from './QuicklyList.styles'
+import ConfigCategory from '../Categories/ConfigCategory/ConfigCategory'
 
 import * as actions from '../../store/actions'
 import { connect } from 'react-redux'
@@ -16,7 +17,7 @@ class QuicklyList extends Component {
 	state = {
 		amounts: {},
 		searchText: '',
-
+		showConfigCategory: false,
 		offset: 0,
 		scrollDirection: 0,
 		bottomHidden: false,
@@ -112,6 +113,22 @@ class QuicklyList extends Component {
 		})
 	}
 
+	toggleModalHandler = (selected = false) => {
+		const { showConfigCategory } = this.state
+
+		if (selected !== false) {
+			this.setState({
+				showConfigCategory: !showConfigCategory,
+				selectedCategory: selected,
+			})
+		} else {
+			this.setState({
+				showConfigCategory: !showConfigCategory,
+				selectedCategory: false,
+			})
+		}
+	}
+
 	renderQuicklyList = (data) => {
 		// This is executed when a quickly task is made, not when it loads
 		const { amounts } = this.state
@@ -157,7 +174,7 @@ class QuicklyList extends Component {
 	}
 
 	render() {
-		const { bottomHidden, searchText, showDialog, dialog,
+		const { bottomHidden, searchText, showDialog, dialog, showConfigCategory, selectedCategory
 			// loading,
 		} = this.state
 		// const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
@@ -224,7 +241,8 @@ class QuicklyList extends Component {
 				<View style={styles.actionButtonWrapper}>
 					<ActionButton
 						hidden={bottomHidden}
-						onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
+						onPress={this.toggleModalHandler}
+						// onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
 						icon='add'
 						style={{
 							container: { backgroundColor: theme.warningColor },
@@ -232,6 +250,15 @@ class QuicklyList extends Component {
 						}}
 					/>
 				</View>
+
+				{showConfigCategory && (
+					<ConfigCategory
+						showDialog={showConfigCategory}
+						category={selectedCategory}
+						toggleModal={this.toggleModalHandler}
+					/>
+				)}
+
 			</View>
 		)
 	}
