@@ -56,6 +56,8 @@ class QuicklyTaskList extends Component {
 	}
 
 	componentDidMount() {
+		// TODO 
+		console.log('this is categories being made:: ', this.state.quicklyTasks)
 		const { navigation } = this.props
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>

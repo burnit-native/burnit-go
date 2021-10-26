@@ -1,6 +1,8 @@
 import { openDatabase } from 'expo-sqlite'
 import * as Analytics from 'expo-firebase-analytics'
 import * as actionTypes from './actionTypes'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const db = openDatabase('maker.db')
 
@@ -9,17 +11,36 @@ export const onInitCategories = (categories) => ({
 	categories,
 })
 
-export const initCategories = (callback = () => null) => (dispatch) => {
-	db.transaction(
-		(tx) => {
-			tx.executeSql('select * from categories', [], (_, { rows }) => {
-				callback()
-				dispatch(onInitCategories(rows._array))
-			})
-		},
-		// eslint-disable-next-line no-console
-		(err) => console.log(err),
-	)
+export const initCategories = (callback = () => null) => async (dispatch) => {
+	// db.transaction(
+	// 	(tx) => {
+	// 		// TODO
+	// 		console.log('this is cateogries ocming back')
+	// 		tx.executeSql('select * from categories', [], (_, { rows }) => {
+	// 			console.log('this is ROWS', rows._array)
+	// 			callback()
+	// 			dispatch(onInitCategories(rows._array))
+	// 		})
+	// 	},
+	// 	// eslint-disable-next-line no-console
+	// 	(err) => console.log(err),
+	// )
+	try {
+		const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
+			headers: {
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`
+			}
+		})
+
+		const filteredCategories = rawCategories.data.result;
+
+		callback()
+		dispatch(onInitCategories(filteredCategories))
+
+
+	} catch (e) {
+		console.error('Error on initCategories :: ', e)
+	}
 }
 
 export const initCategory = (id, callback = () => null) => () => {

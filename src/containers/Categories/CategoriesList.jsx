@@ -29,9 +29,13 @@ class CategoriesList extends PureComponent {
 		}
 
 		tasks.map((task) => {
-			if (!taskPerCategory[task.category.id]) taskPerCategory[task.category.id] = 1
-			else taskPerCategory[task.category.id]++
+			if (task) {
+				if (!taskPerCategory[task.category.id]) taskPerCategory[task.category.id] = 1
+				else taskPerCategory[task.category.id]++
+			}
 		})
+
+
 
 		this.setState({ taskPerCategory, ready: true })
 	}
@@ -105,6 +109,9 @@ class CategoriesList extends PureComponent {
 		} = this.state
 		const { categories, navigation, theme, translations } = this.props
 
+		// // TODO
+		// console.log('thsi is categories loading from catelgories list::', categories)
+
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
 				<Toolbar
@@ -153,9 +160,8 @@ class CategoriesList extends PureComponent {
 										) : null
 									}
 									centerElement={{
-										primaryText: `${cate.name} (${
-											taskPerCategory[cate.id] ? taskPerCategory[cate.id] : 0
-										})`,
+										primaryText: `${cate.name} (${taskPerCategory[cate.id] ? taskPerCategory[cate.id] : 0
+											})`,
 									}}
 									onPress={() => this.toggleModalHandler(cate.id)}
 								/>

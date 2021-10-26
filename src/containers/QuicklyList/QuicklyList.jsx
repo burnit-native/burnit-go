@@ -26,6 +26,8 @@ class QuicklyList extends Component {
 	}
 
 	componentDidMount() {
+		// TODO
+		console.log('categorijes is mounting')
 		this.reloadListsAmount()
 	}
 
@@ -99,6 +101,9 @@ class QuicklyList extends Component {
 	getFilterData = () => {
 		const { lists } = this.props
 
+		// TODO 
+		// console.log('this is lists::', lists)
+
 		return lists.filter((list) => {
 			const searchText = this.state.searchText.toLowerCase()
 			return !(searchText.length > 0 && list.name.toLowerCase().indexOf(searchText) < 0)
@@ -106,8 +111,12 @@ class QuicklyList extends Component {
 	}
 
 	renderQuicklyList = (data) => {
+		// This is executed when a quickly task is made, not when it loads
 		const { amounts } = this.state
-		const { theme, navigation, translations } = this.props
+		const { theme, navigation, translations, categories } = this.props
+
+		// todo 
+		console.log('this is data coming thorugh quicky render :', categories, '\n', data, ':: data')
 
 		return data.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
@@ -148,6 +157,10 @@ class QuicklyList extends Component {
 		const { theme, navigation, settings, translations } = this.props
 
 		const filterData = this.getFilterData()
+
+		// TODO
+		// console.log('thsi is categories loading from quickly list::', categories)
+
 
 		return (
 			<View style={flex}>
@@ -220,6 +233,7 @@ const mapStateToProps = (state) => ({
 	theme: state.theme.theme,
 	settings: state.settings.settings,
 	lists: state.lists.lists,
+	categories: state.categories.categories,
 	translations: {
 		...state.settings.translations.QuicklyList,
 		...state.settings.translations.common,
