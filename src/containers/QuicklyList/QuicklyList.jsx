@@ -8,6 +8,7 @@ import EmptyList from '../../components/EmptyList/EmptyList'
 import Spinner from '../../components/Spinner/Spinner'
 import Dialog from '../../components/Dialog/Dialog'
 import styles from './QuicklyList.styles'
+import ConfigCategory from '../Categories/ConfigCategory/ConfigCategory'
 
 import * as actions from '../../store/actions'
 import { connect } from 'react-redux'
@@ -16,7 +17,7 @@ class QuicklyList extends Component {
 	state = {
 		amounts: {},
 		searchText: '',
-
+		showConfigCategory: false,
 		offset: 0,
 		scrollDirection: 0,
 		bottomHidden: false,
@@ -26,6 +27,8 @@ class QuicklyList extends Component {
 	}
 
 	componentDidMount() {
+		// TODO
+		console.log('categorijes is mounting')
 		this.reloadListsAmount()
 	}
 
@@ -76,6 +79,8 @@ class QuicklyList extends Component {
 	}
 
 	showDialog = (list_id) => {
+		// TODO
+		console.log('this is list coming into for delete::', list_id)
 		const { translations, onRemoveList } = this.props
 
 		const cancelHandler = () => this.setState({ showDialog: false })
@@ -99,17 +104,40 @@ class QuicklyList extends Component {
 	getFilterData = () => {
 		const { lists } = this.props
 
+		// TODO 
+		// console.log('this is lists::', lists)
+
 		return lists.filter((list) => {
 			const searchText = this.state.searchText.toLowerCase()
 			return !(searchText.length > 0 && list.name.toLowerCase().indexOf(searchText) < 0)
 		})
 	}
 
-	renderQuicklyList = (data) => {
-		const { amounts } = this.state
-		const { theme, navigation, translations } = this.props
+	toggleModalHandler = (selected = false) => {
+		const { showConfigCategory } = this.state
 
-		return data.map((list, index) => (
+		if (selected !== false) {
+			this.setState({
+				showConfigCategory: !showConfigCategory,
+				selectedCategory: selected,
+			})
+		} else {
+			this.setState({
+				showConfigCategory: !showConfigCategory,
+				selectedCategory: false,
+			})
+		}
+	}
+
+	renderQuicklyList = (data) => {
+		// This is executed when a quickly task is made, not when it loads
+		const { amounts } = this.state
+		const { theme, navigation, translations, categories } = this.props
+
+		// todo 
+		// console.log('this is data coming thorugh quicky render :', categories, '\n', data, ':: data')
+
+		return categories.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
@@ -131,7 +159,9 @@ class QuicklyList extends Component {
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
-								onPress={() => this.showDialog(list.id, list.name)}
+								onPress={() => this.showDialog(list.id,
+									// list.name
+								)}
 								name='delete'
 								color={theme.warningColor}
 								size={26}
@@ -144,10 +174,17 @@ class QuicklyList extends Component {
 	}
 
 	render() {
-		const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
-		const { theme, navigation, settings, translations } = this.props
+		const { bottomHidden, searchText, showDialog, dialog, showConfigCategory, selectedCategory
+			// loading,
+		} = this.state
+		// const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
+		const { theme, navigation, settings, translations, categories } = this.props
 
 		const filterData = this.getFilterData()
+
+		// TODO
+		// console.log('thsi is categories loading from quickly list::', categories)
+
 
 		return (
 			<View style={flex}>
@@ -180,7 +217,8 @@ class QuicklyList extends Component {
 
 				<Dialog {...dialog} theme={theme} showDialog={showDialog} />
 
-				{!loading ? (
+				{/* {!loading ? ( */}
+				{categories[0] ? (
 					<ScrollView
 						scrollEventThrottle={16}
 						keyboardShouldPersistTaps='always'
@@ -203,7 +241,8 @@ class QuicklyList extends Component {
 				<View style={styles.actionButtonWrapper}>
 					<ActionButton
 						hidden={bottomHidden}
-						onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
+						onPress={this.toggleModalHandler}
+						// onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
 						icon='add'
 						style={{
 							container: { backgroundColor: theme.warningColor },
@@ -211,6 +250,15 @@ class QuicklyList extends Component {
 						}}
 					/>
 				</View>
+
+				{showConfigCategory && (
+					<ConfigCategory
+						showDialog={showConfigCategory}
+						category={selectedCategory}
+						toggleModal={this.toggleModalHandler}
+					/>
+				)}
+
 			</View>
 		)
 	}
@@ -220,6 +268,7 @@ const mapStateToProps = (state) => ({
 	theme: state.theme.theme,
 	settings: state.settings.settings,
 	lists: state.lists.lists,
+	categories: state.categories.categories,
 	translations: {
 		...state.settings.translations.QuicklyList,
 		...state.settings.translations.common,
