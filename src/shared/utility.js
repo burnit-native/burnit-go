@@ -68,7 +68,7 @@ export const setCategories = (products, categories) => {
 			// that the user attached to the product when first created b/c when the initial user creates the
 			// product, the category it attaches to is represented by ID. This function adds the whole cateory object
 			// to the key of category in the product object
-			let findCategory = null;
+			let findCategory = null
 
 			if (!isNaN(+product.category_id)) {
 				findCategory = categories.find(({ id }) => +id === +product.category_id)
@@ -78,13 +78,18 @@ export const setCategories = (products, categories) => {
 
 			if (findCategory) {
 				product.category = findCategory
-				return product;
+				return product
 			}
 
 			// IF there isn't a category set, then the default category attached will be the first in the categories array
-			else product.category = categories[0]
+			else {
+				product.category = categories[0]
+			}
+			return product
 		}),
-	).then((updatedProducts) => updatedProducts)
+	).then((updatedProducts) => {
+		return updatedProducts
+	})
 }
 
 export const sortingData = (array, field, type) => {

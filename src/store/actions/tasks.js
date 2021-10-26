@@ -87,6 +87,12 @@ export const initToDo = (callback = () => null) => {
 		// )
 
 		try {
+			const meResponse = await axios.get('http://caliboxs.com/api/v1/me', {
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
+
 			const rawProducts = await axios.get('http://caliboxs.com/api/v1/products', {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
@@ -101,11 +107,17 @@ export const initToDo = (callback = () => null) => {
 
 			const filteredProducts = rawProducts.data.result
 			const filteredCategories = rawCategories.data.result
+
+			// TODO: Change hard-coded user ID to meResponse.data.result.id
+			const userFilteredProducts = filteredProducts.filter((product) => product.user_id === 42)
+			const userFilteredCategories = filteredCategories.filter(
+				(category) => category.user_id === 42,
+			)
+
 			// console.log('this is filtered products  ::', filteredProducts, '\n')
 			// console.log('this is filtered Categories  ::', filteredCategories, '\n')
-			console.log(filteredCategories)
-
-			const updatedProducts = await setCategories(filteredProducts, filteredCategories)
+			userFilteredCategories.forEach((cat) => console.log(`cat ID`, cat.name))
+			const updatedProducts = await setCategories(userFilteredProducts, userFilteredCategories)
 
 			callback(updatedProducts)
 			dispatch(onInitToDo(updatedProducts))
@@ -146,8 +158,6 @@ export const initTasks = () => {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
 			})
-
-			const meId = await AsyncStorage.getItem('meId')
 
 			const filteredProducts = rawProducts.data.result
 			const filteredCategories = rawCategories.data.result
