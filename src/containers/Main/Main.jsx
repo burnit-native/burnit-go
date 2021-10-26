@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
-import LoginContainer from '../../components/Login';
+import LoginContainer from '../../components/Login'
 import TaskList from '../Tasks/TaskList'
 import Template from '../Template/Template'
 import QuicklyList from '../QuicklyList/QuicklyList'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import * as actions from '../../store/actions'
 import { connect } from 'react-redux'
@@ -19,15 +19,13 @@ class Main extends Component {
 			],
 		},
 		loading: true,
-		isLoggedIn: AsyncStorage.getItem('isLoggedIn') === "yes" ? true : false
+		isLoggedIn: AsyncStorage.getItem('isLoggedIn') === 'yes' ? true : false,
 	}
-
 
 	componentDidMount() {
 		this.props.onInitTheme()
 		this.props.onInitCategories()
 		this.props.onInitProfile()
-		this.props.onInitToDo()
 		this.props.onInitLists()
 		this.props.onInitSettings(() => {
 			this.setState({ loading: false })
@@ -35,6 +33,9 @@ class Main extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
+		if (this.state.isLoggedIn) {
+			this.props.onInitToDo()
+		}
 		if (prevProps.translations !== this.props.translations) {
 			const { tabs } = this.state
 			const { translations } = this.props
@@ -51,42 +52,40 @@ class Main extends Component {
 
 		return (
 			<>
-				{!this.state.isLoggedIn 
-					?
-					(
-						<LoginContainer navigation={navigation} onLoginSuccess={() => this.setState({ isLoggedIn: true })} />
-					)
-					:
-					(
-						<Template bgColor={theme.secondaryBackgroundColor}>
-							<TabView
-								navigationState={tabs}
-								tabStyle={{ backgroundColor: theme.primaryColor }}
-								onIndexChange={(index) => {
-									tabs.index = index
-									this.setState({ tabs })
-								}}
-								renderScene={SceneMap({
-									tasks: () => <TaskList navigation={navigation} />,
-									lists: () => <QuicklyList navigation={navigation} />,
-								})}
-								renderTabBar={(props) => (
-									<TabBar
-										{...props}
-										onTabPress={({ route }) => {
-											props.jumpTo(route.key)
-										}}
-										indicatorStyle={{ backgroundColor: theme.primaryTextColor }}
-										style={{
-											backgroundColor: theme.primaryColor,
-											height: hideTabView ? 0 : 50,
-										}}
-									/>
-								)}
-							/>
-						</Template>
-					)
-				}
+				{!this.state.isLoggedIn ? (
+					<LoginContainer
+						navigation={navigation}
+						onLoginSuccess={() => this.setState({ isLoggedIn: true })}
+					/>
+				) : (
+					<Template bgColor={theme.secondaryBackgroundColor}>
+						<TabView
+							navigationState={tabs}
+							tabStyle={{ backgroundColor: theme.primaryColor }}
+							onIndexChange={(index) => {
+								tabs.index = index
+								this.setState({ tabs })
+							}}
+							renderScene={SceneMap({
+								tasks: () => <TaskList navigation={navigation} />,
+								lists: () => <QuicklyList navigation={navigation} />,
+							})}
+							renderTabBar={(props) => (
+								<TabBar
+									{...props}
+									onTabPress={({ route }) => {
+										props.jumpTo(route.key)
+									}}
+									indicatorStyle={{ backgroundColor: theme.primaryTextColor }}
+									style={{
+										backgroundColor: theme.primaryColor,
+										height: hideTabView ? 0 : 50,
+									}}
+								/>
+							)}
+						/>
+					</Template>
+				)}
 			</>
 		)
 	}
