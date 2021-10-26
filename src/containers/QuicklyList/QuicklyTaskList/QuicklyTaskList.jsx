@@ -8,6 +8,8 @@ import {
 	TouchableOpacity,
 	View,
 	Keyboard,
+	Button,
+	Image,
 } from 'react-native'
 import { IconToggle, Toolbar } from 'react-native-material-ui'
 import { listRow, shadow, flex, foundResults } from '../../../shared/styles'
@@ -19,6 +21,7 @@ import Spinner from '../../../components/Spinner/Spinner'
 import Template from '../../Template/Template'
 import Dialog from '../../../components/Dialog/Dialog'
 import styles from './QuicklyTaskList.styles'
+import * as ImagePicker from 'expo-image-picker';
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
@@ -27,6 +30,7 @@ const initialNumToRender = 16
 
 class QuicklyTaskList extends Component {
 	state = {
+		image: null,
 		quicklyTasks: [],
 		showDialog: false,
 		showInputDialog: false,
@@ -206,6 +210,21 @@ class QuicklyTaskList extends Component {
 		})
 	}
 
+	async pickImage() {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		console.log(result);
+
+		if (!result.cancelled) {
+			this.setState({ image: result.uri });
+		}
+	};
+
 	renderTaskRow = (item, index) => {
 		const { keyboardDidShow } = this.state
 		const { theme } = this.props
@@ -374,6 +393,8 @@ class QuicklyTaskList extends Component {
 										this.setState({ input: { ...input, value } })
 									}}
 								/>
+								<Button title="Pick an image from camera roll" onPress={this.pickImage} />
+								{this.state.image && <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />}
 								<View style={styles.addIcon}>
 									<IconToggle onPress={this.addTask} name='add' />
 								</View>

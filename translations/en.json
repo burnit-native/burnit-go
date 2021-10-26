@@ -212,6 +212,7 @@
 	},
 	"ConfigCategory": {
 		"nameLabel": "Enter category name",
+		"photoLabel": "Please add a photo",
 		"editCategory": "Edit category",
 		"newCategory": "New category"
 	},

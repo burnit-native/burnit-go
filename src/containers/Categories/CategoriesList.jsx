@@ -54,7 +54,10 @@ class CategoriesList extends PureComponent {
 	}
 
 	toggleModalHandler = (selected = false) => {
+		console.log('this is toggle handler::')
 		const { showConfigCategory } = this.state
+
+		// TODO
 
 		if (selected !== false) {
 			this.setState({

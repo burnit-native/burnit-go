@@ -242,7 +242,7 @@ class QuicklyList extends Component {
 					<ActionButton
 						hidden={bottomHidden}
 						onPress={this.toggleModalHandler}
-						// onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
+						onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
 						icon='add'
 						style={{
 							container: { backgroundColor: theme.warningColor },
