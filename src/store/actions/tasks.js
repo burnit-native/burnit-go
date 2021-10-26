@@ -101,9 +101,9 @@ export const initToDo = (callback = () => null) => {
 
 			const filteredProducts = rawProducts.data.result
 			const filteredCategories = rawCategories.data.result
-			console.log('fetching')
 			// console.log('this is filtered products  ::', filteredProducts, '\n')
 			// console.log('this is filtered Categories  ::', filteredCategories, '\n')
+			console.log(filteredCategories)
 
 			const updatedProducts = await setCategories(filteredProducts, filteredCategories)
 
@@ -111,6 +111,50 @@ export const initToDo = (callback = () => null) => {
 			dispatch(onInitToDo(updatedProducts))
 		} catch (e) {
 			console.error('Error on initTodo :: ', e)
+		}
+	}
+}
+
+export const initTasks = () => {
+	// FIRES off whenever new products are made
+	let categories
+	// TODO
+	console.log('THIS IS INITIAL TASKS')
+	return async (dispatch) => {
+		// db.transaction(
+		// 	(tx) => {
+		// 		tx.executeSql('select * from categories', [], (_, { rows }) => {
+		// 			categories = rows._array
+		// 		})
+		// 		tx.executeSql('select * from tasks', [], async (_, { rows }) => {
+		// 			const tasks = await setCategories(rows._array, categories)
+		// 			dispatch(onInitTasks(tasks))
+		// 		})
+		// 	},
+		// 	// eslint-disable-next-line no-console
+		// 	(err) => console.log(err),
+		// )
+		try {
+			const rawProducts = await axios.get('http://caliboxs.com/api/v1/products', {
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
+
+			const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
+
+			const filteredProducts = rawProducts.data.result
+			const filteredCategories = rawCategories.data.result
+
+			const updatedProducts = await setCategories(filteredProducts, filteredCategories)
+
+			dispatch(onInitTasks(updatedProducts))
+		} catch (e) {
+			console.error('Error oninitTask:: ', e)
 		}
 	}
 }
