@@ -38,6 +38,19 @@ const LoginContainer = ({ onLoginSuccess }) => {
 			await AsyncStorage.setItem('isLoggedIn', 'yes')
 			await AsyncStorage.setItem('accessToken', response.data.result.access_token)
 
+			console.log('this is before  me')
+
+			const meResponse = await axios.get('http://caliboxs.com/api/v1/me', {
+				headers: {
+					authorization: 'Bearer ' + response.data.result.access_token
+				}
+			})
+
+			console.log('this is after me', meResponse.data.result.id)
+
+			await AsyncStorage.setItem('me', JSON.stringify(meResponse.data.result.id))
+			console.log('this is async me me')
+
 			onLoginSuccess()
 		} catch (e) {
 			console.log('THIS IS ERROR', e)

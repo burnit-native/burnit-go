@@ -9,6 +9,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import Dialog from '../../components/Dialog/Dialog'
 import styles from './QuicklyList.styles'
 import ConfigCategory from '../Categories/ConfigCategory/ConfigCategory'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import * as actions from '../../store/actions'
 import { connect } from 'react-redux'
@@ -24,11 +25,13 @@ class QuicklyList extends Component {
 		dialog: null,
 		showDialog: false,
 		loading: true,
+		me: null
 	}
 
 	componentDidMount() {
 		// TODO
 		console.log('categorijes is mounting')
+		this.filterOutCategories();
 		this.reloadListsAmount()
 	}
 
@@ -129,15 +132,33 @@ class QuicklyList extends Component {
 		}
 	}
 
+	filterOutCategories = async () => {
+
+		const me = await AsyncStorage.getItem('me')
+		// TODO
+		console.log('this is ME', me)
+		this.setState({ me })
+	}
+
 	renderQuicklyList = (data) => {
 		// This is executed when a quickly task is made, not when it loads
 		const { amounts } = this.state
 		const { theme, navigation, translations, categories } = this.props
 
+		console.log('this is me from state:: ', this.state.me)
+
+		const filteredByUserCategories = this.state.me ? categories.filter(cate => {
+			if (cate.user_id === +me) {
+				return true;
+			}
+		}) : categories
+
+		console.log('this is filtered user categories::', filteredByUserCategories)
+
 		// todo 
 		// console.log('this is data coming thorugh quicky render :', categories, '\n', data, ':: data')
 
-		return categories.map((list, index) => (
+		return filteredByUserCategories.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
