@@ -48,7 +48,7 @@ class Main extends Component {
 
 	render() {
 		const { tabs, loading } = this.state
-		const { navigation, theme, hideTabView } = this.props
+		const { navigation, theme, hideTabView, onInitCategories } = this.props
 
 		return (
 			<>
@@ -68,7 +68,7 @@ class Main extends Component {
 							}}
 							renderScene={SceneMap({
 								tasks: () => <TaskList navigation={navigation} />,
-								lists: () => <QuicklyList navigation={navigation} />,
+								lists: () => <QuicklyList navigation={navigation} onInitCategories={onInitCategories} />,
 							})}
 							renderTabBar={(props) => (
 								<TabBar

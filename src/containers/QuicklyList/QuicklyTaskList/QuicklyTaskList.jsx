@@ -47,7 +47,7 @@ class QuicklyTaskList extends Component {
 		},
 		input: {
 			control: {
-				label: this.props.translations.quicklyAdding,
+				label: this.props.translations.nameLabel,
 				required: true,
 				characterRestriction: 40,
 			},
@@ -159,20 +159,34 @@ class QuicklyTaskList extends Component {
 		this.setState({ showInputDialog: true, dialog })
 	}
 
-	addTask = () => {
-		const { input, list } = this.state
-		const { onSaveQuicklyTask } = this.props
+	addTask = async () => {
+		console.log('THIS IS ADD TASK');
+
+		const { input,
+			// list 
+		} = this.state
+		const {
+			// onSaveQuicklyTask, 
+			onSaveCategory, navigation } = this.props
 
 		if (!input.control.error) {
-			const newTask = {
-				id: false,
+			const newCategory = {
 				name: input.value,
+				photo: this.state.image
 			}
 
-			onSaveQuicklyTask(newTask, list, (list) => {
-				this.setState({ input: { ...input, value: null } })
-				this.reloadTasks(list)
-			})
+			const newlyCreatedCategory = await onSaveCategory(newCategory);
+
+			console.log('this is newly created cateogyr:: ', newlyCreatedCategory)
+
+			if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
+				navigation.goBack();
+			}
+
+			// onSaveQuicklyTask(newTask, list, (list) => {
+			// 	this.setState({ input: { ...input, value: null } })
+			// 	this.reloadTasks(list)
+			// })
 		}
 	}
 
@@ -210,7 +224,7 @@ class QuicklyTaskList extends Component {
 		})
 	}
 
-	async pickImage() {
+	pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
@@ -218,12 +232,10 @@ class QuicklyTaskList extends Component {
 			quality: 1,
 		});
 
-		console.log(result);
-
 		if (!result.cancelled) {
-			this.setState({ image: result.uri });
+			this.setState({ image: result.uri })
 		}
-	};
+	}
 
 	renderTaskRow = (item, index) => {
 		const { keyboardDidShow } = this.state
@@ -266,7 +278,7 @@ class QuicklyTaskList extends Component {
 				</View>
 			</TouchableOpacity>
 		)
-	}
+	};
 
 	render() {
 		const {
@@ -349,6 +361,7 @@ class QuicklyTaskList extends Component {
 						showDialog={showDialog}
 						task_id={selectedTask}
 						list={list}
+						navigation={navigation}
 						taskLength={filterData.length}
 						toggleModal={(selected, list) => this.toggleModalHandler(selected, list)}
 					/>
@@ -395,9 +408,9 @@ class QuicklyTaskList extends Component {
 								/>
 								<Button title="Pick an image from camera roll" onPress={this.pickImage} />
 								{this.state.image && <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />}
-								<View style={styles.addIcon}>
-									<IconToggle onPress={this.addTask} name='add' />
-								</View>
+								{/* <View style={styles.addIcon}> */}
+								<IconToggle onPress={this.addTask} name='add' />
+								{/* </View> */}
 							</View>
 						</View>
 					</KeyboardAvoidingView>
@@ -425,6 +438,7 @@ const mapDispatchToProps = (dispatch) => ({
 	onSaveQuicklyTask: (task, list, callback) =>
 		dispatch(actions.saveQuicklyTask(task, list, callback)),
 	onSaveList: (list, callback) => dispatch(actions.saveList(list, callback)),
+	onSaveCategory: (category, callback) => dispatch(actions.saveCategory(category, callback)),
 	onRemoveQuicklyTask: (id, callback) => dispatch(actions.removeQuicklyTask(id, callback)),
 })
 

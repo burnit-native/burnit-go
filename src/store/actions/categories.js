@@ -55,46 +55,73 @@ export const initCategory = (id, callback = () => null) => () => {
 	)
 }
 
-export const saveCategory = (category, callback) => () => {
-	if (category.id !== false) {
-		db.transaction(
-			(tx) => {
-				tx.executeSql(
-					`update categories
-                                   set name = ?
-                                   where id = ?;`,
-					[category.name, category.id],
-					() => {
-						Analytics.logEvent('updatedCategory', {
-							name: 'categoryAction',
-						})
+export const saveCategory = (category, callback) => async () => {
+	// if (category.id !== false) {
+	// 	db.transaction(
+	// 		(tx) => {
+	// 			tx.executeSql(
+	// 				`update categories
+	//                                set name = ?
+	//                                where id = ?;`,
+	// 				[category.name, category.id],
+	// 				() => {
+	// 					Analytics.logEvent('updatedCategory', {
+	// 						name: 'categoryAction',
+	// 					})
 
-						callback()
-					},
-				)
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	} else {
-		db.transaction(
-			(tx) => {
-				tx.executeSql(
-					'insert into categories (name) values (?)',
-					[category.name],
-					(_, { insertId }) => {
-						Analytics.logEvent('createdCategory', {
-							name: 'categoryAction',
-						})
+	// 					callback()
+	// 				},
+	// 			)
+	// 		},
+	// 		// eslint-disable-next-line no-console
+	// 		(err) => console.log(err),
+	// 	)
+	// } else {
+	// 	db.transaction(
+	// 		(tx) => {
+	// 			tx.executeSql(
+	// 				'insert into categories (name) values (?)',
+	// 				[category.name],
+	// 				(_, { insertId }) => {
+	// 					Analytics.logEvent('createdCategory', {
+	// 						name: 'categoryAction',
+	// 					})
 
-						callback({ id: insertId, name: category.name })
-					},
-				)
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
+	// 					callback({ id: insertId, name: category.name })
+	// 				},
+	// 			)
+	// 		},
+	// 		// eslint-disable-next-line no-console
+	// 		(err) => console.log(err),
+	// 	)
+	// }
+
+	// Takes the incoming object and turns it into form-data
+	const form = new FormData();
+	form.append('name', category.name);
+
+	// file object created for post request with axios
+	form.append('photo', {
+		uri: category.photo,
+		type: 'image/jpeg',
+		name: category.name + '_photo'
+	});
+
+	try {
+		const response = await axios.post('http://caliboxs.com/api/v1/categories', form, {
+			headers: {
+				"content-type": "multipart/form-data",
+				// "content-type": "application/json",
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`
+			}
+		})
+
+		return response.data.result
+
+	} catch (e) {
+		console.error('Error on saving categories :: ', e)
 	}
+
 }
 
 export const removeCategory = (id, callback = () => null) => (dispatch) => {

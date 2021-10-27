@@ -109,7 +109,7 @@
 	"QuicklyTaskList": {
 		"listName": "List name",
 		"dialogTitle": "Edit list name",
-		"quicklyAdding": "Quickly adding",
+		"nameLabel": "Enter new category name",
 		"emptyList": "Quickly list is empty!"
 	},
 	"ConfigQuicklyTask": {

@@ -183,7 +183,7 @@ class QuicklyList extends Component {
 		const filterData = this.getFilterData()
 
 		// TODO
-		// console.log('thsi is categories loading from quickly list::', categories)
+		console.log('thsi is categories loading from quickly list::')
 
 
 		return (
