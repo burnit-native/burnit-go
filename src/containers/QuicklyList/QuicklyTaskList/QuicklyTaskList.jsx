@@ -167,7 +167,7 @@ class QuicklyTaskList extends Component {
 		} = this.state
 		const {
 			// onSaveQuicklyTask, 
-			onSaveCategory, navigation } = this.props
+			onSaveCategory, navigation, onInitCategories } = this.props
 
 		if (!input.control.error) {
 			const newCategory = {
@@ -177,9 +177,8 @@ class QuicklyTaskList extends Component {
 
 			const newlyCreatedCategory = await onSaveCategory(newCategory);
 
-			console.log('this is newly created cateogyr:: ', newlyCreatedCategory)
-
 			if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
+				await onInitCategories();
 				navigation.goBack();
 			}
 
@@ -433,6 +432,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
+	onInitCategories: () => dispatch(actions.initCategories()),
 	onInitLists: () => dispatch(actions.initLists()),
 	onInitList: (id, callback) => dispatch(actions.initList(id, callback)),
 	onSaveQuicklyTask: (task, list, callback) =>

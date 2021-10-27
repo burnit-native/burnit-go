@@ -178,7 +178,7 @@ class QuicklyList extends Component {
 			// loading,
 		} = this.state
 		// const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
-		const { theme, navigation, settings, translations, categories } = this.props
+		const { theme, navigation, settings, translations, categories, onInitCategories } = this.props
 
 		const filterData = this.getFilterData()
 
