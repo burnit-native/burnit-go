@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 // Components
 import Main from './containers/Main/Main'
 import ConfigTask from './containers/Tasks/ConfigTask/ConfigTask'
+import ViewProduct from './containers/Tasks/ViewProduct/ViewProduct'
 import OtherRepeat from './containers/Tasks/OtherRepeat/OtherRepeat'
 import QuicklyTaskList from './containers/QuicklyList/QuicklyTaskList/QuicklyTaskList'
 import CategoriesList from './containers/Categories/CategoriesList'
@@ -19,6 +20,7 @@ const MainNavigator = createStackNavigator(
 	{
 		Main: { screen: Main },
 		ConfigTask: { screen: ConfigTask },
+		ViewProduct: { screen: ViewProduct },
 		OtherRepeat: { screen: OtherRepeat },
 		QuicklyTaskList: { screen: QuicklyTaskList },
 		CategoriesList: { screen: CategoriesList },
