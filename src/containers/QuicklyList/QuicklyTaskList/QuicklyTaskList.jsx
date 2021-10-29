@@ -460,9 +460,7 @@ class QuicklyTaskList extends Component {
 								}
 								<Button title="Pick an image from camera roll" onPress={this.pickImage} />
 								{this.state.image && <Image source={{
-									uri:
-										// this.state.image 
-										"MTYzNTQ3NjU1M0RkZGRfcGhvdG8="
+									uri: this.state.image && this.state.image
 								}} style={{ width: 200, height: 200 }} />}
 								{/* <View style={styles.addIcon}> */}
 								<IconToggle styles={styles.addIcon} onPress={this.addTask} name='add' />
