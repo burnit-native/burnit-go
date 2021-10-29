@@ -88,7 +88,6 @@ export const setCategories = (products, categories) => {
 			return product
 		}),
 	).then((updatedProducts) => {
-		console.log(`prods`, updatedProducts)
 		return updatedProducts
 	})
 }

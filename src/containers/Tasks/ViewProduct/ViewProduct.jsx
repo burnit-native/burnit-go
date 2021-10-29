@@ -28,6 +28,7 @@ import styles from './ViewProduct.styles'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 class ViewProduct extends Component {
 	state = {
@@ -161,9 +162,7 @@ class ViewProduct extends Component {
 		}
 
 		this.setState({ task: newTask })
-		console.log(this.state.task)
 		// TODO
-		console.log('THIS IS VIEW PRODUCT')
 
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
@@ -199,7 +198,6 @@ class ViewProduct extends Component {
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
-		console.log(task)
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
 			task.category = findCate
@@ -479,22 +477,22 @@ class ViewProduct extends Component {
 		this.setState({ isVisibleTime: !isVisibleTime })
 	}
 
-	saveTask = () => {
+	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
 
-		const saveTaskCallback = (task) => {
-			if (task.finish) {
-				onUndoTask(task, navigation.goBack)
-			} else {
-				onSaveTask(task, navigation.goBack)
-			}
-		}
+		// const saveTaskCallback = (task) => {
+		// 	if (task.finish) {
+		// 		onUndoTask(task, navigation.goBack)
+		// 	} else {
+		// 		onSaveTask(task, navigation.goBack)
+		// 	}
+		// }
 
-		if (!dateTime(task.date)) setNotification = false
-		configTask(task, theme.primaryColor, setEvent, setNotification)
-			.then((task) => saveTaskCallback(task))
-			.catch((task) => saveTaskCallback(task))
+		// if (!dateTime(task.date)) setNotification = false
+		// configTask(task, theme.primaryColor, setEvent, setNotification)
+		// 	.then((task) => saveTaskCallback(task))
+		// 	.catch((task) => saveTaskCallback(task))
 	}
 
 	render() {
@@ -534,7 +532,7 @@ class ViewProduct extends Component {
 							editTask ? (
 								translations.editTask
 							) : (
-								translations.newTask
+								this.state.task.name
 							)
 						) : (
 							<View style={styles.spinnerWrapper}>

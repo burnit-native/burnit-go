@@ -468,22 +468,34 @@ class ConfigTask extends Component {
 		this.setState({ isVisibleTime: !isVisibleTime })
 	}
 
-	saveTask = () => {
+	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
 
-		const saveTaskCallback = (task) => {
-			if (task.finish) {
-				onUndoTask(task, navigation.goBack)
-			} else {
-				onSaveTask(task, navigation.goBack)
-			}
-		}
+		// const saveTaskCallback = (task) => {
+		// 	if (task.finish) {
+		// 		onUndoTask(task, navigation.goBack)
+		// 	} else {
+		// 		onSaveTask(task, navigation.goBack)
+		// 	}
+		// }
 
-		if (!dateTime(task.date)) setNotification = false
-		configTask(task, theme.primaryColor, setEvent, setNotification)
-			.then((task) => saveTaskCallback(task))
-			.catch((task) => saveTaskCallback(task))
+		try {
+			const bodyFormData = new FormData()
+
+			bodyFormData.append('name', task.name)
+			bodyFormData.append('price', task.price)
+			bodyFormData.append('stock', task.stock)
+			bodyFormData.append('details', task.details)
+
+			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
+				headers: { 'Content-Type': 'multipart/form-data' },
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			})
+			console.log(`added product res:`, response)
+		} catch (err) {
+			console.error(`error posting new product`, err)
+		}
 	}
 
 	render() {

@@ -333,13 +333,7 @@ class QuicklyTaskList extends Component {
 
 		const listFromProp = navigation.getParam('list', {})
 
-		// TODO
-		console.log('this is LIST: ', this.state.image)
-		console.log('this is LIST FROM PROP: ', listFromProp)
-
 		const filterData = this.getFilterData()
-
-		console.log('THIS IS EDIT STATE ::', this.state.edit)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>

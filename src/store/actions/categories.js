@@ -36,8 +36,6 @@ export const initCategories =
 
 			const filteredCategories = rawCategories.data.result
 
-			console.log(filteredCategories)
-
 			callback()
 			dispatch(onInitCategories(filteredCategories))
 		} catch (e) {
