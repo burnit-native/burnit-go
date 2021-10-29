@@ -31,7 +31,7 @@ const LoginContainer = ({ onLoginSuccess }) => {
 	const handleLoginPress = async () => {
 		try {
 			const response = await axios.post('http://caliboxs.com/api/v1/login', {
-				email: 'e@e.com',
+				email: 'test@test.com',
 				password: '123456',
 			})
 
@@ -42,8 +42,8 @@ const LoginContainer = ({ onLoginSuccess }) => {
 
 			const meResponse = await axios.get('http://caliboxs.com/api/v1/me', {
 				headers: {
-					authorization: 'Bearer ' + response.data.result.access_token
-				}
+					authorization: 'Bearer ' + response.data.result.access_token,
+				},
 			})
 
 			console.log('this is after me', meResponse.data.result.id)

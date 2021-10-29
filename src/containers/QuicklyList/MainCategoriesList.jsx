@@ -25,13 +25,13 @@ class MainCategoriesList extends Component {
 		dialog: null,
 		showDialog: false,
 		loading: true,
-		me: null
+		me: null,
 	}
 
 	componentDidMount() {
 		// TODO
 		console.log('categorijes is mounting')
-		this.filterOutCategories();
+		this.filterOutCategories()
 		this.reloadListsAmount()
 	}
 
@@ -144,22 +144,24 @@ class MainCategoriesList extends Component {
 		const { amounts } = this.state
 		const { theme, navigation, translations, categories } = this.props
 
-
-		const filteredByUserCategories = this.state.me ? categories.filter(cate => {
-			if (cate.user_id === +this.state.me) {
-				return true;
-			}
-		}) : categories
+		const filteredByUserCategories = this.state.me
+			? categories.filter((cate) => {
+					if (cate.user_id === +this.state.me) {
+						return true
+					}
+			  })
+			: categories
 
 		// TODO
 		console.log('this is filteredByUserCategories', filteredByUserCategories)
-
 
 		return filteredByUserCategories.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
-					onPress={() => navigation.navigate('QuicklyTaskList', { list, edit: true, name: list.name })}
+					onPress={() =>
+						navigation.navigate('QuicklyTaskList', { list, edit: true, name: list.name })
+					}
 					style={{
 						container: [shadow, { backgroundColor: theme.primaryBackgroundColor }],
 						primaryText: {
@@ -177,9 +179,12 @@ class MainCategoriesList extends Component {
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
-								onPress={() => this.showDialog(list.id,
-									// list.name
-								)}
+								onPress={() =>
+									this.showDialog(
+										list.id,
+										// list.name
+									)
+								}
 								name='delete'
 								color={theme.warningColor}
 								size={26}
@@ -192,17 +197,24 @@ class MainCategoriesList extends Component {
 	}
 
 	render() {
-		const { bottomHidden, searchText, showDialog, dialog, showConfigCategory, selectedCategory
+		const {
+			bottomHidden,
+			searchText,
+			showDialog,
+			dialog,
+			showConfigCategory,
+			selectedCategory,
 			// loading,
 		} = this.state
 		// const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
-		const { theme, navigation, settings, translations, categories, onInitCategories, list } = this.props
+		const { theme, navigation, settings, translations, categories, onInitCategories, list } =
+			this.props
 
 		const filterData = this.getFilterData()
+		console.log(`filterData`, filterData)
 
 		// TODO
 		console.log('thsi is main categories list mounting')
-
 
 		return (
 			<View style={flex}>
@@ -244,7 +256,7 @@ class MainCategoriesList extends Component {
 						onScroll={this.onScroll}
 						style={styles.scrollView}
 					>
-						{filterData?.length ? (
+						{this.state.me ? (
 							<View style={styles.quicklyTaskListWrapper}>
 								{this.renderQuicklyList(filterData)}
 							</View>
@@ -276,7 +288,6 @@ class MainCategoriesList extends Component {
 						toggleModal={this.toggleModalHandler}
 					/>
 				)}
-
 			</View>
 		)
 	}

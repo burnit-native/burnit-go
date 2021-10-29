@@ -32,31 +32,31 @@ export const onInitFinished = (tasks) => ({
 
 export const initTask =
 	(id, callback = () => null) =>
-		() => {
-			db.transaction(
-				(tx) => {
-					tx.executeSql('select * from tasks where id = ?', [id], (_, { rows }) => {
-						callback(rows._array[0])
-					})
-				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
-			)
-		}
+	() => {
+		db.transaction(
+			(tx) => {
+				tx.executeSql('select * from tasks where id = ?', [id], (_, { rows }) => {
+					callback(rows._array[0])
+				})
+			},
+			// eslint-disable-next-line no-console
+			(err) => console.log(err),
+		)
+	}
 
 export const initFinishedTask =
 	(id, callback = () => null) =>
-		() => {
-			db.transaction(
-				(tx) => {
-					tx.executeSql('select * from finished where id = ?', [id], (_, { rows }) => {
-						callback(rows._array[0])
-					})
-				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
-			)
-		}
+	() => {
+		db.transaction(
+			(tx) => {
+				tx.executeSql('select * from finished where id = ?', [id], (_, { rows }) => {
+					callback(rows._array[0])
+				})
+			},
+			// eslint-disable-next-line no-console
+			(err) => console.log(err),
+		)
+	}
 
 export const initToDo = (callback = () => null) => {
 	let tasks
@@ -87,7 +87,6 @@ export const initToDo = (callback = () => null) => {
 		// )
 
 		try {
-
 			const rawProducts = await axios.get('http://caliboxs.com/api/v1/products', {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
@@ -106,9 +105,9 @@ export const initToDo = (callback = () => null) => {
 			const me = await AsyncStorage.getItem('me')
 
 			// TODO: Change hard-coded user ID to meResponse.data.result.id
-			const userFilteredProducts = filteredProducts.filter((product) => product.user_id == +me)
+			const userFilteredProducts = filteredProducts.filter((product) => product.user_id === 42)
 			const userFilteredCategories = filteredCategories.filter(
-				(category) => category.user_id == +me,
+				(category) => category.user_id === 42,
 			)
 			// console.log('this is filtered products  ::', filteredProducts, '\n')
 			// console.log('this is filtered Categories  ::', filteredCategories, '\n')
@@ -186,12 +185,12 @@ export const initFinished = () => {
 
 export const saveTask =
 	(task, callback = () => null) =>
-		(dispatch) => {
-			if (task.id) {
-				db.transaction(
-					(tx) => {
-						tx.executeSql(
-							`update tasks
+	(dispatch) => {
+		if (task.id) {
+			db.transaction(
+				(tx) => {
+					tx.executeSql(
+						`update tasks
 											 set name            = ?,
 													 description     = ?,
 													 date            = ?,
@@ -201,60 +200,60 @@ export const saveTask =
 													 event_id        = ?,
 													 notification_id = ?
 											 where id = ?;`,
-							[
-								task.name,
-								task.description,
-								task.date,
-								task.category.id,
-								task.priority,
-								task.repeat,
-								task.event_id,
-								task.notification_id,
-								task.id,
-							],
-							() => {
-								Analytics.logEvent('updatedTask', {
-									name: 'taskAction',
-								})
+						[
+							task.name,
+							task.description,
+							task.date,
+							task.category.id,
+							task.priority,
+							task.repeat,
+							task.event_id,
+							task.notification_id,
+							task.id,
+						],
+						() => {
+							Analytics.logEvent('updatedTask', {
+								name: 'taskAction',
+							})
 
-								callback()
-								dispatch(initTasks())
-							},
-						)
-					},
-					// eslint-disable-next-line no-console
-					(err) => console.log(err),
-				)
-			} else {
-				db.transaction(
-					(tx) => {
-						tx.executeSql(
-							'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
-							[
-								task.name,
-								task.description,
-								task.date,
-								task.category.id,
-								task.priority,
-								task.repeat,
-								task.event_id,
-								task.notification_id,
-							],
-							() => {
-								Analytics.logEvent('createdTask', {
-									name: 'taskAction',
-								})
+							callback()
+							dispatch(initTasks())
+						},
+					)
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		} else {
+			db.transaction(
+				(tx) => {
+					tx.executeSql(
+						'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
+						[
+							task.name,
+							task.description,
+							task.date,
+							task.category.id,
+							task.priority,
+							task.repeat,
+							task.event_id,
+							task.notification_id,
+						],
+						() => {
+							Analytics.logEvent('createdTask', {
+								name: 'taskAction',
+							})
 
-								callback()
-								dispatch(initTasks())
-							},
-						)
-					},
-					// eslint-disable-next-line no-console
-					(err) => console.log(err),
-				)
-			}
+							callback()
+							dispatch(initTasks())
+						},
+					)
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
 		}
+	}
 
 // export const finishTask = (task, endTask, primaryColor, callback = () => null) => {
 // 	let nextDate = task.date
@@ -364,70 +363,70 @@ export const saveTask =
 
 export const undoTask =
 	(task, callback = () => null) =>
-		(dispatch) => {
+	(dispatch) => {
+		db.transaction(
+			(tx) => {
+				tx.executeSql('delete from finished where id = ?', [task.id])
+				tx.executeSql(
+					'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
+					[
+						task.name,
+						task.description,
+						task.date,
+						task.category.id,
+						task.priority,
+						task.repeat,
+						task.event_id,
+						task.notification_id,
+					],
+					() => {
+						Analytics.logEvent('undoTask', {
+							name: 'taskAction',
+						})
+
+						callback()
+						dispatch(initToDo())
+					},
+				)
+			},
+			// eslint-disable-next-line no-console
+			(err) => console.log(err),
+		)
+	}
+
+export const removeTask =
+	(task, finished = true, callback = () => null) =>
+	(dispatch) => {
+		if (finished) {
 			db.transaction(
 				(tx) => {
-					tx.executeSql('delete from finished where id = ?', [task.id])
-					tx.executeSql(
-						'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
-						[
-							task.name,
-							task.description,
-							task.date,
-							task.category.id,
-							task.priority,
-							task.repeat,
-							task.event_id,
-							task.notification_id,
-						],
-						() => {
-							Analytics.logEvent('undoTask', {
-								name: 'taskAction',
-							})
-
-							callback()
-							dispatch(initToDo())
-						},
-					)
+					tx.executeSql('delete from finished where id = ?', [task.id], () => {
+						callback()
+						dispatch(initFinished())
+					})
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		} else {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('delete from tasks where id = ?', [task.id], () => {
+						Analytics.logEvent('removedTask', {
+							name: 'taskAction',
+						})
+						if (task.event_id !== null) {
+							deleteCalendarEvent(task.event_id)
+						}
+						if (task.notification_id !== null) {
+							deleteLocalNotification(task.notification_id)
+						}
+						callback()
+						dispatch(initTasks())
+					})
 				},
 				// eslint-disable-next-line no-console
 				(err) => console.log(err),
 			)
 		}
-
-export const removeTask =
-	(task, finished = true, callback = () => null) =>
-		(dispatch) => {
-			if (finished) {
-				db.transaction(
-					(tx) => {
-						tx.executeSql('delete from finished where id = ?', [task.id], () => {
-							callback()
-							dispatch(initFinished())
-						})
-					},
-					// eslint-disable-next-line no-console
-					(err) => console.log(err),
-				)
-			} else {
-				db.transaction(
-					(tx) => {
-						tx.executeSql('delete from tasks where id = ?', [task.id], () => {
-							Analytics.logEvent('removedTask', {
-								name: 'taskAction',
-							})
-							if (task.event_id !== null) {
-								deleteCalendarEvent(task.event_id)
-							}
-							if (task.notification_id !== null) {
-								deleteLocalNotification(task.notification_id)
-							}
-							callback()
-							dispatch(initTasks())
-						})
-					},
-					// eslint-disable-next-line no-console
-					(err) => console.log(err),
-				)
-			}
-		}
+	}
