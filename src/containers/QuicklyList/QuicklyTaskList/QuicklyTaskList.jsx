@@ -459,9 +459,7 @@ class QuicklyTaskList extends Component {
 								{this.state.image && (
 									<Image
 										source={{
-											uri:
-												// this.state.image
-												'MTYzNTQ3NjU1M0RkZGRfcGhvdG8=',
+											uri: this.state.image && this.state.image,
 										}}
 										style={{ width: 200, height: 200 }}
 									/>
