@@ -579,7 +579,6 @@ class TaskList extends Component {
 		// TODO
 		console.log('THIS IS UPDATING TAKSS')
 
-
 		this.setState({ selectedTask: task }, () => {
 			if (action === 'delete') {
 				this.checkDeleteHandler()
@@ -608,8 +607,9 @@ class TaskList extends Component {
 
 				const dateDifference = dateDiff(firstDate, secondDate, translations, settings.lang)
 				if (dateDifference) {
-					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${dateDifference.prefix
-						})`
+					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${
+						dateDifference.prefix
+					})`
 				}
 			}
 			return this.convertTimeCycle(task.date)
@@ -645,7 +645,6 @@ class TaskList extends Component {
 		// This function helps with lazy loading since it looks for visible state and then only renders just as much
 		const { data, visibleData } = this.state
 
-
 		// console.log(':: data ::', data)
 
 		// console.log('\n', 'this is filterData', '\n', data, '\n', ' :::: END')
@@ -674,7 +673,6 @@ class TaskList extends Component {
 		const moveValue = animations[`move${task?.id}`] ? animations[`move${task?.id}`] : 0
 		const hideTask = animations[`hide${task?.id}`] ? 0 : 'auto'
 
-
 		return (
 			<View>
 				{showDiv && (
@@ -692,9 +690,9 @@ class TaskList extends Component {
 					<View style={styles.taskRow}>
 						<ListItem
 							dense
-							onPress={() =>
-								navigation.navigate('ConfigTask', { task: task?.id })
-							}
+							onPress={() => {
+								navigation.navigate('ViewProduct', { task: task?.id, product: task })
+							}}
 							style={{
 								container: {
 									...shadow,
@@ -722,7 +720,7 @@ class TaskList extends Component {
 											color: theme.secondaryTextColor,
 										}}
 									>
-										{task.name + ' HERE IS WHERE CLICK'}
+										{task.name}
 									</Text>
 									<View style={styles.taskDate}>
 										<Text
@@ -732,8 +730,8 @@ class TaskList extends Component {
 												color: task.finish
 													? theme.thirdTextColor
 													: div === translations.overdue
-														? theme.warningColor
-														: theme.thirdTextColor,
+													? theme.warningColor
+													: theme.thirdTextColor,
 											}}
 										>
 											{this.getTaskDateLabel(task)}
@@ -963,13 +961,13 @@ class TaskList extends Component {
 						label={sortingType === 'ASC' ? 'A-Z' : 'Z-A'}
 						onPress={() => this.setSortingType('byAZ')}
 					/>
-					<BottomNavigation.Action
+					{/* <BottomNavigation.Action
 						key='byDate'
 						style={{ label: { fontSize: 13 } }}
 						icon='insert-invitation'
 						label={translations.date}
 						onPress={() => this.setSortingType('byDate')}
-					/>
+					/> */}
 					<BottomNavigation.Action
 						key='byCategory'
 						style={{ label: { fontSize: 13 } }}
@@ -977,13 +975,13 @@ class TaskList extends Component {
 						label={translations.category}
 						onPress={() => this.setSortingType('byCategory')}
 					/>
-					<BottomNavigation.Action
+					{/* <BottomNavigation.Action
 						key='byPriority'
 						style={{ label: { fontSize: 13 } }}
 						icon='priority-high'
 						label={translations.priority}
 						onPress={() => this.setSortingType('byPriority')}
-					/>
+					/> */}
 				</BottomNavigation>
 			</View>
 		)

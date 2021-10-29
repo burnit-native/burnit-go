@@ -24,12 +24,12 @@ import {
 import { configTask } from '../../../shared/configTask'
 import Dialog from '../../../components/Dialog/Dialog'
 import * as Analytics from 'expo-firebase-analytics'
-import styles from './ConfigTask.styles'
+import styles from './ViewProduct.styles'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 
-class ConfigTask extends Component {
+class ViewProduct extends Component {
 	state = {
 		task: {
 			id: 0,
@@ -155,8 +155,15 @@ class ConfigTask extends Component {
 		const category = navigation.getParam('category', false)
 		const product = navigation.getParam('product', false)
 
+		const newTask = {
+			...this.state.task,
+			...product,
+		}
+
+		this.setState({ task: newTask })
+		console.log(this.state.task)
 		// TODO
-		console.log('THISIS COMPONETN MOUNTING FROM CONFIG')
+		console.log('THIS IS VIEW PRODUCT')
 
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
@@ -192,7 +199,7 @@ class ConfigTask extends Component {
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
-
+		console.log(task)
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
 			task.category = findCate
@@ -554,8 +561,7 @@ class ConfigTask extends Component {
 						</View>
 					}
 					onLeftElementPress={() => {
-						if (this.checkChanges()) this.showDialog('exit')
-						else navigation.goBack()
+						navigation.goBack()
 					}}
 				/>
 
@@ -569,204 +575,21 @@ class ConfigTask extends Component {
 
 				{!loading ? (
 					<ScrollView>
-						<Input
-							elementConfig={controls.name}
-							focus={!editTask}
-							value={task.name}
-							changed={(value, control) => {
-								const { task, controls } = this.state
-								task.name = value || ''
-								controls.name = control
-								this.setState({ task, controls })
-							}}
-						/>
-						<Input
-							elementConfig={controls.price}
-							focus={!editTask}
-							value={task.price}
-							changed={(value, control) => {
-								const { task, controls } = this.state
-								task.price = value
-								controls.price = control
-								this.setState({ task, controls })
-							}}
-						/>
-						<Input
-							elementConfig={controls.color}
-							focus={!editTask}
-							value={task.color}
-							changed={(value, control) => {
-								const { task, controls } = this.state
-								task.color = value
-								controls.color = control
-								this.setState({ task, controls })
-							}}
-						/>
-						<Input
-							elementConfig={controls.tags}
-							focus={!editTask}
-							value={task.tags}
-							changed={(value, control) => {
-								const { task, controls } = this.state
-								task.tags = value
-								controls.tags = control
-								this.setState({ task, controls })
-							}}
-						/>
-						{/* <Input
-							elementConfig={controls.description}
-							value={task.description}
-							changed={(value) => this.updateTask('description', value)}
-						/> */}
-
 						<View style={styles.container}>
-							<Subheader text={translations.dueDate} />
+							<Subheader text='Name:' />
+							<Text style={styles.productInfo}>{this.state.task.name}</Text>
+							<Subheader text='Price:' />
+							<Text style={styles.productInfo}>{`$ ${this.state.task.price}`}</Text>
+							<Subheader text='Stock:' />
+							<Text style={styles.productInfo}>{this.state.task.stock}</Text>
+							<Subheader text='Details:' />
+							<Text style={styles.productInfo}>{this.state.task.details}</Text>
+
+							<View style={styles.dateContainer}></View>
+
 							<View style={styles.dateContainer}>
-								<TouchableOpacity onPress={this.toggleDateModal}>
-									<View style={styles.dateWrapper}>
-										<View style={{ ...styles.datePicker, borderColor: theme.primaryColor }}>
-											<Text
-												style={{
-													textAlign: 'center',
-													color: +date < +now ? theme.warningColor : theme.thirdTextColor,
-												}}
-											>
-												{task.date ? task.date.slice(0, 10) : translations.selectDueDate}
-											</Text>
-										</View>
-										<View>
-											{task.date ? (
-												<IconToggle
-													onPress={() => {
-														this.updateTask('date', '')
-														this.updateTask('repeat', 'noRepeat')
-													}}
-													name='clear'
-												/>
-											) : (
-												<IconToggle onPress={this.toggleDateModal} name='event' />
-											)}
-										</View>
-									</View>
-								</TouchableOpacity>
-							</View>
-
-							<DateTimePickerModal
-								locale={settings.lang}
-								isVisible={isVisibleDate}
-								mode='date'
-								date={
-									task.date.slice(0, 10)
-										? new Date(moment(task.date.slice(0, 10), dateFormat).format())
-										: new Date()
-								}
-								format={dateFormat}
-								isDarkModeEnabled={false}
-								confirmTextIOS={translations.confirm}
-								cancelTextIOS={translations.cancel}
-								headerTextIOS={translations.selectDueDate}
-								onCancel={this.toggleDateModal}
-								onConfirm={(date) => {
-									this.toggleDateModal()
-									this.updateTask('date', this.convertDate(moment(date).format(dateFormat)))
-								}}
-							/>
-
-							{task.date !== '' && (
-								<>
-									<View style={styles.dateContainer}>
-										<TouchableOpacity onPress={this.toggleTimeModal}>
-											<View style={styles.dateWrapper}>
-												<View style={{ ...styles.datePicker, borderColor: theme.primaryColor }}>
-													<Text
-														style={{
-															textAlign: 'center',
-															color: +date < +now ? theme.warningColor : theme.thirdTextColor,
-														}}
-													>
-														{task.date.slice(13, 18)
-															? task.date.slice(13, 18)
-															: translations.selectDueTime}
-													</Text>
-												</View>
-												<View>
-													{task.date.slice(13, 18) ? (
-														<IconToggle
-															onPress={() => {
-																this.updateTask('date', task.date.slice(0, 10))
-															}}
-															name='clear'
-														/>
-													) : (
-														<IconToggle onPress={this.toggleTimeModal} name='access-time' />
-													)}
-												</View>
-											</View>
-										</TouchableOpacity>
-									</View>
-
-									<DateTimePickerModal
-										isVisible={isVisibleTime}
-										mode='time'
-										date={
-											task.date.slice(13, 18)
-												? new Date(moment(task.date.slice(13, 18), timeFormat).format())
-												: new Date()
-										}
-										is24Hour={!!settings.timeFormat}
-										format={settings.timeFormat ? timeFormat : timeFormatA}
-										isDarkModeEnabled={false}
-										confirmTextIOS={translations.confirm}
-										cancelTextIOS={translations.cancel}
-										headerTextIOS={translations.selectDueTime}
-										onCancel={this.toggleTimeModal}
-										onConfirm={(date) => {
-											this.toggleTimeModal()
-											this.updateTask(
-												'date',
-												`${task.date.slice(0, 10)} - ${moment(date).format(timeFormat)}`,
-											)
-										}}
-									/>
-
-									<Checkbox
-										style={{ label: { color: theme.thirdTextColor } }}
-										label={translations.setCalendarEvent}
-										value='set'
-										checked={setEvent}
-										onCheck={(value) => this.setEvent(value)}
-									/>
-
-									{isDateTime && (
-										<Checkbox
-											style={{ label: { color: theme.thirdTextColor } }}
-											label={translations.setNotification}
-											value='set'
-											checked={setNotification}
-											onCheck={(value) => this.setNotification(value)}
-										/>
-									)}
-
-									<Subheader text={translations.repeat} />
-									<View style={styles.select}>
-										<TouchableOpacity style={flex} onPress={() => this.showDialog('repeat')}>
-											<Text
-												style={{
-													...styles.selectedOption,
-													color: theme.secondaryTextColor,
-												}}
-											>
-												{+task.repeat ? otherOption : convertRepeatNames(task.repeat, translations)}
-											</Text>
-										</TouchableOpacity>
-										<IconToggle onPress={this.showOtherRepeat} name='playlist-add' />
-									</View>
-								</>
-							)}
-
-							<Subheader text={translations.category} />
-							<View style={styles.select}>
-								<TouchableOpacity style={flex} onPress={() => this.showDialog('category')}>
+								<Subheader text={translations.category} />
+								<View style={styles.select}>
 									<Text
 										style={{
 											...styles.selectedOption,
@@ -775,22 +598,7 @@ class ConfigTask extends Component {
 									>
 										{task.category.name}
 									</Text>
-								</TouchableOpacity>
-								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
-							</View>
-
-							<Subheader text={translations.priority} />
-							<View style={styles.select}>
-								<TouchableOpacity style={flex} onPress={() => this.showDialog('priority')}>
-									<Text
-										style={{
-											...styles.selectedOption,
-											color: theme.secondaryTextColor,
-										}}
-									>
-										{convertPriorityNames(task.priority, translations)}
-									</Text>
-								</TouchableOpacity>
+								</View>
 							</View>
 						</View>
 					</ScrollView>
@@ -826,4 +634,4 @@ const mapDispatchToProps = (dispatch) => ({
 		dispatch(actions.updateSnackbar(showSnackbar, snackbarText)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConfigTask)
+export default connect(mapStateToProps, mapDispatchToProps)(ViewProduct)

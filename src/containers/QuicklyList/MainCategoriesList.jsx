@@ -107,9 +107,6 @@ class MainCategoriesList extends Component {
 	getFilterData = () => {
 		const { lists } = this.props
 
-		// TODO 
-		// console.log('this is lists::', lists)
-
 		return lists.filter((list) => {
 			const searchText = this.state.searchText.toLowerCase()
 			return !(searchText.length > 0 && list.name.toLowerCase().indexOf(searchText) < 0)
@@ -153,6 +150,9 @@ class MainCategoriesList extends Component {
 				return true;
 			}
 		}) : categories
+
+		// TODO
+		console.log('this is filteredByUserCategories', filteredByUserCategories)
 
 
 		return filteredByUserCategories.map((list, index) => (
@@ -260,7 +260,7 @@ class MainCategoriesList extends Component {
 					<ActionButton
 						hidden={bottomHidden}
 						onPress={this.toggleModalHandler}
-						onPress={() => navigation.navigate('QuicklyTaskList', { list: false, edit: false  })}
+						onPress={() => navigation.navigate('QuicklyTaskList', { list: false, edit: false })}
 						icon='add'
 						style={{
 							container: { backgroundColor: theme.warningColor },
