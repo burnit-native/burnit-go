@@ -21,7 +21,7 @@ import Spinner from '../../../components/Spinner/Spinner'
 import Template from '../../Template/Template'
 import Dialog from '../../../components/Dialog/Dialog'
 import styles from './QuicklyTaskList.styles'
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
@@ -58,12 +58,10 @@ class QuicklyTaskList extends Component {
 		searchText: '',
 		loading: true,
 		editMode: false,
-		edit: this.props.navigation.getParam('edit', false)
+		edit: this.props.navigation.getParam('edit', false),
 	}
 
 	componentDidMount() {
-		// TODO 
-		console.log('this is categories being made or edited:: ', this.state.input.control.label)
 		const { navigation } = this.props
 
 		// if category image is found this will be set the string URI in state.image
@@ -166,26 +164,28 @@ class QuicklyTaskList extends Component {
 	}
 
 	addTask = async () => {
-		console.log('THIS IS ADD TASK');
-
-		const { input,
-			// list 
+		const {
+			input,
+			// list
 		} = this.state
 		const {
-			// onSaveQuicklyTask, 
-			onSaveCategory, navigation, onInitCategories } = this.props
+			// onSaveQuicklyTask,
+			onSaveCategory,
+			navigation,
+			onInitCategories,
+		} = this.props
 
 		if (!input.control.error) {
 			const newCategory = {
 				name: input.value,
-				photo: this.state.image
+				photo: this.state.image,
 			}
 
-			const newlyCreatedCategory = await onSaveCategory(newCategory);
+			const newlyCreatedCategory = await onSaveCategory(newCategory)
 
 			if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
-				await onInitCategories();
-				navigation.goBack();
+				await onInitCategories()
+				navigation.goBack()
 			}
 
 			// onSaveQuicklyTask(newTask, list, (list) => {
@@ -196,19 +196,16 @@ class QuicklyTaskList extends Component {
 	}
 
 	editCategory = async () => {
-		console.log('THIS IS EDIT TASK');
+		console.log('THIS IS EDIT TASK')
 
 		this.setState({ edit: false })
 
-
 		// const { input,
-		// 	// list 
+		// 	// list
 		// } = this.state
 		// const {
-		// 	// onSaveQuicklyTask, 
+		// 	// onSaveQuicklyTask,
 		// 	onUpdateCategory, navigation, onInitCategories } = this.props
-
-
 
 		// if (!input.control.error) {
 		// 	const newCategory = {
@@ -270,7 +267,7 @@ class QuicklyTaskList extends Component {
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
-		});
+		})
 
 		if (!result.cancelled) {
 			this.setState({ image: result.uri })
@@ -318,7 +315,7 @@ class QuicklyTaskList extends Component {
 				</View>
 			</TouchableOpacity>
 		)
-	};
+	}
 
 	render() {
 		const {
@@ -334,17 +331,15 @@ class QuicklyTaskList extends Component {
 		} = this.state
 		const { navigation, theme, lang, translations, onInitLists } = this.props
 
-		const listFromProp = navigation.getParam('list', {});
+		const listFromProp = navigation.getParam('list', {})
 
 		// TODO
 		console.log('this is LIST: ', this.state.image)
 		console.log('this is LIST FROM PROP: ', listFromProp)
 
-
-
 		const filterData = this.getFilterData()
 
-		console.log('THIS IS EDIT STATE ::', this.state.edit);
+		console.log('THIS IS EDIT STATE ::', this.state.edit)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -447,8 +442,8 @@ class QuicklyTaskList extends Component {
 							/>
 
 							<View style={styles.inputWrapper}>
-								{
-									!this.state.edit ? <Input
+								{!this.state.edit ? (
+									<Input
 										elementConfig={input.control}
 										focus={false}
 										value={input.value}
@@ -456,17 +451,26 @@ class QuicklyTaskList extends Component {
 											const { input } = this.state
 											this.setState({ input: { ...input, value } })
 										}}
-									/> : <Text>{this.props.navigation.getParam('name')}</Text>
-								}
-								<Button title="Pick an image from camera roll" onPress={this.pickImage} />
-								{this.state.image && <Image source={{
-									uri:
-										// this.state.image 
-										"MTYzNTQ3NjU1M0RkZGRfcGhvdG8="
-								}} style={{ width: 200, height: 200 }} />}
+									/>
+								) : (
+									<Text>{this.props.navigation.getParam('name')}</Text>
+								)}
+								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
+								{this.state.image && (
+									<Image
+										source={{
+											uri:
+												// this.state.image
+												'MTYzNTQ3NjU1M0RkZGRfcGhvdG8=',
+										}}
+										style={{ width: 200, height: 200 }}
+									/>
+								)}
 								{/* <View style={styles.addIcon}> */}
 								<IconToggle styles={styles.addIcon} onPress={this.addTask} name='add' />
-								{this.state.edit && <IconToggle styles={styles.addIcon} onPress={this.editCategory} name='edit' />}
+								{this.state.edit && (
+									<IconToggle styles={styles.addIcon} onPress={this.editCategory} name='edit' />
+								)}
 								{/* </View> */}
 							</View>
 						</View>

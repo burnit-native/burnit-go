@@ -20,7 +20,6 @@ class ConfigCategory extends Component {
 
 	componentDidMount() {
 		// TODO
-		console.log('this is config category mounting')
 		const { category } = this.props
 		this.initCategory(category)
 	}
@@ -49,13 +48,8 @@ class ConfigCategory extends Component {
 	}
 
 	showDialog = (title) => {
-		const {
-			translations,
-			onSaveCategory,
-			onInitCategories,
-			toggleModal,
-			onRefreshTask,
-		} = this.props
+		const { translations, onSaveCategory, onInitCategories, toggleModal, onRefreshTask } =
+			this.props
 
 		const cancelHandler = () => {
 			toggleModal()

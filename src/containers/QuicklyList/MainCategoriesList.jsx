@@ -30,7 +30,6 @@ class MainCategoriesList extends Component {
 
 	componentDidMount() {
 		// TODO
-		console.log('categorijes is mounting')
 		this.filterOutCategories()
 		this.reloadListsAmount()
 	}
@@ -83,7 +82,6 @@ class MainCategoriesList extends Component {
 
 	showDialog = (list_id) => {
 		// TODO
-		console.log('this is list coming into for delete::', list_id)
 		const { translations, onRemoveList } = this.props
 
 		const cancelHandler = () => this.setState({ showDialog: false })
@@ -152,9 +150,6 @@ class MainCategoriesList extends Component {
 			  })
 			: categories
 
-		// TODO
-		console.log('this is filteredByUserCategories', filteredByUserCategories)
-
 		return filteredByUserCategories.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
@@ -211,10 +206,6 @@ class MainCategoriesList extends Component {
 			this.props
 
 		const filterData = this.getFilterData()
-		console.log(`filterData`, filterData)
-
-		// TODO
-		console.log('thsi is main categories list mounting')
 
 		return (
 			<View style={flex}>

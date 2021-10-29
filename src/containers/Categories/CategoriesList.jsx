@@ -35,8 +35,6 @@ class CategoriesList extends PureComponent {
 			}
 		})
 
-
-
 		this.setState({ taskPerCategory, ready: true })
 	}
 
@@ -54,7 +52,6 @@ class CategoriesList extends PureComponent {
 	}
 
 	toggleModalHandler = (selected = false) => {
-		console.log('this is toggle handler::')
 		const { showConfigCategory } = this.state
 
 		// TODO
@@ -102,14 +99,8 @@ class CategoriesList extends PureComponent {
 	}
 
 	render() {
-		const {
-			showConfigCategory,
-			selectedCategory,
-			taskPerCategory,
-			dialog,
-			showDialog,
-			ready,
-		} = this.state
+		const { showConfigCategory, selectedCategory, taskPerCategory, dialog, showDialog, ready } =
+			this.state
 		const { categories, navigation, theme, translations } = this.props
 
 		// // TODO
@@ -163,8 +154,9 @@ class CategoriesList extends PureComponent {
 										) : null
 									}
 									centerElement={{
-										primaryText: `${cate.name} (${taskPerCategory[cate.id] ? taskPerCategory[cate.id] : 0
-											})`,
+										primaryText: `${cate.name} (${
+											taskPerCategory[cate.id] ? taskPerCategory[cate.id] : 0
+										})`,
 									}}
 									onPress={() => this.toggleModalHandler(cate.id)}
 								/>
