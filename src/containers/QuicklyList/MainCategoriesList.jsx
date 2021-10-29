@@ -159,7 +159,7 @@ class MainCategoriesList extends Component {
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
-					onPress={() => navigation.navigate('QuicklyTaskList', { list })}
+					onPress={() => navigation.navigate('QuicklyTaskList', { list, edit: true, name: list.name })}
 					style={{
 						container: [shadow, { backgroundColor: theme.primaryBackgroundColor }],
 						primaryText: {
@@ -196,12 +196,12 @@ class MainCategoriesList extends Component {
 			// loading,
 		} = this.state
 		// const { bottomHidden, searchText, showDialog, dialog, loading } = this.state
-		const { theme, navigation, settings, translations, categories, onInitCategories } = this.props
+		const { theme, navigation, settings, translations, categories, onInitCategories, list } = this.props
 
 		const filterData = this.getFilterData()
 
 		// TODO
-		console.log('thsi is categories loading from quickly list::')
+		console.log('thsi is main categories list mounting')
 
 
 		return (
@@ -260,7 +260,7 @@ class MainCategoriesList extends Component {
 					<ActionButton
 						hidden={bottomHidden}
 						onPress={this.toggleModalHandler}
-						onPress={() => navigation.navigate('QuicklyTaskList', { list: false })}
+						onPress={() => navigation.navigate('QuicklyTaskList', { list: false, edit: false  })}
 						icon='add'
 						style={{
 							container: { backgroundColor: theme.warningColor },
