@@ -961,13 +961,13 @@ class TaskList extends Component {
 						label={sortingType === 'ASC' ? 'A-Z' : 'Z-A'}
 						onPress={() => this.setSortingType('byAZ')}
 					/>
-					<BottomNavigation.Action
+					{/* <BottomNavigation.Action
 						key='byDate'
 						style={{ label: { fontSize: 13 } }}
 						icon='insert-invitation'
 						label={translations.date}
 						onPress={() => this.setSortingType('byDate')}
-					/>
+					/> */}
 					<BottomNavigation.Action
 						key='byCategory'
 						style={{ label: { fontSize: 13 } }}
@@ -975,13 +975,13 @@ class TaskList extends Component {
 						label={translations.category}
 						onPress={() => this.setSortingType('byCategory')}
 					/>
-					<BottomNavigation.Action
+					{/* <BottomNavigation.Action
 						key='byPriority'
 						style={{ label: { fontSize: 13 } }}
 						icon='priority-high'
 						label={translations.priority}
 						onPress={() => this.setSortingType('byPriority')}
-					/>
+					/> */}
 				</BottomNavigation>
 			</View>
 		)

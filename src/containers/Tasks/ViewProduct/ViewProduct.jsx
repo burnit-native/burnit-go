@@ -161,7 +161,7 @@ class ViewProduct extends Component {
 		}
 
 		this.setState({ task: newTask })
-
+		console.log(this.state.task)
 		// TODO
 		console.log('THIS IS VIEW PRODUCT')
 
@@ -199,7 +199,7 @@ class ViewProduct extends Component {
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
-
+		console.log(task)
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
 			task.category = findCate
@@ -575,19 +575,6 @@ class ViewProduct extends Component {
 
 				{!loading ? (
 					<ScrollView>
-						{/* <Input
-							elementConfig={controls.description}
-							value={task.description}
-							changed={(value) => this.updateTask('description', value)}
-						/> */}
-
-						{/* <Text style={styles.productInfoKey}>Price:</Text>
-						<Text style={styles.productInfo}>{this.state.task.price}</Text>
-						<Text style={styles.productInfoKey}>Stock: {this.state.task.stock}</Text>
-						<Text style={styles.productInfo}>{this.state.task.stock}</Text>
-						<Text style={styles.productInfoKey}>Details:</Text>
-						<Text style={styles.productDetails}>{this.state.task.details}</Text> */}
-
 						<View style={styles.container}>
 							<Subheader text='Name:' />
 							<Text style={styles.productInfo}>{this.state.task.name}</Text>
