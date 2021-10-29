@@ -137,17 +137,17 @@ class MainCategoriesList extends Component {
 		}
 	}
 
-	renderQuicklyList = (data) => {
+	renderQuicklyList = (data = null) => {
 		// This is executed when a quickly task is made, not when it loads
 		const { amounts } = this.state
 		const { theme, navigation, translations, categories } = this.props
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
-					if (cate.user_id === +this.state.me) {
-						return true
-					}
-			  })
+				if (cate.user_id === +this.state.me) {
+					return true
+				}
+			})
 			: categories
 
 		return filteredByUserCategories.map((list, index) => (
@@ -249,7 +249,7 @@ class MainCategoriesList extends Component {
 					>
 						{this.state.me ? (
 							<View style={styles.quicklyTaskListWrapper}>
-								{this.renderQuicklyList(filterData)}
+								{this.renderQuicklyList()}
 							</View>
 						) : (
 							<EmptyList color={theme.thirdTextColor} text={translations.emptyList} />

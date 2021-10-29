@@ -21,12 +21,27 @@ import Spinner from '../../../components/Spinner/Spinner'
 import Template from '../../Template/Template'
 import Dialog from '../../../components/Dialog/Dialog'
 import styles from './QuicklyTaskList.styles'
+import Subheader from '../../../components/Subheader/Subheader'
 import * as ImagePicker from 'expo-image-picker'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 
 const initialNumToRender = 16
+
+// TODO
+const filterOutPhoto = (list) => {
+	console.log('this is list coming ito filter out photo::', list)
+	const photoIdentityArray = list.photo.split('_').shift();
+
+	console.log('this is parsed PHOTO identity array:: ', photoIdentityArray)
+
+	return list.photo = {
+		product_id: photoIdentityArray[0],
+		id: photoIdentityArray[1]
+	}
+	// const getPhoto = await axios.get()
+}
 
 class QuicklyTaskList extends Component {
 	state = {
@@ -63,6 +78,12 @@ class QuicklyTaskList extends Component {
 
 	componentDidMount() {
 		const { navigation } = this.props
+
+		const listFromProp = navigation.getParam('list', {})
+
+		const updatedPhoto = filterOutPhoto(listFromProp)
+
+		console.log('this is list after photo has been updated', updatedPhoto)
 
 		// if category image is found this will be set the string URI in state.image
 		const photoUriFromCategory = navigation.getParam('list').photo || null
@@ -331,11 +352,6 @@ class QuicklyTaskList extends Component {
 		} = this.state
 		const { navigation, theme, lang, translations, onInitLists } = this.props
 
-		const listFromProp = navigation.getParam('list', {})
-
-		// TODO
-		console.log('this is LIST: ', this.state.image)
-		console.log('this is LIST FROM PROP: ', listFromProp)
 
 		const filterData = this.getFilterData()
 
@@ -453,7 +469,10 @@ class QuicklyTaskList extends Component {
 										}}
 									/>
 								) : (
-									<Text>{this.props.navigation.getParam('name')}</Text>
+									<>
+										<Subheader text='Name:' />
+										<Text>{this.props.navigation.getParam('name')}</Text>
+									</>
 								)}
 								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 								{this.state.image && (

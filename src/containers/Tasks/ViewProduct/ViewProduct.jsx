@@ -199,7 +199,6 @@ class ViewProduct extends Component {
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
-		console.log(task)
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
 			task.category = findCate
