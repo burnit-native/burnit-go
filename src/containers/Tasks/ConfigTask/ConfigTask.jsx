@@ -29,8 +29,6 @@ import * as ImagePicker from 'expo-image-picker'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
-import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 class ConfigTask extends Component {
 	state = {
@@ -119,7 +117,7 @@ class ConfigTask extends Component {
 			},
 			stock: {
 				label: this.props.translations.stockLabel,
-				required: true,
+				required: false,
 				characterRestriction: 40,
 			},
 			previousPrice: {
@@ -487,14 +485,6 @@ class ConfigTask extends Component {
 		}
 	}
 
-	errorParseResult = (errorObj) => {
-		let errorsArray = []
-		for (let errorFieldArray in errorObj) {
-			errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
-		}
-		return errorsArray.join('\n')
-	}
-
 	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
@@ -503,66 +493,9 @@ class ConfigTask extends Component {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
 		// 	} else {
-		// 		onSaveTask(task, navigation.goBack)
+		onSaveTask(task, navigation.goBack)
 		// 	}
 		// }
-
-		try {
-			const bodyFormData = new FormData()
-
-			// bodyFormData.append('name', task.name)
-			// bodyFormData.append('price', task.price)
-			// bodyFormData.append('stock', task.stock)
-			// bodyFormData.append('details', task.details)
-			// bodyFormData.append('photo', {
-			// 	uri: this.state.task.image,
-			// 	type: 'image/jpeg',
-			// 	name: this.state.task.name + '_photo',
-			// })
-
-			bodyFormData.append('name', 'name11111111ss2dd')
-			bodyFormData.append('price', '23')
-			bodyFormData.append('stock', '333')
-			bodyFormData.append('details', 'details')
-			bodyFormData.append('categories[]', [task.category.id])
-			bodyFormData.append('photo', {
-				uri: this.state.task.image,
-				type: 'image/jpeg',
-				name: this.state.task.name + '_photo',
-			})
-
-			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
-				headers: {
-					'content-type': 'multipart/form-data',
-					// "content-type": "application/json",
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
-			console.log(`added product res:`, response)
-			if (response) {
-				Alert.alert('Success', `Your product has been created.`, [
-					{
-						text: 'Ok',
-						onPress: this.props.navigation.goBack(),
-						style: 'cancel',
-					},
-				])
-				console.log('nice')
-			}
-		} catch (err) {
-			console.error(`error posting new product`, err.response.data)
-			Alert.alert(
-				'Error',
-				`${err.response.data.message} ${this.errorParseResult(err.response.data.errors)}`,
-				[
-					{
-						text: 'Ok',
-						onPress: null,
-						style: 'cancel',
-					},
-				],
-			)
-		}
 	}
 
 	render() {

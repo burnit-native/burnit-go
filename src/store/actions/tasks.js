@@ -7,6 +7,7 @@ import { convertNumberToDate, setCategories, dateTime } from '../../shared/utili
 import { configTask, deleteCalendarEvent, deleteLocalNotification } from '../../shared/configTask'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Alert } from 'react-native'
 
 const db = openDatabase('maker.db')
 
@@ -183,74 +184,140 @@ export const initFinished = () => {
 	}
 }
 
+const errorParseResult = (errorObj) => {
+	let errorsArray = []
+	for (let errorFieldArray in errorObj) {
+		errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
+	}
+	return errorsArray.join('\n')
+}
+
 export const saveTask =
 	(task, callback = () => null) =>
-	(dispatch) => {
-		if (task.id) {
-			db.transaction(
-				(tx) => {
-					tx.executeSql(
-						`update tasks
-											 set name            = ?,
-													 description     = ?,
-													 date            = ?,
-													 category        = ?,
-													 priority        = ?,
-													 repeat          = ?,
-													 event_id        = ?,
-													 notification_id = ?
-											 where id = ?;`,
-						[
-							task.name,
-							task.description,
-							task.date,
-							task.category.id,
-							task.priority,
-							task.repeat,
-							task.event_id,
-							task.notification_id,
-							task.id,
-						],
-						() => {
-							Analytics.logEvent('updatedTask', {
-								name: 'taskAction',
-							})
+	async (dispatch) => {
+		// if (task.id) {
+		// 	db.transaction(
+		// 		(tx) => {
+		// 			tx.executeSql(
+		// 				`update tasks
+		// 									 set name            = ?,
+		// 											 description     = ?,
+		// 											 date            = ?,
+		// 											 category        = ?,
+		// 											 priority        = ?,
+		// 											 repeat          = ?,
+		// 											 event_id        = ?,
+		// 											 notification_id = ?
+		// 									 where id = ?;`,
+		// 				[
+		// 					task.name,
+		// 					task.description,
+		// 					task.date,
+		// 					task.category.id,
+		// 					task.priority,
+		// 					task.repeat,
+		// 					task.event_id,
+		// 					task.notification_id,
+		// 					task.id,
+		// 				],
+		// 				() => {
+		// 					Analytics.logEvent('updatedTask', {
+		// 						name: 'taskAction',
+		// 					})
 
-							callback()
-							dispatch(initTasks())
-						},
-					)
-				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
-			)
-		} else {
-			db.transaction(
-				(tx) => {
-					tx.executeSql(
-						'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
-						[
-							task.name,
-							task.description,
-							task.date,
-							task.category.id,
-							task.priority,
-							task.repeat,
-							task.event_id,
-							task.notification_id,
-						],
-						() => {
-							Analytics.logEvent('createdTask', {
-								name: 'taskAction',
-							})
+		// 					callback()
+		// 					dispatch(initTasks())
+		// 				},
+		// 			)
+		// 		},
+		// 		// eslint-disable-next-line no-console
+		// 		(err) => console.log(err),
+		// 	)
+		// } else {
+		// 	db.transaction(
+		// 		(tx) => {
+		// 			tx.executeSql(
+		// 				'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
+		// 				[
+		// 					task.name,
+		// 					task.description,
+		// 					task.date,
+		// 					task.category.id,
+		// 					task.priority,
+		// 					task.repeat,
+		// 					task.event_id,
+		// 					task.notification_id,
+		// 				],
+		// 				() => {
+		// 					Analytics.logEvent('createdTask', {
+		// 						name: 'taskAction',
+		// 					})
 
-							callback()
-							dispatch(initTasks())
-						},
-					)
+		// 					callback()
+		// 					dispatch(initTasks())
+		// 				},
+		// 			)
+		// 		},
+		// 		// eslint-disable-next-line no-console
+		// 		(err) => console.log(err),
+		// 	)
+		// }
+
+		try {
+			const bodyFormData = new FormData()
+
+			// bodyFormData.append('name', task.name)
+			// bodyFormData.append('price', task.price)
+			// bodyFormData.append('stock', task.stock)
+			// bodyFormData.append('details', task.details)
+			// bodyFormData.append('photo', {
+			// 	uri: task.image,
+			// 	type: 'image/jpeg',
+			// 	name: task.name + '_photo',
+			// })
+
+			bodyFormData.append('name', task.name)
+			bodyFormData.append('price', task.price)
+			bodyFormData.append('stock', task.stock)
+			bodyFormData.append('details', task.details)
+			bodyFormData.append('categories[]', [task.category.id])
+			bodyFormData.append('photo', {
+				uri: task.image,
+				type: 'image/jpeg',
+				name: task.name + '_photo',
+			})
+
+			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
+				headers: {
+					'content-type': 'multipart/form-data',
+					// "content-type": "application/json",
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
+			})
+
+			if (response) {
+				Alert.alert('Success', `Your product has been created.`, [
+					{
+						text: 'Ok',
+						onPress: callback,
+						style: 'cancel',
+					},
+				])
+				console.log('nice')
+				dispatch(initToDo())
+			}
+		} catch (err) {
+			console.error(`error posting new product`, err.response.data)
+			Alert.alert(
+				'Error',
+				`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+				[
+					{
+						text: 'Ok',
+						onPress: null,
+						style: 'cancel',
+					},
+				],
 			)
 		}
 	}
