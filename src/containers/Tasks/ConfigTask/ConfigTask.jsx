@@ -51,7 +51,7 @@ class ConfigTask extends Component {
 			size_qty: '',
 			size_price: '',
 			color: '',
-			price: 0,
+			price: '',
 			previous_price: 0,
 			details: '',
 			stock: 0,
@@ -113,8 +113,8 @@ class ConfigTask extends Component {
 				required: true,
 				characterRestriction: 40,
 			},
-			color: {
-				label: this.props.translations.colorLabel,
+			stock: {
+				label: this.props.translations.stockLabel,
 				required: true,
 				characterRestriction: 40,
 			},
@@ -123,10 +123,11 @@ class ConfigTask extends Component {
 				required: true,
 				characterRestriction: 40,
 			},
-			tags: {
+			details: {
 				label: this.props.translations.tagsLabel,
 				required: true,
-				characterRestriction: 40,
+				characterRestriction: 200,
+				multiline: true,
 			},
 			description: {
 				label: this.props.translations.descriptionLabel,
@@ -155,9 +156,6 @@ class ConfigTask extends Component {
 		const category = navigation.getParam('category', false)
 		const product = navigation.getParam('product', false)
 
-		// TODO
-		console.log('THISIS COMPONETN MOUNTING FROM CONFIG')
-
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
 		// 	if (finished) {
@@ -176,8 +174,6 @@ class ConfigTask extends Component {
 				this.prepareTask(task)
 			})
 		}
-
-		console.log('AFTER COMPONENT MOUNT')
 
 		if (category && category.name !== translations.all) {
 			task.category = category
@@ -592,24 +588,24 @@ class ConfigTask extends Component {
 							}}
 						/>
 						<Input
-							elementConfig={controls.color}
+							elementConfig={controls.stock}
 							focus={!editTask}
-							value={task.color}
+							value={task.stock}
 							changed={(value, control) => {
 								const { task, controls } = this.state
-								task.color = value
-								controls.color = control
+								task.stock = value
+								controls.stock = control
 								this.setState({ task, controls })
 							}}
 						/>
 						<Input
-							elementConfig={controls.tags}
+							elementConfig={controls.details}
 							focus={!editTask}
-							value={task.tags}
+							value={task.details}
 							changed={(value, control) => {
 								const { task, controls } = this.state
-								task.tags = value
-								controls.tags = control
+								task.details = value
+								controls.details = control
 								this.setState({ task, controls })
 							}}
 						/>
@@ -620,58 +616,6 @@ class ConfigTask extends Component {
 						/> */}
 
 						<View style={styles.container}>
-							<Subheader text={translations.dueDate} />
-							<View style={styles.dateContainer}>
-								<TouchableOpacity onPress={this.toggleDateModal}>
-									<View style={styles.dateWrapper}>
-										<View style={{ ...styles.datePicker, borderColor: theme.primaryColor }}>
-											<Text
-												style={{
-													textAlign: 'center',
-													color: +date < +now ? theme.warningColor : theme.thirdTextColor,
-												}}
-											>
-												{task.date ? task.date.slice(0, 10) : translations.selectDueDate}
-											</Text>
-										</View>
-										<View>
-											{task.date ? (
-												<IconToggle
-													onPress={() => {
-														this.updateTask('date', '')
-														this.updateTask('repeat', 'noRepeat')
-													}}
-													name='clear'
-												/>
-											) : (
-												<IconToggle onPress={this.toggleDateModal} name='event' />
-											)}
-										</View>
-									</View>
-								</TouchableOpacity>
-							</View>
-
-							<DateTimePickerModal
-								locale={settings.lang}
-								isVisible={isVisibleDate}
-								mode='date'
-								date={
-									task.date.slice(0, 10)
-										? new Date(moment(task.date.slice(0, 10), dateFormat).format())
-										: new Date()
-								}
-								format={dateFormat}
-								isDarkModeEnabled={false}
-								confirmTextIOS={translations.confirm}
-								cancelTextIOS={translations.cancel}
-								headerTextIOS={translations.selectDueDate}
-								onCancel={this.toggleDateModal}
-								onConfirm={(date) => {
-									this.toggleDateModal()
-									this.updateTask('date', this.convertDate(moment(date).format(dateFormat)))
-								}}
-							/>
-
 							{task.date !== '' && (
 								<>
 									<View style={styles.dateContainer}>
@@ -763,7 +707,6 @@ class ConfigTask extends Component {
 									</View>
 								</>
 							)}
-
 							<Subheader text={translations.category} />
 							<View style={styles.select}>
 								<TouchableOpacity style={flex} onPress={() => this.showDialog('category')}>
@@ -777,20 +720,6 @@ class ConfigTask extends Component {
 									</Text>
 								</TouchableOpacity>
 								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
-							</View>
-
-							<Subheader text={translations.priority} />
-							<View style={styles.select}>
-								<TouchableOpacity style={flex} onPress={() => this.showDialog('priority')}>
-									<Text
-										style={{
-											...styles.selectedOption,
-											color: theme.secondaryTextColor,
-										}}
-									>
-										{convertPriorityNames(task.priority, translations)}
-									</Text>
-								</TouchableOpacity>
 							</View>
 						</View>
 					</ScrollView>
