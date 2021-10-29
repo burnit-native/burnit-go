@@ -42,8 +42,8 @@ const LoginContainer = ({ onLoginSuccess }) => {
 
 			const meResponse = await axios.get('http://caliboxs.com/api/v1/me', {
 				headers: {
-					authorization: 'Bearer ' + response.data.result.access_token
-				}
+					authorization: 'Bearer ' + response.data.result.access_token,
+				},
 			})
 
 			console.log('this is after me', meResponse.data.result.id)
