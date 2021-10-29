@@ -132,12 +132,14 @@ class QuicklyList extends Component {
 		}
 	}
 
+	// this function filters out categories based on logged in user id
 	filterOutCategories = async () => {
-
-		const me = await AsyncStorage.getItem('me')
-		// TODO
-		console.log('this is ME', me)
-		this.setState({ me })
+		try {
+			const me = await AsyncStorage.getItem('me')
+			this.setState({ me })
+		} catch (e) {
+			console.log('error getting me from storage: ', e)
+		}
 	}
 
 	renderQuicklyList = (data) => {
@@ -145,18 +147,13 @@ class QuicklyList extends Component {
 		const { amounts } = this.state
 		const { theme, navigation, translations, categories } = this.props
 
-		console.log('this is me from state:: ', this.state.me)
 
 		const filteredByUserCategories = this.state.me ? categories.filter(cate => {
-			if (cate.user_id === +me) {
+			if (cate.user_id === +this.state.me) {
 				return true;
 			}
 		}) : categories
 
-		console.log('this is filtered user categories::', filteredByUserCategories)
-
-		// todo 
-		// console.log('this is data coming thorugh quicky render :', categories, '\n', data, ':: data')
 
 		return filteredByUserCategories.map((list, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
