@@ -15,7 +15,7 @@
 	},
 	"Main": {
 		"tasks": "Tasks",
-		"quicklyLists": "Quickly Lists"
+		"MainCategoriesList": "Categories"
 	},
 	"TaskList": {
 		"done": "Done",

@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as actions from '../../store/actions'
 import { connect } from 'react-redux'
 
-class QuicklyList extends Component {
+class MainCategoriesList extends Component {
 	state = {
 		amounts: {},
 		searchText: '',
@@ -214,7 +214,7 @@ class QuicklyList extends Component {
 						onSearchCloseRequested: () => this.setState({ searchText: '' }),
 					}}
 					leftElement='menu'
-					centerElement={translations.quicklyLists}
+					centerElement={translations.MainCategoriesList}
 					onLeftElementPress={() => navigation.navigate('Drawer')}
 				/>
 
@@ -298,4 +298,4 @@ const mapDispatchToProps = (dispatch) => ({
 	onRemoveList: (list_id) => dispatch(actions.removeList(list_id)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(QuicklyList)
+export default connect(mapStateToProps, mapDispatchToProps)(MainCategoriesList)
