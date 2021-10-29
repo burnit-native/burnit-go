@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View, Button, Image, Alert } from 'react-native'
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import { IconToggle, Toolbar, Checkbox } from 'react-native-material-ui'
 import { askAsync, CALENDAR, REMINDERS } from 'expo-permissions'
@@ -25,9 +25,12 @@ import { configTask } from '../../../shared/configTask'
 import Dialog from '../../../components/Dialog/Dialog'
 import * as Analytics from 'expo-firebase-analytics'
 import styles from './ConfigTask.styles'
+import * as ImagePicker from 'expo-image-picker'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 class ConfigTask extends Component {
 	state = {
@@ -55,6 +58,7 @@ class ConfigTask extends Component {
 			previous_price: 0,
 			details: '',
 			stock: 0,
+			image: null,
 			policy: '',
 			status: 0,
 			views: 0,
@@ -468,6 +472,29 @@ class ConfigTask extends Component {
 		this.setState({ isVisibleTime: !isVisibleTime })
 	}
 
+	pickImage = async () => {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		})
+
+		if (!result.cancelled) {
+			const prevTask = { ...this.state.task }
+			const newTask = { ...prevTask, image: result.uri }
+			this.setState({ task: newTask })
+		}
+	}
+
+	errorParseResult = (errorObj) => {
+		let errorsArray = []
+		for (let errorFieldArray in errorObj) {
+			errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
+		}
+		return errorsArray.join('\n')
+	}
+
 	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
@@ -483,18 +510,58 @@ class ConfigTask extends Component {
 		try {
 			const bodyFormData = new FormData()
 
-			bodyFormData.append('name', task.name)
-			bodyFormData.append('price', task.price)
-			bodyFormData.append('stock', task.stock)
-			bodyFormData.append('details', task.details)
+			// bodyFormData.append('name', task.name)
+			// bodyFormData.append('price', task.price)
+			// bodyFormData.append('stock', task.stock)
+			// bodyFormData.append('details', task.details)
+			// bodyFormData.append('photo', {
+			// 	uri: this.state.task.image,
+			// 	type: 'image/jpeg',
+			// 	name: this.state.task.name + '_photo',
+			// })
+
+			bodyFormData.append('name', 'name11111111ss2dd')
+			bodyFormData.append('price', '23')
+			bodyFormData.append('stock', '333')
+			bodyFormData.append('details', 'details')
+			bodyFormData.append('categories[]', [task.category.id])
+			bodyFormData.append('photo', {
+				uri: this.state.task.image,
+				type: 'image/jpeg',
+				name: this.state.task.name + '_photo',
+			})
 
 			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
-				headers: { 'Content-Type': 'multipart/form-data' },
-				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				headers: {
+					'content-type': 'multipart/form-data',
+					// "content-type": "application/json",
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
 			})
 			console.log(`added product res:`, response)
+			if (response) {
+				Alert.alert('Success', `Your product has been created.`, [
+					{
+						text: 'Ok',
+						onPress: this.props.navigation.goBack(),
+						style: 'cancel',
+					},
+				])
+				console.log('nice')
+			}
 		} catch (err) {
-			console.error(`error posting new product`, err)
+			console.error(`error posting new product`, err.response.data)
+			Alert.alert(
+				'Error',
+				`${err.response.data.message} ${this.errorParseResult(err.response.data.errors)}`,
+				[
+					{
+						text: 'Ok',
+						onPress: null,
+						style: 'cancel',
+					},
+				],
+			)
 		}
 	}
 
@@ -734,6 +801,15 @@ class ConfigTask extends Component {
 								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
 							</View>
 						</View>
+						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
+						{this.state.task.image && (
+							<Image
+								source={{
+									uri: this.state.task.image && this.state.task.image,
+								}}
+								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
+							/>
+						)}
 					</ScrollView>
 				) : (
 					<Spinner />
