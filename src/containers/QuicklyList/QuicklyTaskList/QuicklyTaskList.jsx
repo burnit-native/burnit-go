@@ -47,7 +47,7 @@ class QuicklyTaskList extends Component {
 		},
 		input: {
 			control: {
-				label: this.props.translations.nameLabel,
+				label: this.props.navigation.getParam('name', 'Enter new category name'),
 				required: true,
 				characterRestriction: 40,
 			},
@@ -57,12 +57,18 @@ class QuicklyTaskList extends Component {
 		visibleData: 16,
 		searchText: '',
 		loading: true,
+		editMode: false,
+		edit: this.props.navigation.getParam('edit', false)
 	}
 
 	componentDidMount() {
 		// TODO 
-		console.log('this is categories being made:: ', this.state.quicklyTasks)
+		console.log('this is categories being made or edited:: ', this.state.input.control.label)
 		const { navigation } = this.props
+
+		// if category image is found this will be set the string URI in state.image
+		const photoUriFromCategory = navigation.getParam('list').photo || null
+		if (photoUriFromCategory) this.setState({ image: photoUriFromCategory })
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
 			this.keyboardDidShow(true),
@@ -189,6 +195,41 @@ class QuicklyTaskList extends Component {
 		}
 	}
 
+	editCategory = async () => {
+		console.log('THIS IS EDIT TASK');
+
+		this.setState({ edit: false })
+
+
+		// const { input,
+		// 	// list 
+		// } = this.state
+		// const {
+		// 	// onSaveQuicklyTask, 
+		// 	onUpdateCategory, navigation, onInitCategories } = this.props
+
+
+
+		// if (!input.control.error) {
+		// 	const newCategory = {
+		// 		name: input.value,
+		// 		photo: this.state.image
+		// 	}
+
+		// 	const newlyCreatedCategory = await onUpdateCategory(newCategory);
+
+		// 	if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
+		// 		await onInitCategories();
+		// 		navigation.goBack();
+		// 	}
+
+		// 	// onSaveQuicklyTask(newTask, list, (list) => {
+		// 	// 	this.setState({ input: { ...input, value: null } })
+		// 	// 	this.reloadTasks(list)
+		// 	// })
+		// }
+	}
+
 	saveList = (list) => {
 		const { onSaveList } = this.props
 
@@ -293,7 +334,17 @@ class QuicklyTaskList extends Component {
 		} = this.state
 		const { navigation, theme, lang, translations, onInitLists } = this.props
 
+		const listFromProp = navigation.getParam('list', {});
+
+		// TODO
+		console.log('this is LIST: ', this.state.image)
+		console.log('this is LIST FROM PROP: ', listFromProp)
+
+
+
 		const filterData = this.getFilterData()
+
+		console.log('THIS IS EDIT STATE ::', this.state.edit);
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -385,9 +436,9 @@ class QuicklyTaskList extends Component {
 								style={styles.quicklyTaskList}
 								onEndReached={this.loadNextData}
 								initialNumToRender={initialNumToRender}
-								ListEmptyComponent={
-									<EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
-								}
+								// ListEmptyComponent={
+								// 	<EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
+								// }
 								renderItem={({ item, index }) => this.renderTaskRow(item, index)}
 								keyExtractor={(item) => `${item.id}`}
 								onRefresh={this.reloadTasks}
@@ -396,19 +447,26 @@ class QuicklyTaskList extends Component {
 							/>
 
 							<View style={styles.inputWrapper}>
-								<Input
-									elementConfig={input.control}
-									focus={false}
-									value={input.value}
-									changed={(value) => {
-										const { input } = this.state
-										this.setState({ input: { ...input, value } })
-									}}
-								/>
+								{
+									!this.state.edit ? <Input
+										elementConfig={input.control}
+										focus={false}
+										value={input.value}
+										changed={(value) => {
+											const { input } = this.state
+											this.setState({ input: { ...input, value } })
+										}}
+									/> : <Text>{this.props.navigation.getParam('name')}</Text>
+								}
 								<Button title="Pick an image from camera roll" onPress={this.pickImage} />
-								{this.state.image && <Image source={{ uri: this.state.image }} style={{ width: 200, height: 200 }} />}
+								{this.state.image && <Image source={{
+									uri:
+										// this.state.image 
+										"MTYzNTQ3NjU1M0RkZGRfcGhvdG8="
+								}} style={{ width: 200, height: 200 }} />}
 								{/* <View style={styles.addIcon}> */}
-								<IconToggle onPress={this.addTask} name='add' />
+								<IconToggle styles={styles.addIcon} onPress={this.addTask} name='add' />
+								{this.state.edit && <IconToggle styles={styles.addIcon} onPress={this.editCategory} name='edit' />}
 								{/* </View> */}
 							</View>
 						</View>
@@ -439,6 +497,7 @@ const mapDispatchToProps = (dispatch) => ({
 		dispatch(actions.saveQuicklyTask(task, list, callback)),
 	onSaveList: (list, callback) => dispatch(actions.saveList(list, callback)),
 	onSaveCategory: (category, callback) => dispatch(actions.saveCategory(category, callback)),
+	onUpdateCategory: (category, callback) => dispatch(actions.updateCategory(category, callback)),
 	onRemoveQuicklyTask: (id, callback) => dispatch(actions.removeQuicklyTask(id, callback)),
 })
 

@@ -123,6 +123,38 @@ export const saveCategory = (category, callback) => async () => {
 	}
 
 }
+export const updateCategory = (category, callback) => async () => {
+	// Takes the incoming object and turns it into form-data
+	const form = new FormData();
+	form.append('name', category.name);
+
+	// file object created for post request with axios
+	form.append('photo', {
+		uri: category.photo,
+		type: 'image/jpeg',
+		name: category.name + '_photo',
+	});
+
+	form.append('_method', 'put')
+
+	try {
+		const response = await axios.post('http://caliboxs.com/api/v1/categories/' + category.id, form, {
+			headers: {
+				"content-type": "multipart/form-data",
+				// "content-type": "application/json",
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`
+			}
+		})
+
+		console.log('new category updated: ', response.data.result)
+
+		return response.data.result
+
+	} catch (e) {
+		console.error('Error on saving categories :: ', e)
+	}
+
+}
 
 export const removeCategory = (id, callback = () => null) => (dispatch) => {
 	db.transaction(
