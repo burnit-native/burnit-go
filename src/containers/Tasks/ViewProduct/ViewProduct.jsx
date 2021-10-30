@@ -162,7 +162,6 @@ class ViewProduct extends Component {
 		}
 
 		this.setState({ task: newTask })
-		// TODO
 
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
@@ -182,8 +181,6 @@ class ViewProduct extends Component {
 				this.prepareTask(task)
 			})
 		}
-
-		console.log('AFTER COMPONENT MOUNT')
 
 		if (category && category.name !== translations.all) {
 			task.category = category

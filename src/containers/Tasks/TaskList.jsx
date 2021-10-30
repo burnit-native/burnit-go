@@ -347,8 +347,6 @@ class TaskList extends Component {
 		tasks &&
 			Promise.all(
 				tasks.map((task) => {
-					// TODO
-					// console.log('this is task happening:: ', task)
 					let div
 					// if (task.finish) {
 					// 	div = translations.finished
@@ -644,10 +642,6 @@ class TaskList extends Component {
 	getFilterData = () => {
 		// This function helps with lazy loading since it looks for visible state and then only renders just as much
 		const { data, visibleData } = this.state
-
-		// console.log(':: data ::', data)
-
-		// console.log('\n', 'this is filterData', '\n', data, '\n', ' :::: END')
 		return data.filter(({ task }, index) => {
 			if (index > visibleData) {
 				return false

@@ -44,8 +44,6 @@ const LoginContainer = ({ onLoginSuccess }) => {
 				},
 			})
 
-			console.log('this is after me', meResponse.data.result.id)
-
 			await AsyncStorage.setItem('me', JSON.stringify(meResponse.data.result.id))
 
 			onLoginSuccess()

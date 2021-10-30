@@ -21,12 +21,51 @@ import Spinner from '../../../components/Spinner/Spinner'
 import Template from '../../Template/Template'
 import Dialog from '../../../components/Dialog/Dialog'
 import styles from './QuicklyTaskList.styles'
+import Subheader from '../../../components/Subheader/Subheader'
 import * as ImagePicker from 'expo-image-picker'
+import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 
 const initialNumToRender = 16
+
+const callToGetPhoto = async (list) => {
+	const rawPhoto = await axios.get(
+		`http://caliboxs.com/api/v1/galleries/${list.photo.product_id}`,
+		{
+			headers: {
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			},
+		},
+	)
+
+	const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
+		if (+photoObject.id === +list.photo.id && +photoObject.product_id === +list.photo.product_id) {
+			console.log('returning this object inside photo filter')
+			return true
+		}
+	})
+
+	list.photo = await filteredPhoto
+
+	return list
+}
+
+// TODO
+const filterOutPhoto = (list) => {
+	const photoIdentityArray = list.photo.split('_')
+
+	photoIdentityArray.shift()
+
+	list.photo = {
+		product_id: photoIdentityArray[0],
+		id: photoIdentityArray[1],
+	}
+
+	return list
+}
 
 class QuicklyTaskList extends Component {
 	state = {
@@ -64,9 +103,15 @@ class QuicklyTaskList extends Component {
 	componentDidMount() {
 		const { navigation } = this.props
 
+		const listFromProp = navigation.getParam('list', {})
+
 		// if category image is found this will be set the string URI in state.image
-		const photoUriFromCategory = navigation.getParam('list').photo || null
-		if (photoUriFromCategory) this.setState({ image: photoUriFromCategory })
+		if (listFromProp) {
+			const updatedList = filterOutPhoto(listFromProp)
+			callToGetPhoto(updatedList).then((data) => {
+				this.setState({ image: data.photo.photo })
+			})
+		}
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
 			this.keyboardDidShow(true),
@@ -447,7 +492,10 @@ class QuicklyTaskList extends Component {
 										}}
 									/>
 								) : (
-									<Text>{this.props.navigation.getParam('name')}</Text>
+									<>
+										<Subheader text='Name:' />
+										<Text>{this.props.navigation.getParam('name')}</Text>
+									</>
 								)}
 								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 								{this.state.image && (
