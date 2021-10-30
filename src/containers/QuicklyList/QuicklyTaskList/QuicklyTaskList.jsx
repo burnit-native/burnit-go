@@ -22,25 +22,46 @@ import Template from '../../Template/Template'
 import Dialog from '../../../components/Dialog/Dialog'
 import styles from './QuicklyTaskList.styles'
 import Subheader from '../../../components/Subheader/Subheader'
-import * as ImagePicker from 'expo-image-picker'
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 
 const initialNumToRender = 16
 
+const callToGetPhoto = async (list) => {
+	const rawPhoto = await axios.get(`http://caliboxs.com/api/v1/galleries/${list.photo.product_id}`, {
+		headers: {
+			authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+		},
+	})
+
+	const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
+		if (+photoObject.id === +list.photo.id && +photoObject.product_id === +list.photo.product_id) {
+			console.log("returning this object inside photo filter")
+			return true;
+		}
+	})
+
+	list.photo = await filteredPhoto
+
+	return list
+}
+
 // TODO
 const filterOutPhoto = (list) => {
-	console.log('this is list coming ito filter out photo::', list)
-	const photoIdentityArray = list.photo.split('_').shift();
+	const photoIdentityArray = list.photo.split('_');
 
-	console.log('this is parsed PHOTO identity array:: ', photoIdentityArray)
+	photoIdentityArray.shift();
 
-	return list.photo = {
+	list.photo = {
 		product_id: photoIdentityArray[0],
 		id: photoIdentityArray[1]
 	}
-	// const getPhoto = await axios.get()
+
+	return list
 }
 
 class QuicklyTaskList extends Component {
@@ -81,13 +102,13 @@ class QuicklyTaskList extends Component {
 
 		const listFromProp = navigation.getParam('list', {})
 
-		const updatedPhoto = filterOutPhoto(listFromProp)
-
-		console.log('this is list after photo has been updated', updatedPhoto)
-
 		// if category image is found this will be set the string URI in state.image
-		const photoUriFromCategory = navigation.getParam('list').photo || null
-		if (photoUriFromCategory) this.setState({ image: photoUriFromCategory })
+		if (listFromProp) {
+			const updatedList = filterOutPhoto(listFromProp)
+			callToGetPhoto(updatedList).then(data => {
+				this.setState({ image: data.photo.photo })
+			})
+		}
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
 			this.keyboardDidShow(true),

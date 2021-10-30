@@ -98,13 +98,13 @@ export const saveCategory = (category, callback) => async () => {
 	// 	)
 	// }
 
-	const photoForm = new FormData();
-	photoForm.append('product_id', '183');
-	photoForm.append('gallery[]', {
-		uri: category.photo,
-		type: 'image/jpeg',
-		name: category.name + '_photo',
-	})
+	// const photoForm = new FormData();
+	// photoForm.append('product_id', '183');
+	// photoForm.append('gallery[]', {
+	// 	uri: category.photo,
+	// 	type: 'image/jpeg',
+	// 	name: category.name + '_photo',
+	// })
 
 	// Takes the incoming object and turns it into form-data
 	const form = new FormData()
@@ -112,7 +112,7 @@ export const saveCategory = (category, callback) => async () => {
 
 	try {
 		const photoForm = new FormData();
-		photoForm.append('product_id', 183);
+		photoForm.append('product_id', "183");
 		photoForm.append('gallery[]', {
 			uri: category.photo,
 			type: 'image/jpeg',
@@ -149,7 +149,6 @@ export const saveCategory = (category, callback) => async () => {
 		const response = await axios.post('http://caliboxs.com/api/v1/categories', form, {
 			headers: {
 				'content-type': 'multipart/form-data',
-				// "content-type": "application/json",
 				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 			},
 		})

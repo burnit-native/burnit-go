@@ -155,7 +155,7 @@ class MainCategoriesList extends Component {
 				<ListItem
 					dense
 					onPress={() =>
-						navigation.navigate('QuicklyTaskList', { list, edit: true, name: list.name })
+						navigation.navigate('QuicklyTaskList', { list: list, edit: true, name: list.name })
 					}
 					style={{
 						container: [shadow, { backgroundColor: theme.primaryBackgroundColor }],

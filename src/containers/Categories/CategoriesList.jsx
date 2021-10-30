@@ -103,9 +103,6 @@ class CategoriesList extends PureComponent {
 			this.state
 		const { categories, navigation, theme, translations } = this.props
 
-		// // TODO
-		// console.log('thsi is categories loading from catelgories list::', categories)
-
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
 				<Toolbar
