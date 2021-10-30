@@ -106,12 +106,13 @@ export const initToDo = (callback = () => null) => {
 			const me = await AsyncStorage.getItem('me')
 
 			// TODO: Change hard-coded user ID to meResponse.data.result.id
-			const userFilteredProducts = filteredProducts.filter((product) => product.user_id === 42)
+			const userFilteredProducts = filteredProducts.filter((product) => product.user_id === +me)
 			const userFilteredCategories = filteredCategories.filter(
-				(category) => category.user_id === 42,
+				(category) => category.user_id === +me,
 			)
 			// console.log('this is filtered products  ::', filteredProducts, '\n')
 			// console.log('this is filtered Categories  ::', filteredCategories, '\n')
+
 			const updatedProducts = await setCategories(userFilteredProducts, userFilteredCategories)
 			callback(updatedProducts)
 			dispatch(onInitToDo(updatedProducts))
@@ -275,12 +276,12 @@ export const saveTask =
 			// 	type: 'image/jpeg',
 			// 	name: task.name + '_photo',
 			// })
-
+			console.log(`adding category ID`, task.category.id)
 			bodyFormData.append('name', task.name)
 			bodyFormData.append('price', task.price)
 			bodyFormData.append('stock', task.stock)
 			bodyFormData.append('details', task.details)
-			bodyFormData.append('categories[]', [task.category.id])
+			bodyFormData.append('categories[]', task.category.id)
 			bodyFormData.append('photo', {
 				uri: task.image,
 				type: 'image/jpeg',

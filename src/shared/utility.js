@@ -83,7 +83,7 @@ export const setCategories = (products, categories) => {
 
 			// IF there isn't a category set, then the default category attached will be the first in the categories array
 			else {
-				product.category = categories[0]
+				product.category = ''
 			}
 			return product
 		}),

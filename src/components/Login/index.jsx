@@ -37,7 +37,6 @@ const LoginContainer = ({ onLoginSuccess }) => {
 
 			await AsyncStorage.setItem('isLoggedIn', 'yes')
 			await AsyncStorage.setItem('accessToken', response.data.result.access_token)
-			console.log('access', response.data.result.access_token)
 
 			const meResponse = await axios.get('http://caliboxs.com/api/v1/me', {
 				headers: {

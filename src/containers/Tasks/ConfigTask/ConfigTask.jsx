@@ -29,6 +29,7 @@ import * as ImagePicker from 'expo-image-picker'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
+import AsyncStorage from '@react-native-community/async-storage'
 
 class ConfigTask extends Component {
 	state = {
@@ -242,7 +243,7 @@ class ConfigTask extends Component {
 		})
 	}
 
-	showDialog = (action) => {
+	showDialog = async (action) => {
 		const { task } = this.state
 		const { translations, navigation } = this.props
 
@@ -318,8 +319,11 @@ class ConfigTask extends Component {
 		} else if (action === 'category') {
 			const { categories } = this.props
 
+			const me = await AsyncStorage.getItem('me')
+			const userCategories = categories.filter((category) => category.user_id === +me)
+
 			const options = []
-			categories.map((c) => {
+			userCategories.map((c) => {
 				options.push({
 					name: c.name,
 					value: c,
@@ -721,7 +725,13 @@ class ConfigTask extends Component {
 							)}
 							<Subheader text={translations.category} />
 							<View style={styles.select}>
-								<TouchableOpacity style={flex} onPress={() => this.showDialog('category')}>
+								<TouchableOpacity
+									style={flex}
+									onPress={() => {
+										console.log('pressed!!')
+										this.showDialog('category')
+									}}
+								>
 									<Text
 										style={{
 											...styles.selectedOption,
