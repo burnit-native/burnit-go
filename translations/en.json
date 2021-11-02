@@ -179,7 +179,7 @@
 		"setCalendarEvent": "Set calendar event",
 		"setNotification": "Set notification",
 		"repeat": "Repeat",
-		"category": "Please choose a category:",
+		"category": "Please pick a category:",
 		"categoryView": "Category",
 		"priority": "Priority",
 		"priorityNone": "None",

@@ -34,7 +34,10 @@ export const initCategories =
 				},
 			})
 
-			const filteredCategories = rawCategories.data.result
+			const me = await AsyncStorage.getItem('me')
+			const filteredCategories = rawCategories.data.result.filter(
+				(category) => category.user_id === +me,
+			)
 
 			callback()
 			dispatch(onInitCategories(filteredCategories))

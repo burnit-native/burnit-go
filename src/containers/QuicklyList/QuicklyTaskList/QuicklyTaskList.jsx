@@ -10,6 +10,7 @@ import {
 	Keyboard,
 	Button,
 	Image,
+	Alert,
 } from 'react-native'
 import { IconToggle, Toolbar } from 'react-native-material-ui'
 import { listRow, shadow, flex, foundResults } from '../../../shared/styles'
@@ -230,7 +231,13 @@ class QuicklyTaskList extends Component {
 
 			if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
 				await onInitCategories()
-				navigation.goBack()
+				Alert.alert('Success', `Your category has been created.`, [
+					{
+						text: 'Ok',
+						onPress: navigation.goBack,
+						style: 'cancel',
+					},
+				])
 			}
 
 			// onSaveQuicklyTask(newTask, list, (list) => {

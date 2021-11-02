@@ -38,9 +38,9 @@ class ConfigTask extends Component {
 			sku: '',
 			product_type: 'normal',
 			affiliate_link: null,
-			user_id: 0,
+			user_id: null,
 			categories: [],
-			category_id: 20,
+			category_id: null,
 			subcategory_id: null,
 			childcategory_id: null,
 			attributes: null,
@@ -153,10 +153,11 @@ class ConfigTask extends Component {
 
 	componentDidMount() {
 		const { task } = this.state
+
 		const { navigation, onInitTask, onInitFinishedTask, translations } = this.props
 		const taskId = navigation.getParam('task', false)
 		const finished = navigation.getParam('finished', false)
-		const category = navigation.getParam('category', false)
+		// const category = navigation.getParam('category', false)
 		const product = navigation.getParam('product', false)
 
 		// if (taskId !== false) {
@@ -178,9 +179,9 @@ class ConfigTask extends Component {
 			})
 		}
 
-		if (category && category.name !== translations.all) {
-			task.category = category
-		}
+		// if (category && category.name !== translations.all) {
+		// 	task.category = category
+		// }
 
 		this.setState({
 			taskCopy: JSON.parse(JSON.stringify(task)),
@@ -191,6 +192,7 @@ class ConfigTask extends Component {
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
+		console.log('inside prep')
 
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
@@ -728,7 +730,6 @@ class ConfigTask extends Component {
 								<TouchableOpacity
 									style={flex}
 									onPress={() => {
-										console.log('pressed!!')
 										this.showDialog('category')
 									}}
 								>
