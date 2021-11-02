@@ -180,6 +180,7 @@
 		"setNotification": "Set notification",
 		"repeat": "Repeat",
 		"category": "Please choose a category:",
+		"categoryView": "Category",
 		"priority": "Priority",
 		"priorityNone": "None",
 		"priorityLow": "Low",

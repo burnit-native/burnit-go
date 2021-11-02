@@ -583,7 +583,7 @@ class ViewProduct extends Component {
 							<View style={styles.dateContainer}></View>
 
 							<View style={styles.dateContainer}>
-								<Subheader text={translations.category} />
+								<Subheader text={translations.categoryView} />
 								<View style={styles.select}>
 									<Text
 										style={{
