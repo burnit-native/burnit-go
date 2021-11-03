@@ -26,6 +26,7 @@ import Subheader from '../../../components/Subheader/Subheader'
 import * as ImagePicker from 'expo-image-picker'
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage'
+import Camera from '../../../components/Camera'
 
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
@@ -44,7 +45,6 @@ const callToGetPhoto = async (list) => {
 
 	const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
 		if (+photoObject.id === +list.photo.id && +photoObject.product_id === +list.photo.product_id) {
-			console.log('returning this object inside photo filter')
 			return true
 		}
 	})
@@ -207,6 +207,11 @@ class QuicklyTaskList extends Component {
 		)
 
 		this.setState({ showInputDialog: true, dialog })
+	}
+
+	// TODO
+	updateImage = async (image) => {
+		this.setState({ image })
 	}
 
 	addTask = async () => {
@@ -383,8 +388,6 @@ class QuicklyTaskList extends Component {
 		} = this.state
 		const { navigation, theme, lang, translations, onInitLists } = this.props
 
-		const listFromProp = navigation.getParam('list', {})
-
 		const filterData = this.getFilterData()
 
 		return (
@@ -462,6 +465,7 @@ class QuicklyTaskList extends Component {
 
 				{!loading ? (
 					<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'none'} style={flex}>
+						<Camera updateImage={this.updateImage} />
 						<View style={styles.quicklyTaskListWrapper}>
 							<FlatList
 								keyboardShouldPersistTaps='handled'
