@@ -50,7 +50,7 @@ const LoginContainer = ({ onLoginSuccess }) => {
 
 			onLoginSuccess()
 		} catch (e) {
-			console.log('THIS IS ERROR', e)
+			console.log('THIS IS LOGIN ERROR', e)
 		}
 	}
 
