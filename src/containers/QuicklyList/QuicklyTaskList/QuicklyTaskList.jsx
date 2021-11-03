@@ -32,42 +32,6 @@ import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 
 const initialNumToRender = 16
-
-const callToGetPhoto = async (list) => {
-	const rawPhoto = await axios.get(
-		`http://caliboxs.com/api/v1/galleries/${list.photo.product_id}`,
-		{
-			headers: {
-				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-			},
-		},
-	)
-
-	const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
-		if (+photoObject.id === +list.photo.id && +photoObject.product_id === +list.photo.product_id) {
-			return true
-		}
-	})
-
-	list.photo = await filteredPhoto
-
-	return list
-}
-
-// TODO
-const filterOutPhoto = (list) => {
-	const photoIdentityArray = list.photo.split('_')
-
-	photoIdentityArray.shift()
-
-	list.photo = {
-		product_id: photoIdentityArray[0],
-		id: photoIdentityArray[1],
-	}
-
-	return list
-}
-
 class QuicklyTaskList extends Component {
 	state = {
 		image: null,
@@ -107,11 +71,13 @@ class QuicklyTaskList extends Component {
 		const listFromProp = navigation.getParam('list', {})
 
 		// if category image is found this will be set the string URI in state.image
-		if (listFromProp) {
-			const updatedList = filterOutPhoto(listFromProp)
-			callToGetPhoto(updatedList).then((data) => {
-				this.setState({ image: data.photo.photo })
-			})
+		if (listFromProp && listFromProp.photo) {
+			// const updatedList = filterOutPhoto(listFromProp)
+			// callToGetPhoto(updatedList).then(data => {
+			// 	this.setState({ image: data.photo.photo })
+			// })
+			// TODO
+			this.setState({ image: listFromProp.photo.photo })
 		}
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>

@@ -6,6 +6,61 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const db = openDatabase('maker.db')
 
+const isObject = (obj) => {
+	return Object.prototype.toString.call(obj) === '[object Object]'
+}
+
+const filterOutPhoto = (list) => {
+	if (!list || !list.photo) {
+		return list
+	}
+
+	if (isObject(list.photo)) {
+		list.photo = null
+		return list
+	}
+
+	const photoIdentityArray = list.photo.split('-')
+
+	if (photoIdentityArray.length < 2) {
+		list.photo = null
+		return list
+	}
+
+	photoIdentityArray.shift()
+
+	list.photo = {
+		product_id: photoIdentityArray[0],
+		id: photoIdentityArray[1],
+	}
+	return list
+}
+
+const callToGetPhoto = async (list) => {
+	if (!list.photo) {
+		return list
+	}
+
+	const rawPhoto = await axios.get(
+		`http://caliboxs.com/api/v1/galleries/${list.photo.product_id}`,
+		{
+			headers: {
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			},
+		},
+	)
+
+	const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
+		if (+photoObject.id === +list.photo.id && +photoObject.product_id === +list.photo.product_id) {
+			return true
+		}
+	})
+
+	list.photo = await filteredPhoto
+
+	return list
+}
+
 export const onInitCategories = (categories) => ({
 	type: actionTypes.INIT_CATEGORIES,
 	categories,
@@ -39,8 +94,18 @@ export const initCategories =
 				(category) => category.user_id === +me,
 			)
 
+			const photoUpdatedCategories = Promise.all(
+				filteredCategories.map((category) => {
+					const updatedList = filterOutPhoto(category)
+					callToGetPhoto(updatedList).then((data) => {
+						return data.photo.photo
+					})
+					return updatedList
+				}),
+			)
+
 			callback()
-			dispatch(onInitCategories(filteredCategories))
+			dispatch(onInitCategories(await photoUpdatedCategories))
 		} catch (e) {
 			console.error('Error on initCategories :: ', e)
 		}
@@ -130,17 +195,12 @@ export const saveCategory = (category, callback) => async () => {
 		})
 
 		const filteredNewPhoto = newPhoto.data.result[0]
-
-		console.log('this is filtered new photo', filteredNewPhoto)
 		// file object created for post request with axios
 		form.append('photo', {
 			uri: category.photo,
 			type: 'image/jpeg',
-			name: `_${filteredNewPhoto.product_id}_${filteredNewPhoto.id}`,
+			name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
 		})
-
-		// TODO
-		console.log('this is beore category gets saved', form)
 	} catch (e) {
 		console.error('Error on uploading category photo :: ', e)
 	}
