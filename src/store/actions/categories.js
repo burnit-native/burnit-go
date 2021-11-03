@@ -97,8 +97,13 @@ export const initCategories =
 			const photoUpdatedCategories = Promise.all(
 				filteredCategories.map((category) => {
 					const updatedList = filterOutPhoto(category)
+
 					callToGetPhoto(updatedList).then((data) => {
-						return data.photo.photo
+						if (data && data.photo) {
+							return data.photo.photo
+						}
+						data.photo = null
+						return null
 					})
 					return updatedList
 				}),

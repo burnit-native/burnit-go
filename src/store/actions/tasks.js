@@ -112,7 +112,6 @@ export const initToDo = (callback = () => null) => {
 			)
 
 			const updatedProducts = await setCategories(userFilteredProducts, userFilteredCategories)
-			callback(updatedProducts)
 			dispatch(onInitToDo(updatedProducts))
 		} catch (e) {
 			console.error('Error on initTodo :: ', e)
