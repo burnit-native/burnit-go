@@ -460,38 +460,63 @@ export const undoTask =
 	}
 
 export const removeTask =
-	(task, finished = true, callback = () => null) =>
-	(dispatch) => {
-		if (finished) {
-			db.transaction(
-				(tx) => {
-					tx.executeSql('delete from finished where id = ?', [task.id], () => {
-						callback()
-						dispatch(initFinished())
-					})
+	(productId, finished = true, callback = () => null) =>
+	async (dispatch) => {
+		const token = await AsyncStorage.getItem('accessToken')
+
+		try {
+			const bodyFormData = new FormData()
+
+			bodyFormData.append('_method', 'DELETE')
+			console.log('productId', productId)
+
+			const response = await axios.post(
+				`http://caliboxs.com/api/v1/products/${productId}`,
+				bodyFormData,
+				{
+					headers: {
+						'content-type': 'multipart/form-data',
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
 				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
 			)
-		} else {
-			db.transaction(
-				(tx) => {
-					tx.executeSql('delete from tasks where id = ?', [task.id], () => {
-						Analytics.logEvent('removedTask', {
-							name: 'taskAction',
-						})
-						if (task.event_id !== null) {
-							deleteCalendarEvent(task.event_id)
-						}
-						if (task.notification_id !== null) {
-							deleteLocalNotification(task.notification_id)
-						}
-						callback()
-						dispatch(initTasks())
-					})
-				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
-			)
+
+			callback()
+			dispatch(initToDo())
+		} catch (err) {
+			console.log('error deleting product', err)
 		}
+
+		// if (finished) {
+		// 	db.transaction(
+		// 		(tx) => {
+		// 			tx.executeSql('delete from finished where id = ?', [task.id], () => {
+		// 				callback()
+		// 				dispatch(initFinished())
+		// 			})
+		// 		},
+		// 		// eslint-disable-next-line no-console
+		// 		(err) => console.log(err),
+		// 	)
+		// } else {
+		// 	db.transaction(
+		// 		(tx) => {
+		// 			tx.executeSql('delete from tasks where id = ?', [task.id], () => {
+		// 				Analytics.logEvent('removedTask', {
+		// 					name: 'taskAction',
+		// 				})
+		// 				if (task.event_id !== null) {
+		// 					deleteCalendarEvent(task.event_id)
+		// 				}
+		// 				if (task.notification_id !== null) {
+		// 					deleteLocalNotification(task.notification_id)
+		// 				}
+		// 				callback()
+		// 				dispatch(initTasks())
+		// 			})
+		// 		},
+		// 		// eslint-disable-next-line no-console
+		// 		(err) => console.log(err),
+		// 	)
+		// }
 	}

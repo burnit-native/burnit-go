@@ -137,22 +137,22 @@ class TaskList extends Component {
 		this.setState({ rotateInterpolate })
 	}
 
-	moveAnimate = (callback = () => null) => {
-		const { animations, selectedTask } = this.state
+	// moveAnimate = (callback = () => null) => {
+	// 	const { animations, selectedTask } = this.state
 
-		animations[`move${selectedTask.id}`] = new Animated.Value(0)
-		this.setState({ animations }, () => {
-			Animated.timing(animations[`move${selectedTask.id}`], {
-				toValue: -400,
-				duration: 350,
-				easing: Easing.bezier(0.0, 0.0, 0.2, 1),
-				useNativeDriver: false,
-			}).start(() => {
-				animations[`hide${selectedTask.id}`] = true
-				this.setState({ animations }, callback())
-			})
-		})
-	}
+	// 	animations[`move${selectedTask.id}`] = new Animated.Value(0)
+	// 	this.setState({ animations }, () => {
+	// 		Animated.timing(animations[`move${selectedTask.id}`], {
+	// 			toValue: -400,
+	// 			duration: 350,
+	// 			easing: Easing.bezier(0.0, 0.0, 0.2, 1),
+	// 			useNativeDriver: false,
+	// 		}).start(() => {
+	// 			animations[`hide${selectedTask.id}`] = true
+	// 			this.setState({ animations }, callback())
+	// 		})
+	// 	})
+	// }
 
 	refreshPriorityColors = () => {
 		const { theme } = this.props
@@ -167,54 +167,55 @@ class TaskList extends Component {
 		})
 	}
 
-	showDialog = (action) => {
+	showDialog = (action, taskId) => {
 		const { selectedTask, animations } = this.state
 		const { theme, translations, onFinishTask, onAddEndedTask } = this.props
 
 		const cancelHandler = () => this.setState({ showDialog: false })
 
-		let dialog
-		if (action === 'repeat') {
-			dialog = generateDialogObject(
-				cancelHandler,
-				translations.repeatTitle,
-				translations.repeatDescription,
-				{
-					[translations.yes]: () => {
-						this.moveAnimate(() => {
-							onFinishTask(selectedTask, false, theme.primaryColor, () => {
-								onAddEndedTask()
-								animations[`move${selectedTask.id}`] = new Animated.Value(0)
-								animations[`hide${selectedTask.id}`] = false
-								this.setState({ animations, showDialog: false })
-							})
-						})
-					},
-					[translations.no]: () => {
-						cancelHandler()
-						this.moveAnimate(() => {
-							onFinishTask(selectedTask, true, theme.primaryColor, onAddEndedTask)
-						})
-					},
-					[translations.cancel]: cancelHandler,
-				},
-			)
-		} else if (action === 'finish') {
-			dialog = generateDialogObject(
-				cancelHandler,
-				translations.defaultTitle,
-				translations.finishDescription,
-				{
-					[translations.yes]: () => {
-						cancelHandler()
-						this.moveAnimate(() => {
-							onFinishTask(selectedTask, true, theme.primaryColor, onAddEndedTask)
-						})
-					},
-					[translations.no]: cancelHandler,
-				},
-			)
-		} else if (action === 'delete') {
+		// let dialog
+		// if (action === 'repeat') {
+		// 	dialog = generateDialogObject(
+		// 		cancelHandler,
+		// 		translations.repeatTitle,
+		// 		translations.repeatDescription,
+		// 		{
+		// 			[translations.yes]: () => {
+		// 				this.moveAnimate(() => {
+		// 					onFinishTask(selectedTask, false, theme.primaryColor, () => {
+		// 						onAddEndedTask()
+		// 						animations[`move${selectedTask.id}`] = new Animated.Value(0)
+		// 						animations[`hide${selectedTask.id}`] = false
+		// 						this.setState({ animations, showDialog: false })
+		// 					})
+		// 				})
+		// 			},
+		// 			[translations.no]: () => {
+		// 				cancelHandler()
+		// 				this.moveAnimate(() => {
+		// 					onFinishTask(selectedTask, true, theme.primaryColor, onAddEndedTask)
+		// 				})
+		// 			},
+		// 			[translations.cancel]: cancelHandler,
+		// 		},
+		// 	)
+		// } else if (action === 'finish') {
+		// 	dialog = generateDialogObject(
+		// 		cancelHandler,
+		// 		translations.defaultTitle,
+		// 		translations.finishDescription,
+		// 		{
+		// 			[translations.yes]: () => {
+		// 				cancelHandler()
+		// 				this.moveAnimate(() => {
+		// 					onFinishTask(selectedTask, true, theme.primaryColor, onAddEndedTask)
+		// 				})
+		// 			},
+		// 			[translations.no]: cancelHandler,
+		// 		},
+		// 	)
+		if (action === 'delete') {
+			console.log(taskId)
 			dialog = generateDialogObject(
 				cancelHandler,
 				translations.defaultTitle,
@@ -222,41 +223,42 @@ class TaskList extends Component {
 				{
 					[translations.yes]: () => {
 						cancelHandler()
-						this.moveAnimate(() => {
-							const { onRemoveTask } = this.props
-							onRemoveTask(selectedTask)
+						// this.moveAnimate(() => {
+						const { onRemoveTask } = this.props
+						onRemoveTask(taskId)
 
-							Analytics.logEvent('removedTask', {
-								name: 'taskAction',
-							})
+						Analytics.logEvent('removedTask', {
+							name: 'taskAction',
 						})
+						// })
 					},
 					[translations.no]: cancelHandler,
-				},
-			)
-		} else if (action === 'deleteAll') {
-			dialog = generateDialogObject(
-				cancelHandler,
-				translations.defaultTitle,
-				translations.finishAllDescription,
-				{
-					[translations.yes]: () => {
-						cancelHandler()
-						this.deleteAllTask()
-					},
-					[translations.no]: cancelHandler,
-				},
-			)
-		} else if (action === 'updated') {
-			dialog = generateDialogObject(
-				cancelHandler,
-				translations.updatedTitle,
-				`${translations.updatedDescription1}\n${translations.updatedDescription2}`,
-				{
-					[translations.cancel]: cancelHandler,
 				},
 			)
 		}
+		// } else if (action === 'deleteAll') {
+		// 	dialog = generateDialogObject(
+		// 		cancelHandler,
+		// 		translations.defaultTitle,
+		// 		translations.finishAllDescription,
+		// 		{
+		// 			[translations.yes]: () => {
+		// 				cancelHandler()
+		// 				this.deleteAllTask()
+		// 			},
+		// 			[translations.no]: cancelHandler,
+		// 		},
+		// 	)
+		// } else if (action === 'updated') {
+		// 	dialog = generateDialogObject(
+		// 		cancelHandler,
+		// 		translations.updatedTitle,
+		// 		`${translations.updatedDescription1}\n${translations.updatedDescription2}`,
+		// 		{
+		// 			[translations.cancel]: cancelHandler,
+		// 		},
+		// 	)
+		// }
 
 		this.setState({ dialog, showDialog: true })
 	}
@@ -752,7 +754,7 @@ class TaskList extends Component {
 							}
 							rightElement={
 								<View style={styles.rightElements}>
-									<IconToggle
+									{/* <IconToggle
 										color={task.finish ? theme.undoIconColor : theme.doneIconColor}
 										style={{
 											container: {
@@ -762,6 +764,14 @@ class TaskList extends Component {
 										size={32}
 										name={task.finish ? 'replay' : 'done'}
 										onPress={() => this.updateTask(task)}
+									/> */}
+									<IconToggle
+										onPress={() => {
+											return this.showDialog('delete', task.id)
+										}}
+										name='delete'
+										color={theme.warningColor}
+										size={26}
 									/>
 									{/* {task.finish && (
 										<IconToggle
