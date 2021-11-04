@@ -114,21 +114,20 @@ export const initCategories =
 		} catch (e) {
 			console.error('Error on initCategories :: ', e)
 		}
-	}
 
 export const initCategory =
 	(id, callback = () => null) =>
-	() => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql('select * from categories where id = ?', [id], (_, { rows }) => {
-					callback(rows._array[0])
-				})
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	}
+		() => {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('select * from categories where id = ?', [id], (_, { rows }) => {
+						callback(rows._array[0])
+					})
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		}
 
 export const saveCategory = (category, callback) => async () => {
 	// if (category.id !== false) {
@@ -260,19 +259,19 @@ export const updateCategory = (category, callback) => async () => {
 
 export const removeCategory =
 	(id, callback = () => null) =>
-	(dispatch) => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql('delete from categories where id = ?', [id], () => {
-					Analytics.logEvent('removedCategory', {
-						name: 'categoryAction',
-					})
+		(dispatch) => {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('delete from categories where id = ?', [id], () => {
+						Analytics.logEvent('removedCategory', {
+							name: 'categoryAction',
+						})
 
-					callback()
-					dispatch(initCategories())
-				})
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	}
+						callback()
+						dispatch(initCategories())
+					})
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		}

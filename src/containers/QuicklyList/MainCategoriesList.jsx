@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, Text, View, ImageBackground } from 'react-native'
 import { ActionButton, IconToggle, ListItem, Toolbar } from 'react-native-material-ui'
 import { generateDialogObject, getVariety } from '../../shared/utility'
 import { flex, foundResults, shadow } from '../../shared/styles'
@@ -38,6 +38,11 @@ class MainCategoriesList extends Component {
 		if (prevProps.lists !== this.props.lists) {
 			this.reloadListsAmount()
 		}
+	}
+
+	goIntoEdit = (category) => {
+		const { navigation } = this.props;
+		navigation.navigate('QuicklyTaskList', { list: category, edit: true, name: category.name })
 	}
 
 	reloadListsAmount = () => {
@@ -150,15 +155,22 @@ class MainCategoriesList extends Component {
 			})
 			: categories
 
-		return filteredByUserCategories.map((list, index) => (
+		return filteredByUserCategories.map((category, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
 					onPress={() =>
-						navigation.navigate('QuicklyTaskList', { list: list, edit: true, name: list.name })
+						navigation.navigate('TaskList', { category }
+							// { list: list, edit: true, name: list.name }
+						)
 					}
 					style={{
-						container: [shadow, { backgroundColor: theme.primaryBackgroundColor }],
+						container: [shadow, {
+							// backgroundColorbackgroundImage: theme.primaryBackgroundColor 
+							backgroundColor: 'white',
+							// backgroundColor: `url(${category.photo})`
+							// backgroundImage: `url${category.photo}`
+						}],
 						primaryText: {
 							fontSize: 17,
 							color: theme.secondaryTextColor,
@@ -167,16 +179,31 @@ class MainCategoriesList extends Component {
 							color: theme.thirdTextColor,
 						},
 					}}
-					centerElement={{
-						primaryText: list.name,
-						secondaryText: `${translations.totalTasks} ${amounts[list.id] ? amounts[list.id] : 0}`,
-					}}
+					centerElement={
+						{
+							primaryText: category.name,
+							secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
+						}
+						// <View>
+						// 	<Text>{category.name}</Text>
+						// 	<Text>{`${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`}</Text>
+						// 	<ImageBackground style={{ width: 'auto', height: 40 }} src={category.photo} />
+						// </View>
+					}
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
 								onPress={() =>
+									this.goIntoEdit(category)
+								}
+								name='edit'
+								color={theme.warningColor}
+								size={26}
+							/>
+							<IconToggle
+								onPress={() =>
 									this.showDialog(
-										list.id,
+										category.id,
 										// list.name
 									)
 								}
@@ -227,7 +254,7 @@ class MainCategoriesList extends Component {
 							{translations.found}:{' '}
 							{getVariety(
 								filterData.length,
-								translations.resultSingular,
+								translations.ImageBackgroundresultSingular,
 								translations.resultPlural,
 								translations.resultGenitive,
 								settings.lang,

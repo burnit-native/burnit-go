@@ -14,8 +14,8 @@ class Main extends Component {
 		tabs: {
 			index: 0,
 			routes: [
-				{ key: 'tasks', title: this.props.translations.tasks },
 				{ key: 'lists', title: this.props.translations.MainCategoriesList },
+				{ key: 'tasks', title: this.props.translations.tasks },
 			],
 		},
 		loading: true,
@@ -67,8 +67,8 @@ class Main extends Component {
 								this.setState({ tabs })
 							}}
 							renderScene={SceneMap({
-								tasks: () => <TaskList navigation={navigation} />,
 								lists: () => <QuicklyList navigation={navigation} onInitCategories={onInitCategories} />,
+								tasks: () => <TaskList navigation={navigation} />,
 							})}
 							renderTabBar={(props) => (
 								<TabBar
