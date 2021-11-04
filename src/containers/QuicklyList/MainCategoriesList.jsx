@@ -40,6 +40,11 @@ class MainCategoriesList extends Component {
 		}
 	}
 
+	goIntoEdit = (category) => {
+		const { navigation } = this.props;
+		navigation.navigate('QuicklyTaskList', { list: category, edit: true, name: category.name })
+	}
+
 	reloadListsAmount = () => {
 		const { lists } = this.props
 		const { amounts } = this.state
@@ -150,12 +155,14 @@ class MainCategoriesList extends Component {
 			  })
 			: categories
 
-		return filteredByUserCategories.map((list, index) => (
+		return filteredByUserCategories.map((category, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
 					onPress={() =>
-						navigation.navigate('QuicklyTaskList', { list, edit: true, name: list.name })
+						navigation.navigate('TaskList', { category }
+							// { list: list, edit: true, name: list.name }
+						)
 					}
 					style={{
 						container: [shadow, { backgroundColor: theme.primaryBackgroundColor }],
@@ -168,15 +175,23 @@ class MainCategoriesList extends Component {
 						},
 					}}
 					centerElement={{
-						primaryText: list.name,
-						secondaryText: `${translations.totalTasks} ${amounts[list.id] ? amounts[list.id] : 0}`,
+						primaryText: category.name,
+						secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
 					}}
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
 								onPress={() =>
+									this.goIntoEdit(category)
+								}
+								name='edit'
+								color={theme.warningColor}
+								size={26}
+							/>
+							<IconToggle
+								onPress={() =>
 									this.showDialog(
-										list.id,
+										category.id,
 										// list.name
 									)
 								}
