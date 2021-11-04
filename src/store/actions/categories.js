@@ -68,51 +68,52 @@ export const onInitCategories = (categories) => ({
 
 export const initCategories =
 	(callback = () => null) =>
-	async (dispatch) => {
-		// db.transaction(
-		// 	(tx) => {
-		// 		// TODO
-		// 		console.log('this is cateogries ocming back')
-		// 		tx.executeSql('select * from categories', [], (_, { rows }) => {
-		// 			console.log('this is ROWS', rows._array)
-		// 			callback()
-		// 			dispatch(onInitCategories(rows._array))
-		// 		})
-		// 	},
-		// 	// eslint-disable-next-line no-console
-		// 	(err) => console.log(err),
-		// )
-		try {
-			const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
-				headers: {
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
+		async (dispatch) => {
+			// db.transaction(
+			// 	(tx) => {
+			// 		// TODO
+			// 		console.log('this is cateogries ocming back')
+			// 		tx.executeSql('select * from categories', [], (_, { rows }) => {
+			// 			console.log('this is ROWS', rows._array)
+			// 			callback()
+			// 			dispatch(onInitCategories(rows._array))
+			// 		})
+			// 	},
+			// 	// eslint-disable-next-line no-console
+			// 	(err) => console.log(err),
+			// )
+			try {
+				const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
+					headers: {
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				})
 
-			const me = await AsyncStorage.getItem('me')
-			const filteredCategories = rawCategories.data.result.filter(
-				(category) => category.user_id === +me,
-			)
+				const me = await AsyncStorage.getItem('me')
+				const filteredCategories = rawCategories.data.result.filter(
+					(category) => category.user_id === +me,
+				)
 
-			const photoUpdatedCategories = Promise.all(
-				filteredCategories.map((category) => {
-					const updatedList = filterOutPhoto(category)
+				const photoUpdatedCategories = Promise.all(
+					filteredCategories.map((category) => {
+						const updatedList = filterOutPhoto(category)
 
-					callToGetPhoto(updatedList).then((data) => {
-						if (data && data.photo) {
-							return data.photo.photo
-						}
-						data.photo = null
-						return null
-					})
-					return updatedList
-				}),
-			)
+						callToGetPhoto(updatedList).then((data) => {
+							if (data && data.photo) {
+								return data.photo.photo
+							}
+							data.photo = null
+							return null
+						})
+						return updatedList
+					}),
+				)
 
-			callback()
-			dispatch(onInitCategories(await photoUpdatedCategories))
-		} catch (e) {
-			console.error('Error on initCategories :: ', e)
+				callback()
+				dispatch(onInitCategories(await photoUpdatedCategories))
+			} catch (e) {
+				console.error('Error on initCategories :: ', e)
+			}
 		}
 
 export const initCategory =
