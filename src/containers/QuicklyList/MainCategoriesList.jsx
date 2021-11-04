@@ -168,6 +168,7 @@ class MainCategoriesList extends Component {
 						container: [shadow, {
 							// backgroundColorbackgroundImage: theme.primaryBackgroundColor 
 							backgroundColor: 'white',
+							height: 80,
 							// backgroundColor: `url(${category.photo})`
 							// backgroundImage: `url${category.photo}`
 						}],
@@ -180,15 +181,30 @@ class MainCategoriesList extends Component {
 						},
 					}}
 					centerElement={
-						{
-							primaryText: category.name,
-							secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
-						}
-						// <View>
-						// 	<Text>{category.name}</Text>
-						// 	<Text>{`${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`}</Text>
-						// 	<ImageBackground style={{ width: 'auto', height: 40 }} src={category.photo} />
-						// </View>
+						// {
+						// 	primaryText: category.name,
+						// 	styles: {
+						// 		backgroundColor: 'red',
+						// 		color: 'blue'
+						// 	},
+						// 	// backgroundImage: `url(${category.photo})`,
+						// 	secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
+						// }
+						<View>
+							{/* TODO */}
+							{category.photo && console.log('this is category with photo', category.photo)}
+							<ImageBackground style={{
+								width: 'auto', height: 80,
+								zIndex: -1,
+								marginLeft: -15
+
+							}}
+								resizeMode="center"
+								source={category.photo ? { uri: category.photo.photo } : ''} >
+								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{category.name}</Text>
+								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{`${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`}</Text>
+							</ImageBackground>
+						</View>
 					}
 					rightElement={
 						<View style={styles.rightElements}>
