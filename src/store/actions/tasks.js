@@ -462,16 +462,12 @@ export const undoTask =
 export const removeTask =
 	(productId, finished = true, callback = () => null) =>
 	async (dispatch) => {
-		const token = await AsyncStorage.getItem('accessToken')
+		const bodyFormData = new FormData()
+		bodyFormData.append('_method', 'DELETE')
 
 		try {
-			const bodyFormData = new FormData()
-
-			bodyFormData.append('_method', 'DELETE')
-			console.log('productId', productId)
-
 			const response = await axios.post(
-				`http://caliboxs.com/api/v1/products/${productId}`,
+				'http://caliboxs.com/api/v1/products/' + productId,
 				bodyFormData,
 				{
 					headers: {
@@ -480,6 +476,8 @@ export const removeTask =
 					},
 				},
 			)
+
+			console.log('response', response)
 
 			callback()
 			dispatch(initToDo())
