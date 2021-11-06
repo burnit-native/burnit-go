@@ -14,7 +14,7 @@
 		"resultGenitive": "results"
 	},
 	"Main": {
-		"tasks": "Tasks",
+		"tasks": "Products",
 		"MainCategoriesList": "Categories"
 	},
 	"TaskList": {
@@ -102,7 +102,7 @@
 	},
 	"QuicklyList": {
 		"dialogDescription": "Delete this list?",
-		"totalTasks": "Total tasks:",
+		"totalTasks": "Total products:",
 		"quicklyLists": "Quickly lists",
 		"emptyList": "Quickly lists is empty!"
 	},

@@ -252,6 +252,7 @@ class MainCategoriesList extends Component {
 
 		return (
 			<View style={flex}>
+				{/* comment out for now when showing MVP */}
 				<Toolbar
 					searchable={{
 						autoFocus: true,
@@ -260,6 +261,7 @@ class MainCategoriesList extends Component {
 						onSearchCloseRequested: () => this.setState({ searchText: '' }),
 					}}
 					leftElement='menu'
+					leftElement=''
 					centerElement={translations.MainCategoriesList}
 					onLeftElementPress={() => navigation.navigate('Drawer')}
 				/>

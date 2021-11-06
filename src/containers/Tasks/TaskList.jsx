@@ -684,7 +684,7 @@ class TaskList extends Component {
 
 		return (
 			<View>
-				{showDiv && (
+				{/* {showDiv && (
 					<Subheader
 						text={div}
 						style={{
@@ -694,7 +694,7 @@ class TaskList extends Component {
 									: { color: theme.thirdTextColor },
 						}}
 					/>
-				)}
+				)} */}
 				<Animated.View style={{ height: hideTask, left: moveValue }}>
 					<View style={styles.taskRow}>
 						<ListItem
@@ -826,7 +826,8 @@ class TaskList extends Component {
 						onChangeText: (value) => this.setState({ searchText: value }),
 						onSearchCloseRequested: () => this.setState({ searchText: '' }),
 					}}
-					leftElement='menu'
+					// leftElement='menu'
+					// leftElement='menu'
 					onLeftElementPress={() => navigation.navigate('Drawer')}
 					centerElement={
 						<>
