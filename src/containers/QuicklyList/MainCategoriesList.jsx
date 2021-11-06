@@ -132,6 +132,19 @@ class MainCategoriesList extends Component {
 		}
 	}
 
+	getProductCountFromCategory = (category) => {
+		// renaming it to products temporarily
+		const { tasks: products } = this.props
+
+		return products.filter(product => {
+			if (product.category.id === category.id) {
+				return true
+			}
+			return false;
+		}).length
+
+	}
+
 	// this function filters out categories based on logged in user id
 	filterOutCategories = async () => {
 		try {
@@ -145,7 +158,7 @@ class MainCategoriesList extends Component {
 	renderQuicklyList = (data = null) => {
 		// This is executed when a quickly task is made, not when it loads
 		const { amounts } = this.state
-		const { theme, navigation, translations, categories } = this.props
+		const { theme, navigation, translations, categories, tasks } = this.props
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
@@ -202,7 +215,7 @@ class MainCategoriesList extends Component {
 								resizeMode="center"
 								source={category.photo ? { uri: category.photo.photo } : ''} >
 								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{category.name}</Text>
-								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{`${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`}</Text>
+								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{`${translations.totalTasks} ${this.getProductCountFromCategory(category)}`}</Text>
 							</ImageBackground>
 						</View>
 					}
@@ -331,6 +344,7 @@ class MainCategoriesList extends Component {
 
 const mapStateToProps = (state) => ({
 	theme: state.theme.theme,
+	tasks: state.tasks.tasks,
 	settings: state.settings.settings,
 	lists: state.lists.lists,
 	categories: state.categories.categories,
