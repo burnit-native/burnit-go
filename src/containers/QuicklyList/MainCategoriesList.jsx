@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, Text, View, ImageBackground } from 'react-native'
 import { ActionButton, IconToggle, ListItem, Toolbar } from 'react-native-material-ui'
 import { generateDialogObject, getVariety } from '../../shared/utility'
 import { flex, foundResults, shadow } from '../../shared/styles'
@@ -38,6 +38,11 @@ class MainCategoriesList extends Component {
 		if (prevProps.lists !== this.props.lists) {
 			this.reloadListsAmount()
 		}
+	}
+
+	goIntoEdit = (category) => {
+		const { navigation } = this.props;
+		navigation.navigate('QuicklyTaskList', { list: category, edit: true, name: category.name })
 	}
 
 	reloadListsAmount = () => {
@@ -127,6 +132,19 @@ class MainCategoriesList extends Component {
 		}
 	}
 
+	getProductCountFromCategory = (category) => {
+		// renaming it to products temporarily
+		const { tasks: products } = this.props
+
+		return products.filter(product => {
+			if (product.category.id === category.id) {
+				return true
+			}
+			return false;
+		}).length
+
+	}
+
 	// this function filters out categories based on logged in user id
 	filterOutCategories = async () => {
 		try {
@@ -140,7 +158,7 @@ class MainCategoriesList extends Component {
 	renderQuicklyList = (data = null) => {
 		// This is executed when a quickly task is made, not when it loads
 		const { amounts } = this.state
-		const { theme, navigation, translations, categories } = this.props
+		const { theme, navigation, translations, categories, tasks } = this.props
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
@@ -150,15 +168,23 @@ class MainCategoriesList extends Component {
 			})
 			: categories
 
-		return filteredByUserCategories.map((list, index) => (
+		return filteredByUserCategories.map((category, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
 					onPress={() =>
-						navigation.navigate('QuicklyTaskList', { list: list, edit: true, name: list.name })
+						navigation.navigate('TaskList', { category }
+							// { list: list, edit: true, name: list.name }
+						)
 					}
 					style={{
-						container: [shadow, { backgroundColor: theme.primaryBackgroundColor }],
+						container: [shadow, {
+							// backgroundColorbackgroundImage: theme.primaryBackgroundColor 
+							backgroundColor: 'white',
+							height: 80,
+							// backgroundColor: `url(${category.photo})`
+							// backgroundImage: `url${category.photo}`
+						}],
 						primaryText: {
 							fontSize: 17,
 							color: theme.secondaryTextColor,
@@ -167,16 +193,46 @@ class MainCategoriesList extends Component {
 							color: theme.thirdTextColor,
 						},
 					}}
-					centerElement={{
-						primaryText: list.name,
-						secondaryText: `${translations.totalTasks} ${amounts[list.id] ? amounts[list.id] : 0}`,
-					}}
+					centerElement={
+						// {
+						// 	primaryText: category.name,
+						// 	styles: {
+						// 		backgroundColor: 'red',
+						// 		color: 'blue'
+						// 	},
+						// 	// backgroundImage: `url(${category.photo})`,
+						// 	secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
+						// }
+						<View>
+							{/* TODO */}
+							{category.photo && console.log('this is category with photo', category.photo)}
+							<ImageBackground style={{
+								width: 'auto', height: 80,
+								zIndex: -1,
+								marginLeft: -15
+
+							}}
+								resizeMode="center"
+								source={category.photo ? { uri: category.photo.photo } : ''} >
+								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{category.name}</Text>
+								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{`${translations.totalTasks} ${this.getProductCountFromCategory(category)}`}</Text>
+							</ImageBackground>
+						</View>
+					}
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
 								onPress={() =>
+									this.goIntoEdit(category)
+								}
+								name='edit'
+								color={theme.warningColor}
+								size={26}
+							/>
+							<IconToggle
+								onPress={() =>
 									this.showDialog(
-										list.id,
+										category.id,
 										// list.name
 									)
 								}
@@ -209,6 +265,7 @@ class MainCategoriesList extends Component {
 
 		return (
 			<View style={flex}>
+				{/* comment out for now when showing MVP */}
 				<Toolbar
 					searchable={{
 						autoFocus: true,
@@ -217,6 +274,7 @@ class MainCategoriesList extends Component {
 						onSearchCloseRequested: () => this.setState({ searchText: '' }),
 					}}
 					leftElement='menu'
+					leftElement=''
 					centerElement={translations.MainCategoriesList}
 					onLeftElementPress={() => navigation.navigate('Drawer')}
 				/>
@@ -227,7 +285,7 @@ class MainCategoriesList extends Component {
 							{translations.found}:{' '}
 							{getVariety(
 								filterData.length,
-								translations.resultSingular,
+								translations.ImageBackgroundresultSingular,
 								translations.resultPlural,
 								translations.resultGenitive,
 								settings.lang,
@@ -286,6 +344,7 @@ class MainCategoriesList extends Component {
 
 const mapStateToProps = (state) => ({
 	theme: state.theme.theme,
+	tasks: state.tasks.tasks,
 	settings: state.settings.settings,
 	lists: state.lists.lists,
 	categories: state.categories.categories,

@@ -7,6 +7,7 @@ import ViewProduct from './containers/Tasks/ViewProduct/ViewProduct'
 import OtherRepeat from './containers/Tasks/OtherRepeat/OtherRepeat'
 import QuicklyTaskList from './containers/QuicklyList/QuicklyTaskList/QuicklyTaskList'
 import CategoriesList from './containers/Categories/CategoriesList'
+import TaskList from './containers/Tasks/TaskList'
 import Drawer from './containers/Drawer/Drawer'
 import Themes from './containers/Themes/Themes'
 import Theme from './containers/Themes/Theme/Theme'
@@ -23,6 +24,7 @@ const MainNavigator = createStackNavigator(
 		ViewProduct: { screen: ViewProduct },
 		OtherRepeat: { screen: OtherRepeat },
 		QuicklyTaskList: { screen: QuicklyTaskList },
+		TaskList: { screen: TaskList },
 		CategoriesList: { screen: CategoriesList },
 		Profile: { screen: Profile },
 		Drawer: { screen: Drawer },

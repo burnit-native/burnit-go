@@ -3,7 +3,7 @@ import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
 import LoginContainer from '../../components/Login'
 import TaskList from '../Tasks/TaskList'
 import Template from '../Template/Template'
-import QuicklyList from '../QuicklyList/MainCategoriesList'
+import MainCategoriesList from '../QuicklyList/MainCategoriesList'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import * as actions from '../../store/actions'
@@ -14,8 +14,8 @@ class Main extends Component {
 		tabs: {
 			index: 0,
 			routes: [
-				{ key: 'tasks', title: this.props.translations.tasks },
 				{ key: 'lists', title: this.props.translations.MainCategoriesList },
+				{ key: 'tasks', title: this.props.translations.tasks },
 			],
 		},
 		loading: true,
@@ -67,8 +67,8 @@ class Main extends Component {
 								this.setState({ tabs })
 							}}
 							renderScene={SceneMap({
+								lists: () => <MainCategoriesList navigation={navigation} onInitCategories={onInitCategories} />,
 								tasks: () => <TaskList navigation={navigation} />,
-								lists: () => <QuicklyList navigation={navigation} onInitCategories={onInitCategories} />,
 							})}
 							renderTabBar={(props) => (
 								<TabBar

@@ -527,7 +527,8 @@ class TaskList extends Component {
 		} else if (rowData.id === -2) {
 			data = {
 				icon: 'done',
-				amount: finished.length,
+				amount: 3,
+				// amount: finished.length,
 				bgColor: theme.primaryBackgroundColor,
 			}
 		} else {
@@ -558,7 +559,7 @@ class TaskList extends Component {
 								: { color: theme.thirdTextColor },
 						]}
 					>
-						{rowData.name + 'HELLOOdfd;lkfajdfk;lsjda;skdfj'}
+						{rowData.name}
 					</Text>
 					<Text
 						style={[
@@ -607,9 +608,8 @@ class TaskList extends Component {
 
 				const dateDifference = dateDiff(firstDate, secondDate, translations, settings.lang)
 				if (dateDifference) {
-					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${
-						dateDifference.prefix
-					})`
+					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${dateDifference.prefix
+						})`
 				}
 			}
 			return this.convertTimeCycle(task.date)
@@ -644,21 +644,36 @@ class TaskList extends Component {
 	getFilterData = () => {
 		// This function helps with lazy loading since it looks for visible state and then only renders just as much
 		const { data, visibleData } = this.state
+
+		// This grabs category from param from previous categories route
+		const { navigation } = this.props;
+		const category = navigation.getParam('category', null);
+
 		return data.filter(({ task }, index) => {
-			if (index > visibleData) {
-				return false
+			if (!category) {
+				return true;
 			}
 
-			const searchText = this.state.searchText.toLowerCase()
-			if (searchText.length > 0 && task.name.toLowerCase().indexOf(searchText) < 0) {
-				if (task?.description.toLowerCase().indexOf(searchText) < 0) {
-					if (task?.category?.name.toLowerCase().indexOf(searchText) < 0) {
-						return false
-					}
-				}
+			if (task.category.name === category.name) {
+				return true
 			}
 
-			return true
+			return false;
+			// 	if (index > visibleData) {
+			// 		return false
+			// 	}
+
+			// 	const searchText = this.state.searchText.toLowerCase()
+			// 	if (searchText.length > 0 && task.name.toLowerCase().indexOf(searchText) < 0) {
+			// 		if (task?.description.toLowerCase().indexOf(searchText) < 0) {
+			// 			if (task?.category?.name.toLowerCase().indexOf(searchText) < 0) {
+			// 				return false
+			// 			}
+			// 		}
+			// 	}
+
+			// 	return true
+			// })
 		})
 	}
 
@@ -671,7 +686,7 @@ class TaskList extends Component {
 
 		return (
 			<View>
-				{showDiv && (
+				{/* {showDiv && (
 					<Subheader
 						text={div}
 						style={{
@@ -681,7 +696,7 @@ class TaskList extends Component {
 									: { color: theme.thirdTextColor },
 						}}
 					/>
-				)}
+				)} */}
 				<Animated.View style={{ height: hideTask, left: moveValue }}>
 					<View style={styles.taskRow}>
 						<ListItem
@@ -726,8 +741,8 @@ class TaskList extends Component {
 												color: task.finish
 													? theme.thirdTextColor
 													: div === translations.overdue
-													? theme.warningColor
-													: theme.thirdTextColor,
+														? theme.warningColor
+														: theme.thirdTextColor,
 											}}
 										>
 											{this.getTaskDateLabel(task)}
@@ -793,6 +808,7 @@ class TaskList extends Component {
 	render() {
 		const {
 			showConfigCategory,
+			// dropdownData will be coming from the categories saved in store
 			dropdownData,
 			selectedIndex,
 			visibleData,
@@ -808,8 +824,11 @@ class TaskList extends Component {
 
 		const filterData = this.getFilterData()
 
+		// TODO
+		// console.log('this is dropdown data :: ', dropdownData)
+
 		return (
-			<View style={flex}>
+			<View style={flex} >
 				<Toolbar
 					searchable={{
 						autoFocus: true,
@@ -817,7 +836,8 @@ class TaskList extends Component {
 						onChangeText: (value) => this.setState({ searchText: value }),
 						onSearchCloseRequested: () => this.setState({ searchText: '' }),
 					}}
-					leftElement='menu'
+					// leftElement='menu'
+					// leftElement='menu'
 					onLeftElementPress={() => navigation.navigate('Drawer')}
 					centerElement={
 						<>
@@ -880,9 +900,10 @@ class TaskList extends Component {
 							)}
 						</Text>
 					</View>
-				)}
+				)
+				}
 
-				<ConfigCategory
+				< ConfigCategory
 					category={false}
 					showDialog={showConfigCategory}
 					toggleModal={this.toggleConfigCategory}
@@ -891,7 +912,7 @@ class TaskList extends Component {
 				<Dialog {...dialog} theme={theme} showDialog={showDialog} />
 
 				{/* THIS IS WHERE THE ACTUAL RENDER OF THE LIST IS */}
-				<FlatList
+				< FlatList
 					ref={(e) => {
 						this.flatList = e
 					}}
@@ -900,14 +921,14 @@ class TaskList extends Component {
 					onScroll={this.onScroll}
 					scrollEventThrottle={16}
 					refreshControl={
-						<RefreshControl
+						< RefreshControl
 							refreshing={loading}
 							tintColor={theme.primaryColor}
 							onRefresh={this.refreshComponent}
 						/>
 					}
 					ListEmptyComponent={
-						<EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
+						< EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
 					}
 					data={filterData}
 					initialNumToRender={8}
@@ -930,7 +951,8 @@ class TaskList extends Component {
 				/>
 
 				<View>
-					{selectedCategory.name !== translations.finished ? (
+					{/* {selectedCategory.name !== translations.finished ? ( */}
+					{selectedCategory.name !== translations.finished && (
 						<ActionButton
 							hidden={bottomHidden}
 							onPress={() => navigation.navigate('ConfigTask', { category: selectedCategory })}
@@ -940,17 +962,19 @@ class TaskList extends Component {
 								icon: { color: theme.primaryTextColor },
 							}}
 						/>
-					) : finished.length ? (
-						<ActionButton
-							hidden={bottomHidden}
-							style={{
-								container: { backgroundColor: theme.warningColor },
-								icon: { color: theme.primaryTextColor },
-							}}
-							onPress={() => this.showDialog('deleteAll')}
-							icon='delete-sweep'
-						/>
-					) : null}
+					)
+						// : finished.length ? (
+						// 	<ActionButton
+						// 		hidden={bottomHidden}
+						// 		style={{
+						// 			container: { backgroundColor: theme.warningColor },
+						// 			icon: { color: theme.primaryTextColor },
+						// 		}}
+						// 		onPress={() => this.showDialog('deleteAll')}
+						// 		icon='delete-sweep'
+						// 	/>
+						// ) : null
+					}
 				</View>
 
 				<BottomNavigation
@@ -987,7 +1011,7 @@ class TaskList extends Component {
 						onPress={() => this.setSortingType('byPriority')}
 					/> */}
 				</BottomNavigation>
-			</View>
+			</View >
 		)
 	}
 }
