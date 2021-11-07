@@ -167,6 +167,13 @@ class TaskList extends Component {
 		})
 	}
 
+	goIntoEdit = (task) => {
+		// navigate to edit product with prefilled values
+		const { navigation } = this.props
+
+		navigation.navigate('EditTask', { product: task })
+	}
+
 	showDialog = (action, taskId) => {
 		const { selectedTask, animations } = this.state
 		const { theme, translations, onFinishTask, onAddEndedTask } = this.props
@@ -214,6 +221,7 @@ class TaskList extends Component {
 		// 			[translations.no]: cancelHandler,
 		// 		},
 		// 	)
+
 		if (action === 'delete') {
 			console.log(taskId)
 			dialog = generateDialogObject(
@@ -608,8 +616,9 @@ class TaskList extends Component {
 
 				const dateDifference = dateDiff(firstDate, secondDate, translations, settings.lang)
 				if (dateDifference) {
-					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${dateDifference.prefix
-						})`
+					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${
+						dateDifference.prefix
+					})`
 				}
 			}
 			return this.convertTimeCycle(task.date)
@@ -646,19 +655,19 @@ class TaskList extends Component {
 		const { data, visibleData } = this.state
 
 		// This grabs category from param from previous categories route
-		const { navigation } = this.props;
-		const category = navigation.getParam('category', null);
+		const { navigation } = this.props
+		const category = navigation.getParam('category', null)
 
 		return data.filter(({ task }, index) => {
 			if (!category) {
-				return true;
+				return true
 			}
 
 			if (task.category.name === category.name) {
 				return true
 			}
 
-			return false;
+			return false
 			// 	if (index > visibleData) {
 			// 		return false
 			// 	}
@@ -741,8 +750,8 @@ class TaskList extends Component {
 												color: task.finish
 													? theme.thirdTextColor
 													: div === translations.overdue
-														? theme.warningColor
-														: theme.thirdTextColor,
+													? theme.warningColor
+													: theme.thirdTextColor,
 											}}
 										>
 											{this.getTaskDateLabel(task)}
@@ -780,6 +789,12 @@ class TaskList extends Component {
 										name={task.finish ? 'replay' : 'done'}
 										onPress={() => this.updateTask(task)}
 									/> */}
+									<IconToggle
+										onPress={() => this.goIntoEdit(task)}
+										name='edit'
+										color={theme.warningColor}
+										size={26}
+									/>
 									<IconToggle
 										onPress={() => {
 											return this.showDialog('delete', task.id)
@@ -828,7 +843,7 @@ class TaskList extends Component {
 		// console.log('this is dropdown data :: ', dropdownData)
 
 		return (
-			<View style={flex} >
+			<View style={flex}>
 				<Toolbar
 					searchable={{
 						autoFocus: true,
@@ -900,10 +915,9 @@ class TaskList extends Component {
 							)}
 						</Text>
 					</View>
-				)
-				}
+				)}
 
-				< ConfigCategory
+				<ConfigCategory
 					category={false}
 					showDialog={showConfigCategory}
 					toggleModal={this.toggleConfigCategory}
@@ -912,7 +926,7 @@ class TaskList extends Component {
 				<Dialog {...dialog} theme={theme} showDialog={showDialog} />
 
 				{/* THIS IS WHERE THE ACTUAL RENDER OF THE LIST IS */}
-				< FlatList
+				<FlatList
 					ref={(e) => {
 						this.flatList = e
 					}}
@@ -921,14 +935,14 @@ class TaskList extends Component {
 					onScroll={this.onScroll}
 					scrollEventThrottle={16}
 					refreshControl={
-						< RefreshControl
+						<RefreshControl
 							refreshing={loading}
 							tintColor={theme.primaryColor}
 							onRefresh={this.refreshComponent}
 						/>
 					}
 					ListEmptyComponent={
-						< EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
+						<EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
 					}
 					data={filterData}
 					initialNumToRender={8}
@@ -952,17 +966,18 @@ class TaskList extends Component {
 
 				<View>
 					{/* {selectedCategory.name !== translations.finished ? ( */}
-					{selectedCategory.name !== translations.finished && (
-						<ActionButton
-							hidden={bottomHidden}
-							onPress={() => navigation.navigate('ConfigTask', { category: selectedCategory })}
-							icon='add'
-							style={{
-								container: { backgroundColor: theme.warningColor },
-								icon: { color: theme.primaryTextColor },
-							}}
-						/>
-					)
+					{
+						selectedCategory.name !== translations.finished && (
+							<ActionButton
+								hidden={bottomHidden}
+								onPress={() => navigation.navigate('ConfigTask', { category: selectedCategory })}
+								icon='add'
+								style={{
+									container: { backgroundColor: theme.warningColor },
+									icon: { color: theme.primaryTextColor },
+								}}
+							/>
+						)
 						// : finished.length ? (
 						// 	<ActionButton
 						// 		hidden={bottomHidden}
@@ -1011,7 +1026,7 @@ class TaskList extends Component {
 						onPress={() => this.setSortingType('byPriority')}
 					/> */}
 				</BottomNavigation>
-			</View >
+			</View>
 		)
 	}
 }

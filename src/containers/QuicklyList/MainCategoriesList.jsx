@@ -41,7 +41,7 @@ class MainCategoriesList extends Component {
 	}
 
 	goIntoEdit = (category) => {
-		const { navigation } = this.props;
+		const { navigation } = this.props
 		navigation.navigate('QuicklyTaskList', { list: category, edit: true, name: category.name })
 	}
 
@@ -135,14 +135,15 @@ class MainCategoriesList extends Component {
 	getProductCountFromCategory = (category) => {
 		// renaming it to products temporarily
 		const { tasks: products } = this.props
-
-		return products.filter(product => {
-			if (product.category.id === category.id) {
-				return true
-			}
-			return false;
-		}).length
-
+		if (products) {
+			return products.filter((product) => {
+				if (product.category.id === category.id) {
+					return true
+				}
+				return false
+			}).length
+		}
+		return 0
 	}
 
 	// this function filters out categories based on logged in user id
@@ -162,10 +163,10 @@ class MainCategoriesList extends Component {
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
-				if (cate.user_id === +this.state.me) {
-					return true
-				}
-			})
+					if (cate.user_id === +this.state.me) {
+						return true
+					}
+			  })
 			: categories
 
 		return filteredByUserCategories.map((category, index) => (
@@ -173,18 +174,23 @@ class MainCategoriesList extends Component {
 				<ListItem
 					dense
 					onPress={() =>
-						navigation.navigate('TaskList', { category }
+						navigation.navigate(
+							'TaskList',
+							{ category },
 							// { list: list, edit: true, name: list.name }
 						)
 					}
 					style={{
-						container: [shadow, {
-							// backgroundColorbackgroundImage: theme.primaryBackgroundColor 
-							backgroundColor: 'white',
-							height: 80,
-							// backgroundColor: `url(${category.photo})`
-							// backgroundImage: `url${category.photo}`
-						}],
+						container: [
+							shadow,
+							{
+								// backgroundColorbackgroundImage: theme.primaryBackgroundColor
+								backgroundColor: 'white',
+								height: 80,
+								// backgroundColor: `url(${category.photo})`
+								// backgroundImage: `url${category.photo}`
+							},
+						],
 						primaryText: {
 							fontSize: 17,
 							color: theme.secondaryTextColor,
@@ -206,25 +212,47 @@ class MainCategoriesList extends Component {
 						<View>
 							{/* TODO */}
 							{category.photo && console.log('this is category with photo', category.photo)}
-							<ImageBackground style={{
-								width: 'auto', height: 80,
-								zIndex: -1,
-								marginLeft: -15
-
-							}}
-								resizeMode="center"
-								source={category.photo ? { uri: category.photo.photo } : ''} >
-								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{category.name}</Text>
-								<Text style={{ marginLeft: 30, marginTop: 15, width: 'auto', color: `${category.photo ? "white" : "black"}`, backgroundColor: `${category.photo ? "rgba(24, 15, 10, 0.68)" : "white"}`, width: 150, zIndex: 2, }}>{`${translations.totalTasks} ${this.getProductCountFromCategory(category)}`}</Text>
+							<ImageBackground
+								style={{
+									width: 'auto',
+									height: 80,
+									zIndex: -1,
+									marginLeft: -15,
+								}}
+								resizeMode='center'
+								source={category.photo ? { uri: category.photo.photo } : ''}
+							>
+								<Text
+									style={{
+										marginLeft: 30,
+										marginTop: 15,
+										width: 'auto',
+										color: `${category.photo ? 'white' : 'black'}`,
+										backgroundColor: `${category.photo ? 'rgba(24, 15, 10, 0.68)' : 'white'}`,
+										width: 150,
+										zIndex: 2,
+									}}
+								>
+									{category.name}
+								</Text>
+								<Text
+									style={{
+										marginLeft: 30,
+										marginTop: 15,
+										width: 'auto',
+										color: `${category.photo ? 'white' : 'black'}`,
+										backgroundColor: `${category.photo ? 'rgba(24, 15, 10, 0.68)' : 'white'}`,
+										width: 150,
+										zIndex: 2,
+									}}
+								>{`${translations.totalTasks} ${this.getProductCountFromCategory(category)}`}</Text>
 							</ImageBackground>
 						</View>
 					}
 					rightElement={
 						<View style={styles.rightElements}>
 							<IconToggle
-								onPress={() =>
-									this.goIntoEdit(category)
-								}
+								onPress={() => this.goIntoEdit(category)}
 								name='edit'
 								color={theme.warningColor}
 								size={26}
@@ -306,9 +334,7 @@ class MainCategoriesList extends Component {
 						style={styles.scrollView}
 					>
 						{this.state.me ? (
-							<View style={styles.quicklyTaskListWrapper}>
-								{this.renderQuicklyList()}
-							</View>
+							<View style={styles.quicklyTaskListWrapper}>{this.renderQuicklyList()}</View>
 						) : (
 							<EmptyList color={theme.thirdTextColor} text={translations.emptyList} />
 						)}

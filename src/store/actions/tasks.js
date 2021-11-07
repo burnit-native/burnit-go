@@ -190,6 +190,66 @@ const errorParseResult = (errorObj) => {
 	return errorsArray.join('\n')
 }
 
+export const saveEditTask =
+	(task, callback = () => null) =>
+	async (dispatch) => {
+		console.log('new nameeeeee', task.name)
+
+		try {
+			const bodyFormData = new FormData()
+
+			console.log(`adding category ID`, task.category.id)
+			bodyFormData.append('method', 'put')
+			bodyFormData.append('name', task.name)
+			bodyFormData.append('price', task.price)
+			bodyFormData.append('stock', task.stock)
+			bodyFormData.append('details', task.details)
+			bodyFormData.append('categories[]', task.category.id)
+			bodyFormData.append('photo', {
+				uri: task.image,
+				type: 'image/jpeg',
+				name: task.name + '_photo',
+			})
+
+			const response = await axios.post(
+				'http://caliboxs.com/api/v1/products' + task.id,
+				bodyFormData,
+				{
+					headers: {
+						'content-type': 'multipart/form-data',
+						// "content-type": "application/json",
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				},
+			)
+
+			if (response) {
+				Alert.alert('Success', `Your product has been updated.`, [
+					{
+						text: 'Ok',
+						onPress: callback,
+						style: 'cancel',
+					},
+				])
+				console.log('nice')
+				dispatch(initToDo())
+			}
+		} catch (err) {
+			console.error(`error editing product`, err.response.data)
+			Alert.alert(
+				'Error',
+				`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+				[
+					{
+						text: 'Ok',
+						onPress: null,
+						style: 'cancel',
+					},
+				],
+			)
+		}
+	}
+
 export const saveTask =
 	(task, callback = () => null) =>
 	async (dispatch) => {

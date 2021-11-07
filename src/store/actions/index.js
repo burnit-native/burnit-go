@@ -6,6 +6,7 @@ export {
 	initFinishedTask,
 	initFinished,
 	saveTask,
+	saveEditTask,
 	finishTask,
 	undoTask,
 	removeTask,
