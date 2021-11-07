@@ -223,7 +223,6 @@ class TaskList extends Component {
 		// 	)
 
 		if (action === 'delete') {
-			console.log(taskId)
 			dialog = generateDialogObject(
 				cancelHandler,
 				translations.defaultTitle,

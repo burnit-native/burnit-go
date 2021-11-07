@@ -211,7 +211,7 @@ class MainCategoriesList extends Component {
 						// }
 						<View>
 							{/* TODO */}
-							{category.photo && console.log('this is category with photo', category.photo)}
+							{/* {category.photo && console.log('this is category with photo', category.photo)} */}
 							<ImageBackground
 								style={{
 									width: 'auto',
