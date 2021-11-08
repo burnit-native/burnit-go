@@ -1,5 +1,16 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, TouchableOpacity, View, Button, Image, Alert } from 'react-native'
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+	Button,
+	Image,
+	Alert,
+	Modal,
+	StyleSheet,
+	Pressable,
+} from 'react-native'
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import { IconToggle, Toolbar, Checkbox } from 'react-native-material-ui'
 import { askAsync, CALENDAR, REMINDERS } from 'expo-permissions'
@@ -11,6 +22,7 @@ import Spinner from '../../../components/Spinner/Spinner'
 import Template from '../../Template/Template'
 import Input from '../../../components/Input/Input'
 import ConfigCategory from '../../Categories/ConfigCategory/ConfigCategory'
+import Camera from '../../../components/Camera'
 import {
 	checkValid,
 	convertDaysIndex,
@@ -149,6 +161,8 @@ class ConfigTask extends Component {
 		isVisibleDate: false,
 		isVisibleTime: false,
 		loading: true,
+		modalVisible: false,
+		photoMode: false,
 	}
 
 	componentDidMount() {
@@ -234,6 +248,13 @@ class ConfigTask extends Component {
 			selectedTime,
 			loading: false,
 		})
+	}
+
+	updateImage = async (image) => {
+		const prevTask = this.state.task
+		prevTask.image = image
+		console.log(`new image`, prevTask.image)
+		this.setState({ task: prevTask, photoMode: false })
 	}
 
 	updateTask = (name, value) => {
@@ -745,6 +766,12 @@ class ConfigTask extends Component {
 								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
 							</View>
 						</View>
+						{this.state.photoMode ? (
+							<Camera updateImage={this.updateImage} />
+						) : (
+							<Button title='Take a photo' onPress={() => this.setState({ photoMode: true })} />
+						)}
+
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 						{this.state.task.image && (
 							<Image
