@@ -359,23 +359,23 @@ class QuicklyTaskList extends Component {
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
 				<Toolbar
-					searchable={{
-						autoFocus: true,
-						placeholder: translations.search,
-						onChangeText: (value) => this.setState({ searchText: value }),
-						onSearchCloseRequested: () => this.setState({ searchText: '' }),
-					}}
+					// searchable={{
+					// 	autoFocus: true,
+					// 	placeholder: translations.search,
+					// 	onChangeText: (value) => this.setState({ searchText: value }),
+					// 	onSearchCloseRequested: () => this.setState({ searchText: '' }),
+					// }}
 					leftElement='arrow-back'
-					rightElement={
-						<>
-							<IconToggle color={theme.primaryTextColor} onPress={this.showDialog} name='edit' />
-							<IconToggle
-								color={theme.primaryTextColor}
-								name='add'
-								onPress={this.toggleModalHandler}
-							/>
-						</>
-					}
+					// rightElement={
+					// 	<>
+					// 		<IconToggle color={theme.primaryTextColor} onPress={this.showDialog} name='edit' />
+					// 		<IconToggle
+					// 			color={theme.primaryTextColor}
+					// 			name='add'
+					// 			onPress={this.toggleModalHandler}
+					// 		/>
+					// 	</>
+					// }
 					onLeftElementPress={() => {
 						onInitLists()
 						navigation.goBack()
@@ -401,7 +401,7 @@ class QuicklyTaskList extends Component {
 					}
 				/>
 
-				{searchText.length > 0 && (
+				{/* {searchText.length > 0 && (
 					<View style={foundResults}>
 						<Text style={{ color: theme.thirdTextColor }}>
 							{translations.found}:{' '}
@@ -414,7 +414,7 @@ class QuicklyTaskList extends Component {
 							)}
 						</Text>
 					</View>
-				)}
+				)} */}
 
 				{showDialog && (
 					<ConfigQuicklyTask

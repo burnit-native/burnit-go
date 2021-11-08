@@ -136,13 +136,16 @@ class MainCategoriesList extends Component {
 		// renaming it to products temporarily
 		const { tasks: products } = this.props
 
-		return products.filter(product => {
-			if (product.category.id === category.id) {
-				return true
-			}
-			return false;
-		}).length
+		if (products) {
+			return products.filter(product => {
+				if (product.category.id === category.id) {
+					return true
+				}
+				return false;
+			}).length
+		}
 
+		return 0;
 	}
 
 	// this function filters out categories based on logged in user id
@@ -173,7 +176,22 @@ class MainCategoriesList extends Component {
 				<ListItem
 					dense
 					onPress={() =>
-						navigation.navigate('TaskList', { category }
+						navigation.navigate('Main', { navigation, 
+							category, fromCategories: {
+								"index": 1,
+								"routes": [
+									{
+										"key": "lists",
+										"title": "Categories",
+									},
+									{
+										"key": "tasks",
+										"title": "Products",
+									},
+								],
+							}
+						}
+							// navigation.navigate('TaskList', { navigation, category }
 							// { list: list, edit: true, name: list.name }
 						)
 					}
@@ -204,8 +222,6 @@ class MainCategoriesList extends Component {
 						// 	secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
 						// }
 						<View>
-							{/* TODO */}
-							{category.photo && console.log('this is category with photo', category.photo)}
 							<ImageBackground style={{
 								width: 'auto', height: 80,
 								zIndex: -1,

@@ -32,7 +32,7 @@
 		"finished": "Finished",
 		"newCategory": "New category",
 		"all": "All",
-		"emptyList": "Task list is empty!",
+		"emptyList": "Product list is empty!",
 		"date": "Date",
 		"category": "Category",
 		"priority": "Priority",
@@ -101,14 +101,14 @@
 		"version": "Version"
 	},
 	"QuicklyList": {
-		"dialogDescription": "Delete this list?",
+		"dialogDescription": "Delete this category?",
 		"totalTasks": "Total products:",
-		"quicklyLists": "Quickly lists",
-		"emptyList": "Quickly lists is empty!"
+		"quicklyLists": "Categories List",
+		"emptyList": "Categories List is empty!"
 	},
 	"QuicklyTaskList": {
-		"listName": "List name",
-		"dialogTitle": "Edit list name",
+		"listName": "Category Name",
+		"dialogTitle": "Edit Category Name",
 		"nameLabel": "Enter new category name",
 		"emptyList": "Categories List is empty!"
 	},
