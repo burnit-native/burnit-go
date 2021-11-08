@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native'
 import DateTimePickerModal from 'react-native-modal-datetime-picker'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IconToggle, Toolbar, Checkbox } from 'react-native-material-ui'
 import { askAsync, CALENDAR, REMINDERS } from 'expo-permissions'
 import moment from 'moment'
@@ -161,6 +162,8 @@ class ViewProduct extends Component {
 			...product,
 		}
 
+		this.getRawPhoto(newTask.photo)
+
 		this.setState({ task: newTask })
 
 		// if (taskId !== false) {
@@ -190,6 +193,28 @@ class ViewProduct extends Component {
 			taskCopy: JSON.parse(JSON.stringify(task)),
 			editTask: false,
 			loading: false,
+		})
+	}
+
+	getRawPhoto = async (photoName) => {
+		const result = await axios.get(`http://caliboxs.com/api/v1/galleries/183`, {
+			headers: {
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			},
+		})
+
+		const photoArray = result.data.result
+
+		const photoUrl = photoArray.find((photoObj) => {
+			const productId = photoName.split('-').pop()
+			return +photoObj.id === +productId
+		}).photo
+
+		const prevTask = this.state.task
+		prevTask.photo = photoUrl
+
+		this.setState({
+			task: prevTask,
 		})
 	}
 
@@ -508,17 +533,8 @@ class ViewProduct extends Component {
 			showDialog,
 		} = this.state
 		const { navigation, theme, settings, translations } = this.props
-		const isDateTime = dateTime(task.date)
 		let date
 		let now
-
-		if (isDateTime) {
-			date = moment(task.date, dateTimeFormat)
-			now = new Date()
-		} else {
-			date = moment(task.date, dateFormat)
-			now = new Date().setHours(0, 0, 0, 0)
-		}
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -580,8 +596,13 @@ class ViewProduct extends Component {
 							<Subheader text='Details:' />
 							<Text style={styles.productInfo}>{this.state.task.details}</Text>
 
-							<View style={styles.dateContainer}></View>
-
+							<Subheader text='Photo:' />
+							<View style={styles.imageContainer}>
+								<Image
+									style={{ width: 200, height: 200 }}
+									source={{ url: this.state.task.photo }}
+								/>
+							</View>
 							<View style={styles.dateContainer}>
 								<Subheader text={translations.categoryView} />
 								<View style={styles.select}>

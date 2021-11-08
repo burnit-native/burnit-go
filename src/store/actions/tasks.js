@@ -321,28 +321,49 @@ export const saveTask =
 		// 	)
 		// }
 
-		try {
-			const bodyFormData = new FormData()
+		const bodyFormData = new FormData()
+		const photoForm = new FormData()
 
-			// bodyFormData.append('name', task.name)
-			// bodyFormData.append('price', task.price)
-			// bodyFormData.append('stock', task.stock)
-			// bodyFormData.append('details', task.details)
-			// bodyFormData.append('photo', {
-			// 	uri: task.image,
-			// 	type: 'image/jpeg',
-			// 	name: task.name + '_photo',
-			// })
-			console.log(`adding category ID`, task.category.id)
-			bodyFormData.append('name', task.name)
-			bodyFormData.append('price', task.price)
-			bodyFormData.append('stock', task.stock)
-			bodyFormData.append('details', task.details)
-			bodyFormData.append('categories[]', task.category.id)
+		// bodyFormData.append('name', task.name)
+		// bodyFormData.append('price', task.price)
+		// bodyFormData.append('stock', task.stock)
+		// bodyFormData.append('details', task.details)
+		// bodyFormData.append('photo', {
+		// 	uri: task.image,
+		// 	type: 'image/jpeg',
+		// 	name: task.name + '_photo',
+		// })
+		bodyFormData.append('name', task.name)
+		bodyFormData.append('price', task.price)
+		bodyFormData.append('stock', task.stock)
+		bodyFormData.append('details', task.details)
+		bodyFormData.append('categories[]', task.category.id)
+
+		photoForm.append('product_id', '183')
+
+		photoForm.append('gallery[]', {
+			uri: task.image,
+			type: 'image/jpeg',
+			name: task.name + '_photo',
+		})
+
+		try {
+			const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
+				headers: {
+					'content-type': 'multipart/form-data',
+					// "content-type": "application/json",
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
+
+			console.log('new photo', newPhoto)
+
+			const filteredNewPhoto = newPhoto.data.result[0]
+
 			bodyFormData.append('photo', {
 				uri: task.image,
 				type: 'image/jpeg',
-				name: task.name + '_photo',
+				name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
 			})
 
 			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
@@ -354,6 +375,7 @@ export const saveTask =
 			})
 
 			if (response) {
+				console.log(`product`, response)
 				Alert.alert('Success', `Your product has been created.`, [
 					{
 						text: 'Ok',

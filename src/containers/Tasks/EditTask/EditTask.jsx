@@ -11,6 +11,7 @@ import Spinner from '../../../components/Spinner/Spinner'
 import Template from '../../Template/Template'
 import Input from '../../../components/Input/Input'
 import ConfigCategory from '../../Categories/ConfigCategory/ConfigCategory'
+import axios from 'axios'
 import {
 	checkValid,
 	convertDaysIndex,
@@ -160,6 +161,11 @@ class EditTask extends Component {
 		// const category = navigation.getParam('category', false)
 		const product = navigation.getParam('product', false)
 		this.setState({ task: product })
+
+		this.getRawPhoto(product.photo)
+
+		this.setState({ task: product })
+
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
 		// 	if (finished) {
@@ -188,6 +194,32 @@ class EditTask extends Component {
 			editTask: true,
 			loading: false,
 		})
+	}
+
+	getRawPhoto = async (photoName) => {
+		try {
+			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/183`, {
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
+
+			const photoArray = result.data.result
+
+			const photoUrl = photoArray.find((photoObj) => {
+				const productId = photoName.split('-').pop()
+				return +photoObj.id === +productId
+			}).photo
+
+			const prevTask = this.state.task
+			prevTask.photo = photoUrl
+
+			this.setState({
+				task: prevTask,
+			})
+		} catch (err) {
+			console.log('failed to get photo', err)
+		}
 	}
 
 	prepareTask = (task) => {
@@ -643,15 +675,20 @@ class EditTask extends Component {
 								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
 							</View>
 						</View>
-						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
-						{this.state.task.image && (
+						{this.state.task.image ? (
 							<Image
 								source={{
 									uri: this.state.task.image && this.state.task.image,
 								}}
 								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
 							/>
+						) : (
+							<Image
+								source={{ url: this.state.task.photo }}
+								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
+							/>
 						)}
+						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 					</ScrollView>
 				) : (
 					<Spinner />
