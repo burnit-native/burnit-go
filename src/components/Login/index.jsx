@@ -28,6 +28,14 @@ const LoginContainer = ({ onLoginSuccess }) => {
 		setNeedAnAccount(true)
 	}
 
+	const errorParseResult = (errorObj) => {
+		let errorsArray = []
+		for (let errorFieldArray in errorObj) {
+			errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
+		}
+		return errorsArray.join('\n')
+	}
+
 	const handleLoginPress = async () => {
 		try {
 			const response = await axios.post('http://caliboxs.com/api/v1/login', {
@@ -49,15 +57,17 @@ const LoginContainer = ({ onLoginSuccess }) => {
 			onLoginSuccess()
 		} catch (e) {
 			console.log('THIS IS LOGIN ERROR', e)
+			Alert.alert(
+				'Error',
+				`${e.response.data.message} ${errorParseResult(e.response.data.errors)}`,
+				[
+					{
+						text: 'Ok',
+						style: 'cancel',
+					},
+				],
+			)
 		}
-	}
-
-	const errorParseResult = (errorObj) => {
-		let errorsArray = []
-		for (let errorFieldArray in errorObj) {
-			errorObj[errorFieldArray].forEach((error) => errorsArray.push(error))
-		}
-		return errorsArray.join('\n')
 	}
 
 	const handleCreateAccountPress = async () => {

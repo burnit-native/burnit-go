@@ -180,7 +180,7 @@ class TaskList extends Component {
 
 		const cancelHandler = () => this.setState({ showDialog: false })
 
-		// let dialog
+		let dialog
 		// if (action === 'repeat') {
 		// 	dialog = generateDialogObject(
 		// 		cancelHandler,
