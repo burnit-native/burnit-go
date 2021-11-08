@@ -657,9 +657,6 @@ class TaskList extends Component {
 		const { navigation } = this.props
 		const category = navigation.getParam('category', null)
 
-		// TODO
-		console.log('this is category :: ', category)
-
 		return data.filter(({ task }, index) => {
 			if (!category) {
 				return true
