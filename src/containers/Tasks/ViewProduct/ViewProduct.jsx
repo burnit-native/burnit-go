@@ -562,13 +562,13 @@ class ViewProduct extends Component {
 									onPress={() => this.showDialog('delete')}
 								/>
 							)}
-							{this.checkChanges() && (
+							{/* {this.checkChanges() && (
 								<IconToggle
 									name={task.finish ? 'replay' : 'save'}
 									color={theme.primaryTextColor}
 									onPress={this.saveTask}
 								/>
-							)}
+							)} */}
 						</View>
 					}
 					onLeftElementPress={() => {

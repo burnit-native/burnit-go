@@ -515,7 +515,6 @@ class TaskList extends Component {
 	}
 
 	dropdownRenderRow = (rowData, index) => {
-
 		const { selectedCategory } = this.state
 		const { tasks, finished, theme } = this.props
 
@@ -839,13 +838,6 @@ class TaskList extends Component {
 			loading,
 		} = this.state
 		const { theme, navigation, sortingType, settings, sorting, finished, translations } = this.props
-
-		// TODO
-		console.log('this is selecte cdcategory:: ', selectedCategory)
-
-		console.log('this is getting category from params:: ', navigation.getParam('category', null))
-
-
 
 		const filterData = this.getFilterData()
 
