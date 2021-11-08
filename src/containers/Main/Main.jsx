@@ -50,6 +50,14 @@ class Main extends Component {
 		const { tabs, loading } = this.state
 		const { navigation, theme, hideTabView, onInitCategories } = this.props
 
+		const fromCategories = navigation.getParam('fromCategories', null);
+		const fromCategory = navigation.getParam('category', null);
+
+		const currentTab = fromCategories || tabs
+
+		//  TODO
+		console.log('this is tabs :: ', fromCategories);
+
 		return (
 			<>
 				{!this.state.isLoggedIn ? (
@@ -60,15 +68,18 @@ class Main extends Component {
 				) : (
 					<Template bgColor={theme.secondaryBackgroundColor}>
 						<TabView
-							navigationState={tabs}
+							navigationState={currentTab}
+							// navigationState={tabs}
 							tabStyle={{ backgroundColor: theme.primaryColor }}
 							onIndexChange={(index) => {
-								tabs.index = index
-								this.setState({ tabs })
+								currentTab.index = index
+								// tabs.index = index
+								this.setState({ currentTab })
+								// this.setState({ tabs })
 							}}
 							renderScene={SceneMap({
 								lists: () => <MainCategoriesList navigation={navigation} onInitCategories={onInitCategories} />,
-								tasks: () => <TaskList navigation={navigation} />,
+								tasks: () => <TaskList navigation={navigation} category={fromCategory} />,
 							})}
 							renderTabBar={(props) => (
 								<TabBar

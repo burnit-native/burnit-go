@@ -210,8 +210,6 @@ class MainCategoriesList extends Component {
 						// 	secondaryText: `${translations.totalTasks} ${amounts[category.id] ? amounts[category.id] : 0}`,
 						// }
 						<View>
-							{/* TODO */}
-							{/* {category.photo && console.log('this is category with photo', category.photo)} */}
 							<ImageBackground
 								style={{
 									width: 'auto',

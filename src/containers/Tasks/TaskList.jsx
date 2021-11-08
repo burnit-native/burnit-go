@@ -515,6 +515,7 @@ class TaskList extends Component {
 	}
 
 	dropdownRenderRow = (rowData, index) => {
+
 		const { selectedCategory } = this.state
 		const { tasks, finished, theme } = this.props
 
@@ -656,6 +657,9 @@ class TaskList extends Component {
 		// This grabs category from param from previous categories route
 		const { navigation } = this.props
 		const category = navigation.getParam('category', null)
+
+		// TODO
+		console.log('this is category :: ', category)
 
 		return data.filter(({ task }, index) => {
 			if (!category) {
@@ -836,10 +840,18 @@ class TaskList extends Component {
 		} = this.state
 		const { theme, navigation, sortingType, settings, sorting, finished, translations } = this.props
 
+		// TODO
+		console.log('this is selecte cdcategory:: ', selectedCategory)
+
+		console.log('this is getting category from params:: ', navigation.getParam('category', null))
+
+
+
 		const filterData = this.getFilterData()
 
+		const categoryPassed = navigation.getParam('category', null) || selectedCategory
 		// TODO
-		// console.log('this is dropdown data :: ', dropdownData)
+		// console.log('this is dropdown data :: ', dropdownData, ' end of drop down data')
 
 		return (
 			<View style={flex}>
@@ -866,7 +878,8 @@ class TaskList extends Component {
 										...styles.dropdownDropdown,
 										backgroundColor: theme.primaryBackgroundColor,
 									}}
-									defaultValue={selectedCategory.name}
+									defaultValue={categoryPassed.name}
+									// defaultValue={selectedCategory.name}
 									defaultIndex={selectedIndex}
 									options={dropdownData}
 									onDropdownWillShow={() => this.rotate(1)}
@@ -883,7 +896,8 @@ class TaskList extends Component {
 												},
 											]}
 										>
-											{selectedCategory.name}
+											{categoryPassed.name}
+											{/* {selectedCategory.name} */}
 										</Text>
 										<Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
 											<Icon
