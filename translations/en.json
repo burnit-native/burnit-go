@@ -149,7 +149,7 @@
 	},
 	"ConfigTask": {
 		"nameLabel": "Enter product name",
-		"priceLabel": "Enter product price ($)",
+		"priceLabel": "Enter product price",
 		"stockLabel": "Enter product stock",
 		"previousPriceLabel": "Enter previous product price",
 		"tagsLabel": "Enter product details",

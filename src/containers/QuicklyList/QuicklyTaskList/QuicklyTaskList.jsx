@@ -63,6 +63,7 @@ class QuicklyTaskList extends Component {
 		loading: true,
 		editMode: false,
 		edit: this.props.navigation.getParam('edit', false),
+		spinner: false,
 	}
 
 	componentDidMount() {
@@ -193,6 +194,7 @@ class QuicklyTaskList extends Component {
 		} = this.props
 
 		if (!input.control.error) {
+			this.setState({ spinner: true })
 			const newCategory = {
 				name: input.value,
 				photo: this.state.image,
@@ -209,6 +211,7 @@ class QuicklyTaskList extends Component {
 						style: 'cancel',
 					},
 				])
+				this.setState({ spinner: false })
 			}
 
 			// onSaveQuicklyTask(newTask, list, (list) => {
@@ -484,7 +487,11 @@ class QuicklyTaskList extends Component {
 									/>
 								)}
 								{/* <View style={styles.addIcon}> */}
-								<IconToggle styles={styles.addIcon} onPress={this.addTask} name='add' />
+								{this.state.spinner ? (
+									<Spinner />
+								) : (
+									<IconToggle styles={styles.addIcon} onPress={this.addTask} name='add' />
+								)}
 								{this.state.edit && (
 									<IconToggle styles={styles.addIcon} onPress={this.editCategory} name='edit' />
 								)}

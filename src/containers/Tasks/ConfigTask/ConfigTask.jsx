@@ -125,7 +125,7 @@ class ConfigTask extends Component {
 			},
 			price: {
 				label: this.props.translations.priceLabel,
-				required: true,
+				required: false,
 				characterRestriction: 40,
 			},
 			stock: {
@@ -520,6 +520,7 @@ class ConfigTask extends Component {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
 		// 	} else {
+		this.setState({ loading: true })
 		onSaveTask(task, navigation.goBack)
 		// 	}
 		// }
@@ -579,7 +580,7 @@ class ConfigTask extends Component {
 									onPress={() => this.showDialog('delete')}
 								/>
 							)}
-							{this.checkChanges() && (
+							{this.checkChanges() && !loading && (
 								<IconToggle
 									name={task.finish ? 'replay' : 'save'}
 									color={theme.primaryTextColor}

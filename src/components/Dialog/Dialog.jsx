@@ -45,12 +45,12 @@ const defaultDialog = (props) => (
 				<View>{props.children ? props.children : null}</View>
 			)}
 
-			<ScrollView style={styles.dialogButtons}>
+			<View style={styles.dialogButtons}>
 				{props.buttons &&
 					props.buttons.map((button) => (
 						<Dialog.Button key={button.label} label={button.label} onPress={button.onPress} />
 					))}
-			</ScrollView>
+			</View>
 		</View>
 	</Dialog.Container>
 )
