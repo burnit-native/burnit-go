@@ -1,5 +1,5 @@
 import React from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View, ScrollView } from 'react-native'
 import { ListItem } from 'react-native-material-ui'
 import Dialog from 'react-native-dialog'
 import Input from '../Input/Input'
@@ -45,65 +45,71 @@ const defaultDialog = (props) => (
 				<View>{props.children ? props.children : null}</View>
 			)}
 
-			<View style={styles.dialogButtons}>
+			<ScrollView style={styles.dialogButtons}>
 				{props.buttons &&
 					props.buttons.map((button) => (
 						<Dialog.Button key={button.label} label={button.label} onPress={button.onPress} />
 					))}
-			</View>
+			</ScrollView>
 		</View>
 	</Dialog.Container>
 )
 
-const selectDialog = (props) => (
-	<Dialog.Container onBackdropPress={props.cancelHandler} visible={props.showDialog}>
-		<View
-			style={{ ...styles.dialogContainer, backgroundColor: props.theme.primaryBackgroundColor }}
-		>
-			<View style={styles.dialogTitle}>
-				{props.title && (
-					<Dialog.Title style={{ color: props.theme.thirdTextColor, textAlign: 'center' }}>
-						{props.title}
-					</Dialog.Title>
-				)}
-			</View>
-
-			{props.body && (
-				<View>
-					{props.body.map((option, index) => (
-						<TouchableOpacity key={index} onPress={() => option.onClick(option.value)}>
-							<ListItem
-								divider
-								dense
-								style={{
-									contentViewContainer: {
-										backgroundColor: props.theme.primaryBackgroundColor,
-									},
-									primaryText: {
-										color: checkSelectedOption(option.value, props.selectedValue)
-											? props.theme.primaryColor
-											: props.theme.thirdTextColor,
-									},
-									...option.style,
-								}}
-								centerElement={{
-									primaryText: option.name,
-								}}
-							/>
-						</TouchableOpacity>
-					))}
+const selectDialog = (props) => {
+	return (
+		<Dialog.Container onBackdropPress={props.cancelHandler} visible={props.showDialog}>
+			<View
+				style={{
+					...styles.dialogContainer,
+					backgroundColor: props.theme.primaryBackgroundColor,
+					maxHeight: 500,
+				}}
+			>
+				<View style={styles.dialogTitle}>
+					{props.title && (
+						<Dialog.Title style={{ color: props.theme.thirdTextColor, textAlign: 'center' }}>
+							{props.title}
+						</Dialog.Title>
+					)}
 				</View>
-			)}
 
-			<View style={styles.dialogButtons}>
-				{props.buttons &&
-					props.buttons.map((button) => (
-						<Dialog.Button key={button.label} label={button.label} onPress={button.onPress} />
-					))}
+				{props.body && (
+					<ScrollView style={styles.dialogBody}>
+						{props.body.map((option, index) => (
+							<TouchableOpacity key={index} onPress={() => option.onClick(option.value)}>
+								<ListItem
+									divider
+									dense
+									style={{
+										contentViewContainer: {
+											backgroundColor: props.theme.primaryBackgroundColor,
+										},
+										primaryText: {
+											color: checkSelectedOption(option.value, props.selectedValue)
+												? props.theme.primaryColor
+												: props.theme.thirdTextColor,
+										},
+										...option.style,
+									}}
+									centerElement={{
+										primaryText: option.name,
+									}}
+								/>
+							</TouchableOpacity>
+						))}
+					</ScrollView>
+				)}
+
+				<View style={styles.dialogButtons}>
+					{props.buttons &&
+						props.buttons.map((button) => (
+							<Dialog.Button key={button.label} label={button.label} onPress={button.onPress} />
+						))}
+				</View>
 			</View>
-		</View>
-	</Dialog.Container>
-)
+		</Dialog.Container>
+	)
+}
 
 const inputDialog = (props) => (
 	<Dialog.Container onBackdropPress={props.cancelHandler} visible={props.showDialog}>

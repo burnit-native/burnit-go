@@ -763,7 +763,7 @@ class ConfigTask extends Component {
 										{task.category.name}
 									</Text>
 								</TouchableOpacity>
-								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
+								{/* <IconToggle onPress={this.toggleConfigCategory} name='playlist-add' /> */}
 							</View>
 						</View>
 						{this.state.photoMode ? (
