@@ -106,6 +106,8 @@ class ConfigTask extends Component {
 			whole_sell_qty: '',
 			whole_sell_discount: '',
 			is_catalog: 0,
+			nose: '',
+			structure: '',
 			catalog_id: 0,
 			// ORIGINAL BELOW
 			id: false,
@@ -147,6 +149,17 @@ class ConfigTask extends Component {
 			},
 			description: {
 				label: this.props.translations.descriptionLabel,
+				multiline: true,
+			},
+			nose: {
+				label: this.props.translations.noseLabel,
+				required: false,
+				characterRestriction: 80
+			},
+			structure: {
+				label: this.props.translations.structureLabel,
+				required: false,
+				characterRestriction: 80,
 				multiline: true,
 			},
 		},
@@ -516,7 +529,8 @@ class ConfigTask extends Component {
 	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
-
+		// TODO
+		console.log('this is task coming being added', task)
 		// const saveTaskCallback = (task) => {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
@@ -660,7 +674,29 @@ class ConfigTask extends Component {
 								this.setState({ task, controls })
 							}}
 						/>
-						{/* <Input
+						<Input
+							elementConfig={controls.nose}
+							focus={!editTask}
+							value={task.nose}
+							changed={(value, control) => {
+								const { task, controls } = this.state
+								task.nose = value
+								controls.nose = control
+								this.setState({ task, controls })
+							}}
+						/>
+						<Input
+							elementConfig={controls.structure}
+							focus={!editTask}
+							value={task.structure}
+							changed={(value, control) => {
+								const { task, controls } = this.state
+								task.structure = value
+								controls.structure = control
+								this.setState({ task, controls })
+							}}
+						/>
+						{/* <InputdescriptionLabel
 							elementConfig={controls.description}
 							value={task.description}
 							changed={(value) => this.updateTask('description', value)}

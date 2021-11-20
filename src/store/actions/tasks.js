@@ -343,6 +343,8 @@ export const saveTask =
 			bodyFormData.append('price', task.price)
 			bodyFormData.append('stock', task.stock)
 			bodyFormData.append('details', task.details)
+			bodyFormData.append('nose', task.nose)
+			bodyFormData.append('structure', task.structure)
 			bodyFormData.append('categories[]', task.category.id)
 			bodyFormData.append('video', task.video)
 

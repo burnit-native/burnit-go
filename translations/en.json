@@ -160,6 +160,8 @@
 		"TypeLabel": "",
 		"affiliateLinkLabel": "Enter affiliate lnk",
 		"descriptionLabel": "Enter task description",
+		"noseLabel": "Enter a nose",
+		"structureLabel": "Enter the structure",
 		"noRepeat": "No repeat",
 		"onceDay": "Once a Day",
 		"onceDayMonFri": "Once a Week (Mon-Fri)",

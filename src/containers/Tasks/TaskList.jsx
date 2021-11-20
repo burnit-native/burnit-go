@@ -707,6 +707,9 @@ class TaskList extends Component {
 
 		const moveValue = animations[`move${task?.id}`] ? animations[`move${task?.id}`] : 0
 		const hideTask = animations[`hide${task?.id}`] ? 0 : 'auto'
+		// TODO
+		
+		console.log('this is task from task list', task)
 
 		return (
 			<View>

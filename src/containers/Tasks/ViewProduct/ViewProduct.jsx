@@ -93,6 +93,8 @@ class ViewProduct extends Component {
 			whole_sell_qty: '',
 			whole_sell_discount: '',
 			is_catalog: 0,
+			nose: '',
+			structure: '',
 			catalog_id: 0,
 			video: '',
 			// ORIGINAL BELOW
@@ -606,21 +608,10 @@ class ViewProduct extends Component {
 							<Text style={styles.productInfo}>{this.state.task.stock}</Text>
 							<Subheader text='Details:' />
 							<Text style={styles.productInfo}>{this.state.task.details}</Text>
-
-							<Subheader text='Photo:' />
-							<View style={styles.dateContainer}>
-								<Subheader text={translations.categoryView} />
-								<View style={styles.select}>
-									<Text
-										style={{
-											...styles.selectedOption,
-											color: theme.secondaryTextColor,
-										}}
-									>
-										{task.category.name}
-									</Text>
-								</View>
-							</View>
+							<Subheader text='Nose:' />
+							<Text style={styles.productInfo}>{this.state.task.nose}</Text>
+							<Subheader text='Structure:' />
+							<Text style={styles.productInfo}>{this.state.task.structure}</Text>
 							<View style={styles.imageContainer}>
 								<Subheader text={translations.image} />
 								<Image
