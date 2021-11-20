@@ -193,26 +193,19 @@ const errorParseResult = (errorObj) => {
 export const saveEditTask =
 	(task, callback = () => null) =>
 	async (dispatch) => {
-		console.log('new nameeeeee', task.name)
-
 		try {
 			const bodyFormData = new FormData()
 
 			console.log(`adding category ID`, task.category.id)
-			bodyFormData.append('method', 'put')
+			bodyFormData.append('_method', 'put')
 			bodyFormData.append('name', task.name)
 			bodyFormData.append('price', task.price)
 			bodyFormData.append('stock', task.stock)
 			bodyFormData.append('details', task.details)
 			bodyFormData.append('categories[]', task.category.id)
-			bodyFormData.append('photo', {
-				uri: task.image,
-				type: 'image/jpeg',
-				name: task.name + '_photo',
-			})
 
 			const response = await axios.post(
-				'http://caliboxs.com/api/v1/products' + task.id,
+				`http://caliboxs.com/api/v1/products/${task.id}`,
 				bodyFormData,
 				{
 					headers: {

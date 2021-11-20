@@ -163,9 +163,6 @@ class EditTask extends Component {
 		this.setState({ task: product })
 
 		this.getRawPhoto(product.photo)
-
-		this.setState({ task: product })
-
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
 		// 	if (finished) {
@@ -531,6 +528,7 @@ class EditTask extends Component {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
 		// 	} else {
+		console.log(`id`, task.id)
 		this.props.onSaveEditTask(task, navigation.goBack)
 		// 	}
 		// }
