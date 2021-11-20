@@ -22,6 +22,7 @@ import {
 	generateDialogObject,
 	getTimeVariant,
 } from '../../../shared/utility'
+import VideoRecorderContainer from '../../../components/VideoRecorder'
 import { configTask } from '../../../shared/configTask'
 import Dialog from '../../../components/Dialog/Dialog'
 import * as Analytics from 'expo-firebase-analytics'
@@ -689,6 +690,10 @@ class EditTask extends Component {
 							/>
 						)}
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
+						<View style={styles.container}>
+							<Subheader text={translations.videoRecord} />
+							<VideoRecorderContainer />
+						</View>
 					</ScrollView>
 				) : (
 					<Spinner />

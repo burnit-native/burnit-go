@@ -22,6 +22,7 @@ import {
 	generateDialogObject,
 	getTimeVariant,
 } from '../../../shared/utility'
+import VideoPlayer from '../../../components/Video'
 import { configTask } from '../../../shared/configTask'
 import Dialog from '../../../components/Dialog/Dialog'
 import * as Analytics from 'expo-firebase-analytics'
@@ -597,12 +598,6 @@ class ViewProduct extends Component {
 							<Text style={styles.productInfo}>{this.state.task.details}</Text>
 
 							<Subheader text='Photo:' />
-							<View style={styles.imageContainer}>
-								<Image
-									style={{ width: 200, height: 200 }}
-									source={{ url: this.state.task.photo }}
-								/>
-							</View>
 							<View style={styles.dateContainer}>
 								<Subheader text={translations.categoryView} />
 								<View style={styles.select}>
@@ -615,6 +610,17 @@ class ViewProduct extends Component {
 										{task.category.name}
 									</Text>
 								</View>
+							</View>
+							<View style={styles.imageContainer}>
+								<Subheader text={translations.image} />
+								<Image
+									style={{ width: 200, height: 200 }}
+									source={{ url: this.state.task.photo }}
+								/>
+							</View>
+							<View style={styles.dateContainer}>
+								<Subheader text={translations.video} />
+								<VideoPlayer videoUri={this.state.task.videos} />
 							</View>
 						</View>
 					</ScrollView>

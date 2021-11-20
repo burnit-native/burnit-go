@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 
-export default function CameraContainer({ updateImage = null }) {
+export default function CameraPictureContainer({ updateImage = null }) {
     const [hasPermission, setHasPermission] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [preview, setPreview] = useState(false);
@@ -34,6 +34,7 @@ export default function CameraContainer({ updateImage = null }) {
             updateImage(photo.uri)
         }
     }
+
 
     if (hasPermission === null) {
         return <View />;
