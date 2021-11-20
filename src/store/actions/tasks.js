@@ -231,12 +231,19 @@ export const saveEditTask =
 				})
 			}
 
+			// bodyFormData.append('video', {
+			// 	uri: state.task.video,
+			// 	type: 'video/mov',
+			// 	name: state.task.name + '_photo',
+			// })
+
 			const response = await axios.post(
 				`http://caliboxs.com/api/v1/products/${state.task.id}`,
 				bodyFormData,
 				{
 					headers: {
 						'content-type': 'multipart/form-data',
+						// "content-type": "application/json",
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				},
@@ -250,9 +257,11 @@ export const saveEditTask =
 						style: 'cancel',
 					},
 				])
+				console.log('nice')
 				dispatch(initToDo())
 			}
 		} catch (err) {
+			console.log(`error`, err)
 			console.error(`error editing product`, err.response.data)
 			Alert.alert(
 				'Error',
@@ -271,91 +280,18 @@ export const saveEditTask =
 export const saveTask =
 	(task, callback = () => null) =>
 	async (dispatch) => {
-		// if (state.task.id) {
-		// 	db.transaction(
-		// 		(tx) => {
-		// 			tx.executeSql(
-		// 				`update tasks
-		// 									 set name            = ?,
-		// 											 description     = ?,
-		// 											 date            = ?,
-		// 											 category        = ?,
-		// 											 priority        = ?,
-		// 											 repeat          = ?,
-		// 											 event_id        = ?,
-		// 											 notification_id = ?
-		// 									 where id = ?;`,
-		// 				[
-		// 					task.name,
-		// 					task.description,
-		// 					task.date,
-		// 					task.category.id,
-		// 					task.priority,
-		// 					task.repeat,
-		// 					task.event_id,
-		// 					task.notification_id,
-		// 					task.id,
-		// 				],
-		// 				() => {
-		// 					Analytics.logEvent('updatedTask', {
-		// 						name: 'taskAction',
-		// 					})
-
-		// 					callback()
-		// 					dispatch(initTasks())
-		// 				},
-		// 			)
-		// 		},
-		// 		// eslint-disable-next-line no-console
-		// 		(err) => console.log(err),
-		// 	)
-		// } else {
-		// 	db.transaction(
-		// 		(tx) => {
-		// 			tx.executeSql(
-		// 				'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
-		// 				[
-		// 					task.name,
-		// 					task.description,
-		// 					task.date,
-		// 					task.category.id,
-		// 					task.priority,
-		// 					task.repeat,
-		// 					task.event_id,
-		// 					task.notification_id,
-		// 				],
-		// 				() => {
-		// 					Analytics.logEvent('createdTask', {
-		// 						name: 'taskAction',
-		// 					})
-
-		// 					callback()
-		// 					dispatch(initTasks())
-		// 				},
-		// 			)
-		// 		},
-		// 		// eslint-disable-next-line no-console
-		// 		(err) => console.log(err),
-		// 	)
-		// }
-
 		const bodyFormData = new FormData()
 		const photoForm = new FormData()
+		const videoForm = new FormData()
 
-		// bodyFormData.append('name', task.name)
-		// bodyFormData.append('price', task.price)
-		// bodyFormData.append('stock', task.stock)
-		// bodyFormData.append('details', task.details)
-		// bodyFormData.append('photo', {
-		// 	uri: task.image,
-		// 	type: 'image/jpeg',
-		// 	name: task.name + '_photo',
-		// })
 		bodyFormData.append('name', task.name)
 		bodyFormData.append('price', task.price)
 		bodyFormData.append('stock', task.stock)
 		bodyFormData.append('details', task.details)
+		bodyFormData.append('nose', task.nose)
+		bodyFormData.append('structure', task.structure)
 		bodyFormData.append('categories[]', task.category.id)
+		bodyFormData.append('video', task.video)
 
 		photoForm.append('product_id', '183')
 
@@ -365,8 +301,23 @@ export const saveTask =
 			name: task.name + '_photo',
 		})
 
+		videoForm.append('product_id', '183')
+
+		videoForm.append('gallery[]', {
+			uri: task.video,
+			type: 'video/mov',
+			name: task.video + '_video',
+		})
+
 		try {
 			const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
+				headers: {
+					'content-type': 'multipart/form-data',
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
+
+			const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', videoForm, {
 				headers: {
 					'content-type': 'multipart/form-data',
 					// "content-type": "application/json",
@@ -375,6 +326,13 @@ export const saveTask =
 			})
 
 			const filteredNewPhoto = newPhoto.data.result[0]
+			const filteredNewVideo = newVideo.data.result[0]
+
+			bodyFormData.append('video', {
+				uri: task.video,
+				type: 'video/mov',
+				name: `-${filteredNewVideo.product_id}-${filteredNewVideo.id}`,
+			})
 
 			bodyFormData.append('photo', {
 				uri: task.image,
@@ -391,6 +349,7 @@ export const saveTask =
 			})
 
 			if (response) {
+				console.log(`product`, response)
 				Alert.alert('Success', `Your product has been created.`, [
 					{
 						text: 'Ok',
@@ -398,9 +357,11 @@ export const saveTask =
 						style: 'cancel',
 					},
 				])
+				console.log('nice')
 				dispatch(initToDo())
 			}
 		} catch (err) {
+			console.log(`actual`, err)
 			console.error(`error posting new product`, err.response.data)
 			Alert.alert(
 				'Error',

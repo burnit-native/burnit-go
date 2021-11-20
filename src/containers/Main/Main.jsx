@@ -55,9 +55,6 @@ class Main extends Component {
 
 		const currentTab = fromCategories || tabs
 
-		//  TODO
-		console.log('this is tabs :: ', fromCategories);
-
 		return (
 			<>
 				{!this.state.isLoggedIn ? (

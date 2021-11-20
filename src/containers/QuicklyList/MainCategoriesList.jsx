@@ -163,10 +163,10 @@ class MainCategoriesList extends Component {
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
-					if (cate.user_id === +this.state.me) {
-						return true
-					}
-			  })
+				if (cate.user_id === +this.state.me) {
+					return true
+				}
+			})
 			: categories
 
 		return filteredByUserCategories.map((category, index) => (
@@ -175,6 +175,7 @@ class MainCategoriesList extends Component {
 					dense
 					onPress={() =>
 						navigation.navigate(
+							// TODO : fix bug where you go into main and show the second screen instead of directly into products/task
 							'TaskList',
 							{ category },
 							// { list: list, edit: true, name: list.name }
