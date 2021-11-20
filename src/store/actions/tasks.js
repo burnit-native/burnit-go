@@ -328,6 +328,7 @@ export const saveTask =
 
 			const bodyFormData = new FormData()
 			const photoForm = new FormData()
+			const videoForm = new FormData()
 
 			// bodyFormData.append('name', task.name)
 			// bodyFormData.append('price', task.price)
@@ -343,6 +344,7 @@ export const saveTask =
 			bodyFormData.append('stock', task.stock)
 			bodyFormData.append('details', task.details)
 			bodyFormData.append('categories[]', task.category.id)
+			bodyFormData.append('video', task.video)
 
 			photoForm.append('product_id', '183')
 
@@ -350,6 +352,14 @@ export const saveTask =
 				uri: task.image,
 				type: 'image/jpeg',
 				name: task.name + '_photo',
+			})
+
+			videoForm.append('product_id', '183')
+
+			videoForm.append('gallery[]', {
+				uri: task.video,
+				type: 'video/mov',
+				name: task.video + '_video',
 			})
 
 			try {
@@ -369,6 +379,22 @@ export const saveTask =
 					uri: task.image,
 					type: 'image/jpeg',
 					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+				})
+
+				const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
+					headers: {
+						'content-type': 'multipart/form-data',
+						// "content-type": "application/json",
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				})
+
+				const filteredNewVideo = newVideo.data.result[0]
+
+				bodyFormData.append('video', {
+					uri: task.video,
+					type: 'video/mov',
+					name: `-${filteredNewVideo.product_id}-${filteredNewVideo.id}`,
 				})
 
 				const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
