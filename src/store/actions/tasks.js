@@ -222,8 +222,6 @@ export const saveEditTask =
 					},
 				)
 
-				console.log('new photo!!!!', newPhoto)
-
 				const filteredNewPhoto = newPhoto.data.result[0]
 
 				bodyFormData.append('photo', {
@@ -376,8 +374,6 @@ export const saveTask =
 				},
 			})
 
-			console.log('new photo', newPhoto)
-
 			const filteredNewPhoto = newPhoto.data.result[0]
 
 			bodyFormData.append('photo', {
@@ -395,7 +391,6 @@ export const saveTask =
 			})
 
 			if (response) {
-				console.log(`product`, response)
 				Alert.alert('Success', `Your product has been created.`, [
 					{
 						text: 'Ok',
@@ -577,8 +572,6 @@ export const removeTask =
 					},
 				},
 			)
-
-			console.log('response', response)
 
 			callback()
 			dispatch(initToDo())
