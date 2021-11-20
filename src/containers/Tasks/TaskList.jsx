@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import {
 	Animated,
-	AsyncStorage,
 	Easing,
 	FlatList,
 	RefreshControl,
@@ -9,6 +8,8 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import {
 	ActionButton,
 	BottomNavigation,
@@ -72,6 +73,9 @@ class TaskList extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
+		if (prevProps.selectedCategory !== this.state.selectedCategory) {
+			AsyncStorage.setItem('productSelected', 'no')
+		}
 		if (prevProps.theme !== this.props.theme) {
 			this.refreshPriorityColors()
 		}
@@ -615,9 +619,8 @@ class TaskList extends Component {
 
 				const dateDifference = dateDiff(firstDate, secondDate, translations, settings.lang)
 				if (dateDifference) {
-					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${
-						dateDifference.prefix
-					})`
+					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${dateDifference.prefix
+						})`
 				}
 			}
 			return this.convertTimeCycle(task.date)
@@ -657,12 +660,23 @@ class TaskList extends Component {
 		const { navigation } = this.props
 		const category = navigation.getParam('category', null)
 
-		return data.filter(({ task }, index) => {
+		const isProductSelected = AsyncStorage.getItem('productSelected').then(data => console.log('this is async product selected', data))
+
+		if (isProductSelected === 'no') {
+			category = this.state.selectedCategory
+		}
+
+
+		const returnData = data.filter(({ task }, index) => {
+
+			// console.log('this is selected task: ', task.category.name)
+			// console.log('this is selected category: ', category?.name)
+
 			if (!category) {
 				return true
 			}
 
-			if (task.category.name === category.name) {
+			if (task.category.name === category?.name) {
 				return true
 			}
 
@@ -683,6 +697,8 @@ class TaskList extends Component {
 			// 	return true
 			// })
 		})
+
+		return returnData
 	}
 
 	renderTaskRow = ({ task, div, showDiv }) => {
@@ -749,8 +765,8 @@ class TaskList extends Component {
 												color: task.finish
 													? theme.thirdTextColor
 													: div === translations.overdue
-													? theme.warningColor
-													: theme.thirdTextColor,
+														? theme.warningColor
+														: theme.thirdTextColor,
 											}}
 										>
 											{this.getTaskDateLabel(task)}
@@ -838,7 +854,7 @@ class TaskList extends Component {
 
 		const filterData = this.getFilterData()
 
-		const categoryPassed = navigation.getParam('category', null) || selectedCategory
+		// const categoryPassed = navigation.getParam('category', null) || selectedCategory
 		// TODO
 		// console.log('this is dropdown data :: ', dropdownData, ' end of drop down data')
 
@@ -867,8 +883,8 @@ class TaskList extends Component {
 										...styles.dropdownDropdown,
 										backgroundColor: theme.primaryBackgroundColor,
 									}}
-									defaultValue={categoryPassed.name}
-									// defaultValue={selectedCategory.name}
+									// defaultValue={categoryPassed.name}
+									defaultValue={selectedCategory.name}
 									defaultIndex={selectedIndex}
 									options={dropdownData}
 									onDropdownWillShow={() => this.rotate(1)}
@@ -885,8 +901,8 @@ class TaskList extends Component {
 												},
 											]}
 										>
-											{categoryPassed.name}
-											{/* {selectedCategory.name} */}
+											{/* {categoryPassed.name} */}
+											{selectedCategory.name}
 										</Text>
 										<Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
 											<Icon

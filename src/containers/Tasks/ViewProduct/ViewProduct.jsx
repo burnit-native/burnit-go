@@ -208,10 +208,10 @@ class ViewProduct extends Component {
 		const photoUrl = photoArray.find((photoObj) => {
 			const productId = photoName.split('-').pop()
 			return +photoObj.id === +productId
-		}).photo
+		})
 
 		const prevTask = this.state.task
-		prevTask.photo = photoUrl
+		prevTask.photo = photoUrl.photo
 
 		this.setState({
 			task: prevTask,

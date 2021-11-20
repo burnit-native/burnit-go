@@ -163,22 +163,32 @@ class MainCategoriesList extends Component {
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
-					if (cate.user_id === +this.state.me) {
-						return true
-					}
-			  })
+				if (cate.user_id === +this.state.me) {
+					return true
+				}
+			})
 			: categories
 
 		return filteredByUserCategories.map((category, index) => (
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
-					onPress={() =>
+					onPress={() => {
+						AsyncStorage.setItem('productSelected', 'yes')
 						navigation.navigate(
-							'TaskList',
-							{ category },
+							'Main',
+							{
+								category, fromCategories: {
+									index: 1,
+									routes: [
+										{ key: 'lists', title: this.props.translations.MainCategoriesList },
+										{ key: 'tasks', title: this.props.translations.tasks },
+									],
+								},
+							},
 							// { list: list, edit: true, name: list.name }
-						)
+							)
+						}
 					}
 					style={{
 						container: [
