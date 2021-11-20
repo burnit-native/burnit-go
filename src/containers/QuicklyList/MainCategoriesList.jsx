@@ -173,22 +173,12 @@ class MainCategoriesList extends Component {
 			<View key={index} style={styles.quicklyTaskList}>
 				<ListItem
 					dense
-					onPress={() => {
-						AsyncStorage.setItem('productSelected', 'yes')
+					onPress={() =>
 						navigation.navigate(
-							'Main',
-							{
-								category, fromCategories: {
-									index: 1,
-									routes: [
-										{ key: 'lists', title: this.props.translations.MainCategoriesList },
-										{ key: 'tasks', title: this.props.translations.tasks },
-									],
-								},
-							},
+							'TaskList',
+							{ category },
 							// { list: list, edit: true, name: list.name }
-							)
-						}
+						)
 					}
 					style={{
 						container: [
