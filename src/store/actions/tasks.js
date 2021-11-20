@@ -191,21 +191,53 @@ const errorParseResult = (errorObj) => {
 }
 
 export const saveEditTask =
-	(task, callback = () => null) =>
+	(state, callback = () => null) =>
 	async (dispatch) => {
 		try {
 			const bodyFormData = new FormData()
+			const photoForm = new FormData()
 
-			console.log(`adding category ID`, task.category.id)
 			bodyFormData.append('_method', 'put')
-			bodyFormData.append('name', task.name)
-			bodyFormData.append('price', task.price)
-			bodyFormData.append('stock', task.stock)
-			bodyFormData.append('details', task.details)
-			bodyFormData.append('categories[]', task.category.id)
+			bodyFormData.append('name', state.task.name)
+			bodyFormData.append('price', state.task.price)
+			bodyFormData.append('stock', state.task.stock)
+			bodyFormData.append('details', state.task.details)
+			bodyFormData.append('categories[]', state.task.category.id)
+
+			if (state.updatePhoto) {
+				photoForm.append('product_id', '183')
+
+				photoForm.append('gallery[]', {
+					uri: state.task.image,
+					type: 'image/jpeg',
+					name: state.task.name + '_photo',
+				})
+
+				const newPhoto = await axios.post(
+					'http://caliboxs.com/api/v1/galleries/upload',
+					photoForm,
+					{
+						headers: {
+							'content-type': 'multipart/form-data',
+							// "content-type": "application/json",
+							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+						},
+					},
+				)
+
+				console.log('new photo!!!!', newPhoto)
+
+				const filteredNewPhoto = newPhoto.data.result[0]
+
+				bodyFormData.append('photo', {
+					uri: state.task.image,
+					type: 'image/jpeg',
+					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+				})
+			}
 
 			const response = await axios.post(
-				`http://caliboxs.com/api/v1/products/${task.id}`,
+				`http://caliboxs.com/api/v1/products/${state.task.id}`,
 				bodyFormData,
 				{
 					headers: {
@@ -246,7 +278,7 @@ export const saveEditTask =
 export const saveTask =
 	(task, callback = () => null) =>
 	async (dispatch) => {
-		// if (task.id) {
+		// if (state.task.id) {
 		// 	db.transaction(
 		// 		(tx) => {
 		// 			tx.executeSql(

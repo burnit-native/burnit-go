@@ -150,6 +150,7 @@ class EditTask extends Component {
 		isVisibleDate: false,
 		isVisibleTime: false,
 		loading: true,
+		updatePhoto: false,
 	}
 
 	componentDidMount() {
@@ -516,20 +517,19 @@ class EditTask extends Component {
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, image: result.uri }
-			this.setState({ task: newTask })
+			this.setState({ task: newTask, updatePhoto: true })
 		}
 	}
 
 	saveEditTask = async () => {
-		let { task, setEvent, setNotification } = this.state
+		let { task, setEvent, setNotification, updatePhoto } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
-
 		// const saveTaskCallback = (task) => {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
 		// 	} else {
-		console.log(`id`, task.id)
-		this.props.onSaveEditTask(task, navigation.goBack)
+		this.setState({ loading: true })
+		this.props.onSaveEditTask(this.state, navigation.goBack)
 		// 	}
 		// }
 	}
@@ -577,7 +577,7 @@ class EditTask extends Component {
 									onPress={() => this.showDialog('delete')}
 								/>
 							)} */}
-							{this.checkChanges() && (
+							{this.checkChanges() && !loading && (
 								<IconToggle
 									name={task.finish ? 'replay' : 'save'}
 									color={theme.primaryTextColor}
@@ -670,7 +670,6 @@ class EditTask extends Component {
 										{task.category.name}
 									</Text>
 								</TouchableOpacity>
-								<IconToggle onPress={this.toggleConfigCategory} name='playlist-add' />
 							</View>
 						</View>
 						{this.state.task.image ? (
