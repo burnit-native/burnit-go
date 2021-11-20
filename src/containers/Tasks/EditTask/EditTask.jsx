@@ -156,6 +156,9 @@ class EditTask extends Component {
 	componentDidMount() {
 		const { task } = this.state
 
+		// todo
+		console.log('this is task from component did mount', task)
+
 		const { navigation, onInitTask, onInitFinishedTask, translations } = this.props
 		const taskId = navigation.getParam('task', false)
 		const finished = navigation.getParam('finished', false)
@@ -212,14 +215,27 @@ class EditTask extends Component {
 				return +photoObj.id === +productId
 			}).photo
 
-			const prevTask = this.state.task
-			prevTask.photo = photoUrl
+			if (photoUrl) {
+				const prevTask = this.state.task
+				
+				prevTask.photo = photoUrl
 
-			this.setState({
-				task: prevTask,
-			})
+				this.setState({
+					task: prevTask,
+				})
+			}
 		} catch (err) {
 			console.log('failed to get photo', err)
+		}
+	}
+
+	getVideoUri = (videoUri) => {
+		const { task } = this.state
+
+		if (videoUri) {
+			this.setState({
+				task: { ...task, video: videoUri }
+			})
 		}
 	}
 
@@ -692,7 +708,7 @@ class EditTask extends Component {
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 						<View style={styles.container}>
 							<Subheader text={translations.videoRecord} />
-							<VideoRecorderContainer />
+							<VideoRecorderContainer getVideoUri={this.getVideoUri} />
 						</View>
 					</ScrollView>
 				) : (

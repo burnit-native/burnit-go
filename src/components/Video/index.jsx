@@ -24,7 +24,7 @@ export default function VideoPlayer({ videoUri }) {
             />
             <View style={styles.buttons}>
                 <Button
-                    title={status.isPlaying ? 'Pause' : 'Play'}
+                    title={status.isPlaying ? 'Pause Video' : 'Play Video'}
                     onPress={() =>
                         status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
                     }

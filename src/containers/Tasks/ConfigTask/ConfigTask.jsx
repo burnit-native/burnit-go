@@ -33,6 +33,7 @@ import {
 	generateDialogObject,
 	getTimeVariant,
 } from '../../../shared/utility'
+import VideoRecorderContainer from '../../../components/VideoRecorder'
 import { configTask } from '../../../shared/configTask'
 import Dialog from '../../../components/Dialog/Dialog'
 import * as Analytics from 'expo-firebase-analytics'
@@ -526,6 +527,16 @@ class ConfigTask extends Component {
 		// }
 	}
 
+	getVideoUri = (videoUri) => {
+		const { task } = this.state
+
+		if (videoUri) {
+			this.setState({
+				task: { ...task, video: videoUri }
+			})
+		}
+	}
+
 	render() {
 		const {
 			task,
@@ -782,6 +793,10 @@ class ConfigTask extends Component {
 								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
 							/>
 						)}
+						<View style={styles.container}>
+							<Subheader text={translations.videoRecord} />
+							<VideoRecorderContainer getVideoUri={this.getVideoUri} />
+						</View>
 					</ScrollView>
 				) : (
 					<Spinner />

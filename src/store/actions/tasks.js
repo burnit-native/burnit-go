@@ -33,31 +33,31 @@ export const onInitFinished = (tasks) => ({
 
 export const initTask =
 	(id, callback = () => null) =>
-	() => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql('select * from tasks where id = ?', [id], (_, { rows }) => {
-					callback(rows._array[0])
-				})
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	}
+		() => {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('select * from tasks where id = ?', [id], (_, { rows }) => {
+						callback(rows._array[0])
+					})
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		}
 
 export const initFinishedTask =
 	(id, callback = () => null) =>
-	() => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql('select * from finished where id = ?', [id], (_, { rows }) => {
-					callback(rows._array[0])
-				})
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	}
+		() => {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('select * from finished where id = ?', [id], (_, { rows }) => {
+						callback(rows._array[0])
+					})
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		}
 
 export const initToDo = (callback = () => null) => {
 	let tasks
@@ -192,215 +192,220 @@ const errorParseResult = (errorObj) => {
 
 export const saveEditTask =
 	(task, callback = () => null) =>
-	async (dispatch) => {
-		console.log('new nameeeeee', task.name)
+		async (dispatch) => {
+			console.log('new nameeeeee', task.name)
 
-		try {
+			try {
+				const bodyFormData = new FormData()
+
+				console.log(`adding category ID`, task.category.id)
+				bodyFormData.append('method', 'put')
+				bodyFormData.append('name', task.name)
+				bodyFormData.append('price', task.price)
+				bodyFormData.append('stock', task.stock)
+				bodyFormData.append('details', task.details)
+				bodyFormData.append('categories[]', task.category.id)
+				bodyFormData.append('photo', {
+					uri: task.image,
+					type: 'image/jpeg',
+					name: task.name + '_photo',
+				})
+				bodyFormData.append('video', {
+					uri: task.video,
+					type: 'video/mov',
+					name: task.name + '_photo',
+				})
+
+				const response = await axios.post(
+					'http://caliboxs.com/api/v1/products' + task.id,
+					bodyFormData,
+					{
+						headers: {
+							'content-type': 'multipart/form-data',
+							// "content-type": "application/json",
+							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+						},
+					},
+				)
+
+				if (response) {
+					Alert.alert('Success', `Your product has been updated.`, [
+						{
+							text: 'Ok',
+							onPress: callback,
+							style: 'cancel',
+						},
+					])
+					console.log('nice')
+					dispatch(initToDo())
+				}
+			} catch (err) {
+				console.error(`error editing product`, err.response.data)
+				Alert.alert(
+					'Error',
+					`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+					[
+						{
+							text: 'Ok',
+							onPress: null,
+							style: 'cancel',
+						},
+					],
+				)
+			}
+		}
+
+export const saveTask =
+	(task, callback = () => null) =>
+		async (dispatch) => {
+			// if (task.id) {
+			// 	db.transaction(
+			// 		(tx) => {
+			// 			tx.executeSql(
+			// 				`update tasks
+			// 									 set name            = ?,
+			// 											 description     = ?,
+			// 											 date            = ?,
+			// 											 category        = ?,
+			// 											 priority        = ?,
+			// 											 repeat          = ?,
+			// 											 event_id        = ?,
+			// 											 notification_id = ?
+			// 									 where id = ?;`,
+			// 				[
+			// 					task.name,
+			// 					task.description,
+			// 					task.date,
+			// 					task.category.id,
+			// 					task.priority,
+			// 					task.repeat,
+			// 					task.event_id,
+			// 					task.notification_id,
+			// 					task.id,
+			// 				],
+			// 				() => {
+			// 					Analytics.logEvent('updatedTask', {
+			// 						name: 'taskAction',
+			// 					})
+
+			// 					callback()
+			// 					dispatch(initTasks())
+			// 				},
+			// 			)
+			// 		},
+			// 		// eslint-disable-next-line no-console
+			// 		(err) => console.log(err),
+			// 	)
+			// } else {
+			// 	db.transaction(
+			// 		(tx) => {
+			// 			tx.executeSql(
+			// 				'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
+			// 				[
+			// 					task.name,
+			// 					task.description,
+			// 					task.date,
+			// 					task.category.id,
+			// 					task.priority,
+			// 					task.repeat,
+			// 					task.event_id,
+			// 					task.notification_id,
+			// 				],
+			// 				() => {
+			// 					Analytics.logEvent('createdTask', {
+			// 						name: 'taskAction',
+			// 					})
+
+			// 					callback()
+			// 					dispatch(initTasks())
+			// 				},
+			// 			)
+			// 		},
+			// 		// eslint-disable-next-line no-console
+			// 		(err) => console.log(err),
+			// 	)
+			// }
+
 			const bodyFormData = new FormData()
+			const photoForm = new FormData()
 
-			console.log(`adding category ID`, task.category.id)
-			bodyFormData.append('method', 'put')
+			// bodyFormData.append('name', task.name)
+			// bodyFormData.append('price', task.price)
+			// bodyFormData.append('stock', task.stock)
+			// bodyFormData.append('details', task.details)
+			// bodyFormData.append('photo', {
+			// 	uri: task.image,
+			// 	type: 'image/jpeg',
+			// 	name: task.name + '_photo',
+			// })
 			bodyFormData.append('name', task.name)
 			bodyFormData.append('price', task.price)
 			bodyFormData.append('stock', task.stock)
 			bodyFormData.append('details', task.details)
 			bodyFormData.append('categories[]', task.category.id)
-			bodyFormData.append('photo', {
+
+			photoForm.append('product_id', '183')
+
+			photoForm.append('gallery[]', {
 				uri: task.image,
 				type: 'image/jpeg',
 				name: task.name + '_photo',
 			})
 
-			const response = await axios.post(
-				'http://caliboxs.com/api/v1/products' + task.id,
-				bodyFormData,
-				{
+			try {
+				const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
 					headers: {
 						'content-type': 'multipart/form-data',
 						// "content-type": "application/json",
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
-				},
-			)
+				})
 
-			if (response) {
-				Alert.alert('Success', `Your product has been updated.`, [
-					{
-						text: 'Ok',
-						onPress: callback,
-						style: 'cancel',
+				console.log('new photo', newPhoto)
+
+				const filteredNewPhoto = newPhoto.data.result[0]
+
+				bodyFormData.append('photo', {
+					uri: task.image,
+					type: 'image/jpeg',
+					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+				})
+
+				const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
+					headers: {
+						'content-type': 'multipart/form-data',
+						// "content-type": "application/json",
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
-				])
-				console.log('nice')
-				dispatch(initToDo())
+				})
+
+				if (response) {
+					console.log(`product`, response)
+					Alert.alert('Success', `Your product has been created.`, [
+						{
+							text: 'Ok',
+							onPress: callback,
+							style: 'cancel',
+						},
+					])
+					console.log('nice')
+					dispatch(initToDo())
+				}
+			} catch (err) {
+				console.error(`error posting new product`, err.response.data)
+				Alert.alert(
+					'Error',
+					`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+					[
+						{
+							text: 'Ok',
+							onPress: null,
+							style: 'cancel',
+						},
+					],
+				)
 			}
-		} catch (err) {
-			console.error(`error editing product`, err.response.data)
-			Alert.alert(
-				'Error',
-				`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
-				[
-					{
-						text: 'Ok',
-						onPress: null,
-						style: 'cancel',
-					},
-				],
-			)
 		}
-	}
-
-export const saveTask =
-	(task, callback = () => null) =>
-	async (dispatch) => {
-		// if (task.id) {
-		// 	db.transaction(
-		// 		(tx) => {
-		// 			tx.executeSql(
-		// 				`update tasks
-		// 									 set name            = ?,
-		// 											 description     = ?,
-		// 											 date            = ?,
-		// 											 category        = ?,
-		// 											 priority        = ?,
-		// 											 repeat          = ?,
-		// 											 event_id        = ?,
-		// 											 notification_id = ?
-		// 									 where id = ?;`,
-		// 				[
-		// 					task.name,
-		// 					task.description,
-		// 					task.date,
-		// 					task.category.id,
-		// 					task.priority,
-		// 					task.repeat,
-		// 					task.event_id,
-		// 					task.notification_id,
-		// 					task.id,
-		// 				],
-		// 				() => {
-		// 					Analytics.logEvent('updatedTask', {
-		// 						name: 'taskAction',
-		// 					})
-
-		// 					callback()
-		// 					dispatch(initTasks())
-		// 				},
-		// 			)
-		// 		},
-		// 		// eslint-disable-next-line no-console
-		// 		(err) => console.log(err),
-		// 	)
-		// } else {
-		// 	db.transaction(
-		// 		(tx) => {
-		// 			tx.executeSql(
-		// 				'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
-		// 				[
-		// 					task.name,
-		// 					task.description,
-		// 					task.date,
-		// 					task.category.id,
-		// 					task.priority,
-		// 					task.repeat,
-		// 					task.event_id,
-		// 					task.notification_id,
-		// 				],
-		// 				() => {
-		// 					Analytics.logEvent('createdTask', {
-		// 						name: 'taskAction',
-		// 					})
-
-		// 					callback()
-		// 					dispatch(initTasks())
-		// 				},
-		// 			)
-		// 		},
-		// 		// eslint-disable-next-line no-console
-		// 		(err) => console.log(err),
-		// 	)
-		// }
-
-		const bodyFormData = new FormData()
-		const photoForm = new FormData()
-
-		// bodyFormData.append('name', task.name)
-		// bodyFormData.append('price', task.price)
-		// bodyFormData.append('stock', task.stock)
-		// bodyFormData.append('details', task.details)
-		// bodyFormData.append('photo', {
-		// 	uri: task.image,
-		// 	type: 'image/jpeg',
-		// 	name: task.name + '_photo',
-		// })
-		bodyFormData.append('name', task.name)
-		bodyFormData.append('price', task.price)
-		bodyFormData.append('stock', task.stock)
-		bodyFormData.append('details', task.details)
-		bodyFormData.append('categories[]', task.category.id)
-
-		photoForm.append('product_id', '183')
-
-		photoForm.append('gallery[]', {
-			uri: task.image,
-			type: 'image/jpeg',
-			name: task.name + '_photo',
-		})
-
-		try {
-			const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
-				headers: {
-					'content-type': 'multipart/form-data',
-					// "content-type": "application/json",
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
-
-			console.log('new photo', newPhoto)
-
-			const filteredNewPhoto = newPhoto.data.result[0]
-
-			bodyFormData.append('photo', {
-				uri: task.image,
-				type: 'image/jpeg',
-				name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
-			})
-
-			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
-				headers: {
-					'content-type': 'multipart/form-data',
-					// "content-type": "application/json",
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
-
-			if (response) {
-				console.log(`product`, response)
-				Alert.alert('Success', `Your product has been created.`, [
-					{
-						text: 'Ok',
-						onPress: callback,
-						style: 'cancel',
-					},
-				])
-				console.log('nice')
-				dispatch(initToDo())
-			}
-		} catch (err) {
-			console.error(`error posting new product`, err.response.data)
-			Alert.alert(
-				'Error',
-				`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
-				[
-					{
-						text: 'Ok',
-						onPress: null,
-						style: 'cancel',
-					},
-				],
-			)
-		}
-	}
 
 // export const finishTask = (task, endTask, primaryColor, callback = () => null) => {
 // 	let nextDate = task.date
@@ -510,93 +515,93 @@ export const saveTask =
 
 export const undoTask =
 	(task, callback = () => null) =>
-	(dispatch) => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql('delete from finished where id = ?', [task.id])
-				tx.executeSql(
-					'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
-					[
-						task.name,
-						task.description,
-						task.date,
-						task.category.id,
-						task.priority,
-						task.repeat,
-						task.event_id,
-						task.notification_id,
-					],
-					() => {
-						Analytics.logEvent('undoTask', {
-							name: 'taskAction',
-						})
+		(dispatch) => {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('delete from finished where id = ?', [task.id])
+					tx.executeSql(
+						'insert into tasks (name, description, date, category, priority, repeat, event_id, notification_id) values (?,?,?,?,?,?,?,?)',
+						[
+							task.name,
+							task.description,
+							task.date,
+							task.category.id,
+							task.priority,
+							task.repeat,
+							task.event_id,
+							task.notification_id,
+						],
+						() => {
+							Analytics.logEvent('undoTask', {
+								name: 'taskAction',
+							})
 
-						callback()
-						dispatch(initToDo())
-					},
-				)
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	}
+							callback()
+							dispatch(initToDo())
+						},
+					)
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		}
 
 export const removeTask =
 	(productId, finished = true, callback = () => null) =>
-	async (dispatch) => {
-		const bodyFormData = new FormData()
-		bodyFormData.append('_method', 'DELETE')
+		async (dispatch) => {
+			const bodyFormData = new FormData()
+			bodyFormData.append('_method', 'DELETE')
 
-		try {
-			const response = await axios.post(
-				'http://caliboxs.com/api/v1/products/' + productId,
-				bodyFormData,
-				{
-					headers: {
-						'content-type': 'multipart/form-data',
-						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			try {
+				const response = await axios.post(
+					'http://caliboxs.com/api/v1/products/' + productId,
+					bodyFormData,
+					{
+						headers: {
+							'content-type': 'multipart/form-data',
+							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+						},
 					},
-				},
-			)
+				)
 
-			console.log('response', response)
+				console.log('response', response)
 
-			callback()
-			dispatch(initToDo())
-		} catch (err) {
-			console.log('error deleting product', err)
+				callback()
+				dispatch(initToDo())
+			} catch (err) {
+				console.log('error deleting product', err)
+			}
+
+			// if (finished) {
+			// 	db.transaction(
+			// 		(tx) => {
+			// 			tx.executeSql('delete from finished where id = ?', [task.id], () => {
+			// 				callback()
+			// 				dispatch(initFinished())
+			// 			})
+			// 		},
+			// 		// eslint-disable-next-line no-console
+			// 		(err) => console.log(err),
+			// 	)
+			// } else {
+			// 	db.transaction(
+			// 		(tx) => {
+			// 			tx.executeSql('delete from tasks where id = ?', [task.id], () => {
+			// 				Analytics.logEvent('removedTask', {
+			// 					name: 'taskAction',
+			// 				})
+			// 				if (task.event_id !== null) {
+			// 					deleteCalendarEvent(task.event_id)
+			// 				}
+			// 				if (task.notification_id !== null) {
+			// 					deleteLocalNotification(task.notification_id)
+			// 				}
+			// 				callback()
+			// 				dispatch(initTasks())
+			// 			})
+			// 		},
+			// 		// eslint-disable-next-line no-console
+			// 		(err) => console.log(err),
+			// 	)
+			// }
 		}
-
-		// if (finished) {
-		// 	db.transaction(
-		// 		(tx) => {
-		// 			tx.executeSql('delete from finished where id = ?', [task.id], () => {
-		// 				callback()
-		// 				dispatch(initFinished())
-		// 			})
-		// 		},
-		// 		// eslint-disable-next-line no-console
-		// 		(err) => console.log(err),
-		// 	)
-		// } else {
-		// 	db.transaction(
-		// 		(tx) => {
-		// 			tx.executeSql('delete from tasks where id = ?', [task.id], () => {
-		// 				Analytics.logEvent('removedTask', {
-		// 					name: 'taskAction',
-		// 				})
-		// 				if (task.event_id !== null) {
-		// 					deleteCalendarEvent(task.event_id)
-		// 				}
-		// 				if (task.notification_id !== null) {
-		// 					deleteLocalNotification(task.notification_id)
-		// 				}
-		// 				callback()
-		// 				dispatch(initTasks())
-		// 			})
-		// 		},
-		// 		// eslint-disable-next-line no-console
-		// 		(err) => console.log(err),
-		// 	)
-		// }
-	}

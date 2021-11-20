@@ -94,9 +94,10 @@ class ViewProduct extends Component {
 			whole_sell_discount: '',
 			is_catalog: 0,
 			catalog_id: 0,
+			video: '',
 			// ORIGINAL BELOW
-			id: false,
-			name: '',
+			// id: false,
+			// name: '',
 			description: '',
 			date: '',
 			repeat: 'noRepeat',
@@ -163,6 +164,8 @@ class ViewProduct extends Component {
 			...product,
 		}
 
+
+		console.log('this is TASK from view Products', task)
 		this.getRawPhoto(newTask.photo)
 
 		this.setState({ task: newTask })
@@ -211,21 +214,28 @@ class ViewProduct extends Component {
 			return +photoObj.id === +productId
 		})
 
-		const prevTask = this.state.task
-		prevTask.photo = photoUrl.photo
+		if (photoUrl) {
+			const prevTask = this.state.task
+			prevTask.photo = photoUrl.photo
 
-		this.setState({
-			task: prevTask,
-		})
+			this.setState({
+				task: prevTask,
+			})
+		}
 	}
 
 	prepareTask = (task) => {
+
 		const { categories, translations, settings } = this.props
-		const findCate = categories.find((c) => +c.id === +task.category)
-		if (findCate) {
-			task.category = findCate
-		} else {
-			task.category = categories[0]
+
+		if (task) {
+			const findCate = categories.find((c) => +c.id === +task.category)
+
+			if (findCate) {
+				task.category = findCate
+			} else {
+				task.category = categories[0]
+			}
 		}
 
 		let selectedTime = 0
@@ -620,7 +630,7 @@ class ViewProduct extends Component {
 							</View>
 							<View style={styles.dateContainer}>
 								<Subheader text={translations.video} />
-								<VideoPlayer videoUri={this.state.task.videos} />
+								<VideoPlayer videoUri={this.state.task.video} />
 							</View>
 						</View>
 					</ScrollView>

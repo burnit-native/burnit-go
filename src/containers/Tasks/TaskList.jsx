@@ -660,11 +660,11 @@ class TaskList extends Component {
 		const { navigation } = this.props
 		const category = navigation.getParam('category', null)
 
-		const isProductSelected = AsyncStorage.getItem('productSelected').then(data => console.log('this is async product selected', data))
+		// const isProductSelected = AsyncStorage.getItem('productSelected').then(data => console.log('this is async product selected', data))
 
-		if (isProductSelected === 'no') {
-			category = this.state.selectedCategory
-		}
+		// if (isProductSelected === 'no') {
+		// 	category = this.state.selectedCategory
+		// }
 
 
 		const returnData = data.filter(({ task }, index) => {
