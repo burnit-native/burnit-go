@@ -63,9 +63,6 @@ export const initToDo = (callback = () => null) => {
 	let tasks
 	let categories
 
-	// TODO
-	console.log('this is todo')
-
 	return async (dispatch) => {
 		// db.transaction(
 		// 	(tx) => {
@@ -242,7 +239,6 @@ export const saveEditTask =
 				{
 					headers: {
 						'content-type': 'multipart/form-data',
-						// "content-type": "application/json",
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				},
@@ -256,7 +252,6 @@ export const saveEditTask =
 						style: 'cancel',
 					},
 				])
-				console.log('nice')
 				dispatch(initToDo())
 			}
 		} catch (err) {
@@ -408,7 +403,6 @@ export const saveTask =
 						style: 'cancel',
 					},
 				])
-				console.log('nice')
 				dispatch(initToDo())
 			}
 		} catch (err) {
