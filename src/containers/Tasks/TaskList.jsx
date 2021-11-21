@@ -619,8 +619,9 @@ class TaskList extends Component {
 
 				const dateDifference = dateDiff(firstDate, secondDate, translations, settings.lang)
 				if (dateDifference) {
-					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${dateDifference.prefix
-						})`
+					return `${this.convertTimeCycle(task.date)} (${dateDifference.value} ${
+						dateDifference.prefix
+					})`
 				}
 			}
 			return this.convertTimeCycle(task.date)
@@ -666,9 +667,7 @@ class TaskList extends Component {
 		// 	category = this.state.selectedCategory
 		// }
 
-
 		const returnData = data.filter(({ task }, index) => {
-
 			// console.log('this is selected task: ', task.category.name)
 			// console.log('this is selected category: ', category?.name)
 
@@ -707,9 +706,6 @@ class TaskList extends Component {
 
 		const moveValue = animations[`move${task?.id}`] ? animations[`move${task?.id}`] : 0
 		const hideTask = animations[`hide${task?.id}`] ? 0 : 'auto'
-		// TODO
-		
-		console.log('this is task from task list', task)
 
 		return (
 			<View>
@@ -768,8 +764,8 @@ class TaskList extends Component {
 												color: task.finish
 													? theme.thirdTextColor
 													: div === translations.overdue
-														? theme.warningColor
-														: theme.thirdTextColor,
+													? theme.warningColor
+													: theme.thirdTextColor,
 											}}
 										>
 											{this.getTaskDateLabel(task)}
