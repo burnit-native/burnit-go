@@ -200,6 +200,8 @@ export const saveEditTask =
 			bodyFormData.append('stock', state.task.stock)
 			bodyFormData.append('details', state.task.details)
 			bodyFormData.append('categories[]', state.task.category.id)
+			bodyFormData.append('nose', state.task.nose)
+			bodyFormData.append('structure', state.task.structure)
 
 			if (state.updatePhoto) {
 				photoForm.append('product_id', '183')
