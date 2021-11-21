@@ -272,7 +272,6 @@ export const valid = (control, value, translations, callback) => {
 			}
 		}
 		if (control.required) {
-			// TODO
 			if (typeof value === 'string' && value.trim() === '') {
 				control.error = translations.required
 				validStatus = false

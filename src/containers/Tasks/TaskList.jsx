@@ -707,9 +707,6 @@ class TaskList extends Component {
 
 		const moveValue = animations[`move${task?.id}`] ? animations[`move${task?.id}`] : 0
 		const hideTask = animations[`hide${task?.id}`] ? 0 : 'auto'
-		// TODO
-		
-		console.log('this is task from task list', task)
 
 		return (
 			<View>
@@ -972,7 +969,6 @@ class TaskList extends Component {
 					renderItem={({ item, index }) => this.renderTaskRow(item, index)}
 					keyExtractor={({ task }) => {
 						if (task && task.id) {
-							// console.log('thisis TASK FROM FLAT LIST::', task)
 							return `${task.id}`
 						} else {
 							return {}

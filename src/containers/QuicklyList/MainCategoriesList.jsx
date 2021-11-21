@@ -85,9 +85,8 @@ class MainCategoriesList extends Component {
 		}
 	}
 
-	showDialog = (list_id) => {
-		// TODO
-		const { translations, onRemoveList } = this.props
+	showDialog = (action, list_id) => {
+		const { translations, onRemoveCategory } = this.props
 
 		const cancelHandler = () => this.setState({ showDialog: false })
 
@@ -98,12 +97,11 @@ class MainCategoriesList extends Component {
 			{
 				[translations.yes]: () => {
 					cancelHandler()
-					onRemoveList(list_id)
+					onRemoveCategory(list_id)
 				},
 				[translations.no]: cancelHandler,
 			},
 		)
-
 		this.setState({ dialog, showDialog: true })
 	}
 
@@ -258,10 +256,11 @@ class MainCategoriesList extends Component {
 							/>
 							<IconToggle
 								onPress={() =>
-									this.showDialog(
-										category.id,
-										// list.name
-									)
+									// this.removeCategory(
+									// 	category.id,
+									// 	// list.name
+									// )
+									this.showDialog('delete', category.id)
 								}
 								name='delete'
 								color={theme.warningColor}
@@ -382,6 +381,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
 	onInitList: (id, callback) => dispatch(actions.initList(id, callback)),
 	onRemoveList: (list_id) => dispatch(actions.removeList(list_id)),
+	onRemoveCategory: (id) => dispatch(actions.removeCategory(id)),
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainCategoriesList)

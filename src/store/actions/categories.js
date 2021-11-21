@@ -69,19 +69,7 @@ export const onInitCategories = (categories) => ({
 export const initCategories =
 	(callback = () => null) =>
 		async (dispatch) => {
-			// db.transaction(
-			// 	(tx) => {
-			// 		// TODO
-			// 		console.log('this is cateogries ocming back')
-			// 		tx.executeSql('select * from categories', [], (_, { rows }) => {
-			// 			console.log('this is ROWS', rows._array)
-			// 			callback()
-			// 			dispatch(onInitCategories(rows._array))
-			// 		})
-			// 	},
-			// 	// eslint-disable-next-line no-console
-			// 	(err) => console.log(err),
-			// )
+			
 			try {
 				const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
 					headers: {
@@ -258,21 +246,27 @@ export const updateCategory = (category, callback) => async () => {
 	}
 }
 
-export const removeCategory =
-	(id, callback = () => null) =>
-		(dispatch) => {
-			db.transaction(
-				(tx) => {
-					tx.executeSql('delete from categories where id = ?', [id], () => {
-						Analytics.logEvent('removedCategory', {
-							name: 'categoryAction',
-						})
+export const removeCategory = (id) => async (dispatch) => {
 
-						callback()
-						dispatch(initCategories())
-					})
+	// Takes the incoming object and turns it into form-data
+	// todo
+	console.log('this is id coming into remove category', removeCategory)
+	try {
+		await axios.delete(
+			'http://caliboxs.com/api/v1/categories/' + id,
+			{
+				headers: {
+					"content-type": "application/json",
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
-			)
-		}
+			},
+		)
+
+		// return response.data.result
+		dispatch(initCategories())
+
+	} catch (e) {
+		console.error('Error on saving categories :: ', e)
+	}
+
+}

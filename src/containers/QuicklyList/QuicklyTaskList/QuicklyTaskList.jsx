@@ -181,7 +181,7 @@ class QuicklyTaskList extends Component {
 		this.setState({ image })
 	}
 
-	addTask = async () => {
+	addCategory = async () => {
 		const {
 			input,
 			// list
@@ -222,7 +222,6 @@ class QuicklyTaskList extends Component {
 	}
 
 	editCategory = async () => {
-		console.log('THIS IS EDIT TASK')
 
 		this.setState({ edit: false })
 
@@ -490,7 +489,7 @@ class QuicklyTaskList extends Component {
 								{this.state.spinner ? (
 									<Spinner />
 								) : (
-									<IconToggle styles={styles.addIcon} onPress={this.addTask} name='add' />
+									<IconToggle styles={styles.addIcon} onPress={this.addCategory} name='add' />
 								)}
 								{this.state.edit && (
 									<IconToggle styles={styles.addIcon} onPress={this.editCategory} name='edit' />

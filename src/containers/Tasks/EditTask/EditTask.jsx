@@ -166,7 +166,6 @@ class EditTask extends Component {
 
 		this.getRawPhoto(product.photo)
 		// if (taskId !== false) {
-		// 	console.log('THISIS INSIDE TASK ID FALSE')
 		// 	if (finished) {
 		// 		onInitFinishedTask(taskId, (task) => {
 		// 			this.prepareTask({ ...task, event_id: null, notification_id: null })

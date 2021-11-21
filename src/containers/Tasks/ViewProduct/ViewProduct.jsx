@@ -167,7 +167,6 @@ class ViewProduct extends Component {
 		}
 
 
-		console.log('this is TASK from view Products', task)
 		this.getRawPhoto(newTask.photo)
 
 		this.setState({ task: newTask })

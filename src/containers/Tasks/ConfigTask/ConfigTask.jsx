@@ -220,7 +220,6 @@ class ConfigTask extends Component {
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
-		console.log('inside prep')
 
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
@@ -529,8 +528,6 @@ class ConfigTask extends Component {
 	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
-		// TODO
-		console.log('this is task coming being added', task)
 		// const saveTaskCallback = (task) => {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
