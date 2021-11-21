@@ -166,8 +166,6 @@ class ViewProduct extends Component {
 			...product,
 		}
 
-
-		console.log('this is TASK from view Products', task)
 		this.getRawPhoto(newTask.photo)
 
 		this.setState({ task: newTask })
@@ -227,7 +225,6 @@ class ViewProduct extends Component {
 	}
 
 	prepareTask = (task) => {
-
 		const { categories, translations, settings } = this.props
 
 		if (task) {
