@@ -22,7 +22,7 @@ export {
 	removeQuicklyTask,
 } from './lists'
 
-export { initCategories, initCategory, saveCategory, removeCategory } from './categories'
+export { initCategories, initCategory, saveCategory, removeCategory, updateCategory } from './categories'
 
 export {
 	initSettings,

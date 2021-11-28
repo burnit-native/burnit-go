@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {
 	FlatList,
+	ScrollView,
 	KeyboardAvoidingView,
 	Platform,
 	RefreshControl,
@@ -62,14 +63,14 @@ class QuicklyTaskList extends Component {
 		searchText: '',
 		loading: true,
 		editMode: false,
-		edit: this.props.navigation.getParam('edit', false),
+		edit: false,
 		spinner: false,
 	}
 
 	componentDidMount() {
 		const { navigation } = this.props
 
-		const listFromProp = navigation.getParam('list', {})
+		const listFromProp = navigation.getParam('list', null)
 
 		// if category image is found this will be set the string URI in state.image
 		if (listFromProp && listFromProp.photo) {
@@ -78,7 +79,7 @@ class QuicklyTaskList extends Component {
 			// 	this.setState({ image: data.photo.photo })
 			// })
 			// TODO
-			this.setState({ image: listFromProp.photo.photo })
+			this.setState({ image: listFromProp.photo.photo, list: listFromProp.photo.photo })
 		}
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
@@ -89,6 +90,8 @@ class QuicklyTaskList extends Component {
 		)
 
 		const list = navigation.getParam('list', false)
+		console.log('thisis list coming thorugh', list)
+
 		if (list && list.id !== false) {
 			this.reloadTasks(list)
 		} else {
@@ -162,7 +165,7 @@ class QuicklyTaskList extends Component {
 				[translations.save]: () => {
 					const { list, newListName, control } = this.state
 					if (!control.error) {
-						this.saveList({
+						this.saveCategory({
 							id: list.id,
 							name: newListName,
 						})
@@ -178,7 +181,7 @@ class QuicklyTaskList extends Component {
 
 	// TODO
 	updateImage = async (image) => {
-		this.setState({ image })
+		this.setState({ list: { ...this.state.list, photo: image } })
 	}
 
 	addCategory = async () => {
@@ -197,13 +200,14 @@ class QuicklyTaskList extends Component {
 			this.setState({ spinner: true })
 			const newCategory = {
 				name: input.value,
-				photo: this.state.image,
+				photo: this.state.list.photo,
 			}
 
 			const newlyCreatedCategory = await onSaveCategory(newCategory)
 
 			if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
 				await onInitCategories()
+
 				Alert.alert('Success', `Your category has been created.`, [
 					{
 						text: 'Ok',
@@ -221,42 +225,103 @@ class QuicklyTaskList extends Component {
 		}
 	}
 
-	editCategory = async () => {
+	setEditTrue = async (category) => {
 
-		this.setState({ edit: false })
 
-		// const { input,
-		// 	// list
-		// } = this.state
-		// const {
-		// 	// onSaveQuicklyTask,
-		// 	onUpdateCategory, navigation, onInitCategories } = this.props
+		this.setState({ edit: true })
 
-		// if (!input.control.error) {
-		// 	const newCategory = {
-		// 		name: input.value,
-		// 		photo: this.state.image
-		// 	}
 
-		// 	const newlyCreatedCategory = await onUpdateCategory(newCategory);
-
-		// 	if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
-		// 		await onInitCategories();
-		// 		navigation.goBack();
-		// 	}
-
-		// 	// onSaveQuicklyTask(newTask, list, (list) => {
-		// 	// 	this.setState({ input: { ...input, value: null } })
-		// 	// 	this.reloadTasks(list)
-		// 	// })
-		// }
 	}
 
-	saveList = (list) => {
-		const { onSaveList } = this.props
+	updateCategory = async () => {
 
-		onSaveList(list, (savedList) => {
-			this.setState({ list: savedList })
+		const { onUpdateCategory } = this.props
+
+		const { list } = this.state
+		
+		const response = await onUpdateCategory(list)
+
+		if (response) {
+			// Alert.alert('Success', `Your category has been updated.`, [
+			// 	{
+			// 		text: 'Ok',
+			// 		onPress: navigation.goBack,
+			// 		style: 'cancel',
+			// 	},
+			// ])
+
+			this.setState({
+				list: response.data.result,
+				edit: false
+			})
+
+
+			this.setState({ spinner: false })
+		}
+		// else
+		// Alert.alert('Error', `Your category could not be updated.`, [
+		// 	{
+		// 		text: 'Ok',
+		// 		onPress: navigation.goBack,
+		// 		style: 'cancel',
+		// 	},
+		// ])
+
+	}
+
+	// const { input,
+	// 	// list
+	// } = this.state
+	// const {
+	// 	// onSaveQuicklyTask,
+	// 	onUpdateCategory, navigation, onInitCategories } = this.props
+
+	// if (!input.control.error) {
+	// 	const newCategory = {
+	// 		name: input.value,
+	// 		photo: this.state.image
+	// 	}
+
+	// 	const newlyCreatedCategory = await onUpdateCategory(newCategory);
+
+	// 	if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
+	// 		await onInitCategories();
+	// 		navigation.goBack();
+	// 	}
+
+	// 	// onSaveQuicklyTask(newTask, list, (list) => {
+	// 	// 	this.setState({ input: { ...input, value: null } })
+	// 	// 	this.reloadTasks(list)
+	// 	// })
+	// }
+
+	// const { translations, onUpdateCategory } = this.props
+
+	// const cancelHandler = () => this.setState({ showDialog: false })
+
+	// const dialog = generateDialogObject(
+	// 	cancelHandler,
+	// 	translations.defaultTitle,
+	// 	`${translations.dialogDescription}`,
+	// 	{
+	// 		[translations.yes]: () => {
+	// 			cancelHandler()
+	// 			this.props.onUpdateCategory(category.id)
+	// 		},
+	// 		[translations.no]: cancelHandler,
+	// 	},
+	// )
+	// this.setState({ dialog, showDialog: true })
+
+	saveCategory = (category) => {
+		const { onSaveCategory, navigation } = this.props
+
+		onSaveCategory(category, (savedcategory) => {
+
+			if (savedcategory) {
+				this.setState({ category: savedcategory })
+				navigation.goBack()
+			}
 		})
 	}
 
@@ -295,7 +360,7 @@ class QuicklyTaskList extends Component {
 		})
 
 		if (!result.cancelled) {
-			this.setState({ image: result.uri })
+			this.setState({ list: { ...this.state.list, photo: result.uri } })
 		}
 	}
 
@@ -357,6 +422,9 @@ class QuicklyTaskList extends Component {
 		const { navigation, theme, lang, translations, onInitLists } = this.props
 
 		const filterData = this.getFilterData()
+		const category = navigation.getParam('list', null)
+
+		console.log('this is staet on edit from categories', this.state.edit)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -432,8 +500,8 @@ class QuicklyTaskList extends Component {
 				<Dialog {...dialog} input theme={theme} showDialog={showInputDialog} />
 
 				{!loading ? (
-					<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'none'} style={flex}>
-						<Camera updateImage={this.updateImage} />
+					<ScrollView style={flex}>
+						{this.state.edit && <Camera updateImage={this.updateImage} />}
 						<View style={styles.quicklyTaskListWrapper}>
 							<FlatList
 								keyboardShouldPersistTaps='handled'
@@ -460,27 +528,27 @@ class QuicklyTaskList extends Component {
 							/>
 
 							<View style={styles.inputWrapper}>
-								{!this.state.edit ? (
+								{this.state.edit ? (
 									<Input
 										elementConfig={input.control}
 										focus={false}
 										value={input.value}
 										changed={(value) => {
-											const { input } = this.state
-											this.setState({ input: { ...input, value } })
+											// const { input } = this.state
+											// this.setState({ input: { ...input, value } })
 										}}
 									/>
 								) : (
 									<>
 										<Subheader text='Name:' />
-										<Text>{this.props.navigation.getParam('name')}</Text>
+										<Text>{this.state.list.name || navigation.getParam('name', this.state.list.name)}</Text>
 									</>
 								)}
 								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
-								{this.state.image && (
+								{this.state.list.photo && (
 									<Image
 										source={{
-											uri: this.state.image && this.state.image,
+											uri: this.state.list.photo && this.state.list.photo,
 										}}
 										style={{ width: 200, height: 200 }}
 									/>
@@ -489,15 +557,15 @@ class QuicklyTaskList extends Component {
 								{this.state.spinner ? (
 									<Spinner />
 								) : (
-									<IconToggle styles={styles.addIcon} onPress={this.addCategory} name='add' />
+									<IconToggle styles={styles.addIcon} onPress={this.updateCategory} name='add' />
 								)}
-								{this.state.edit && (
-									<IconToggle styles={styles.addIcon} onPress={this.editCategory} name='edit' />
+								{this.props.navigation.getParam('edit') && (
+									<IconToggle styles={styles.addIcon} onPress={() => this.setEditTrue(category)} name='edit' />
 								)}
 								{/* </View> */}
 							</View>
 						</View>
-					</KeyboardAvoidingView>
+					</ScrollView>
 				) : (
 					<Spinner />
 				)}
@@ -522,7 +590,7 @@ const mapDispatchToProps = (dispatch) => ({
 	onInitList: (id, callback) => dispatch(actions.initList(id, callback)),
 	onSaveQuicklyTask: (task, list, callback) =>
 		dispatch(actions.saveQuicklyTask(task, list, callback)),
-	onSaveList: (list, callback) => dispatch(actions.saveList(list, callback)),
+	// onsaveCategory: (list, callback) => dispatch(actions.updateCategory(list, callback)),
 	onSaveCategory: (category, callback) => dispatch(actions.saveCategory(category, callback)),
 	onUpdateCategory: (category, callback) => dispatch(actions.updateCategory(category, callback)),
 	onRemoveQuicklyTask: (id, callback) => dispatch(actions.removeQuicklyTask(id, callback)),
