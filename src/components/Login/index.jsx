@@ -43,6 +43,8 @@ const LoginContainer = ({ onLoginSuccess }) => {
 				password: '123456',
 			})
 
+			console.log(`access token`, response.data.result.access_token)
+
 			await AsyncStorage.setItem('isLoggedIn', 'yes')
 			await AsyncStorage.setItem('accessToken', response.data.result.access_token)
 

@@ -154,7 +154,7 @@ class ConfigTask extends Component {
 			nose: {
 				label: this.props.translations.noseLabel,
 				required: false,
-				characterRestriction: 80
+				characterRestriction: 80,
 			},
 			structure: {
 				label: this.props.translations.structureLabel,
@@ -528,12 +528,24 @@ class ConfigTask extends Component {
 	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
+
+		if (!task.image) {
+			Alert.alert('Photo is required', `Please add a photo to your product.`, [
+				{
+					text: 'Ok',
+					style: 'cancel',
+				},
+			])
+		}
 		// const saveTaskCallback = (task) => {
 		// 	if (task.finish) {
 		// 		onUndoTask(task, navigation.goBack)
 		// 	} else {
-		this.setState({ loading: true })
-		onSaveTask(task, navigation.goBack)
+		else {
+			this.setState({ loading: true })
+			onSaveTask(task, navigation.goBack)
+		}
+
 		// 	}
 		// }
 	}
@@ -543,7 +555,7 @@ class ConfigTask extends Component {
 
 		if (videoUri) {
 			this.setState({
-				task: { ...task, video: videoUri }
+				task: { ...task, video: videoUri },
 			})
 		}
 	}

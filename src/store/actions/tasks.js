@@ -190,7 +190,7 @@ export const saveEditTask =
 			bodyFormData.append('structure', state.task.structure)
 
 			if (state.updatePhoto) {
-				photoForm.append('product_id', '183')
+				photoForm.append('product_id', '190')
 
 				photoForm.append('gallery[]', {
 					uri: state.task.image,
@@ -204,7 +204,6 @@ export const saveEditTask =
 					{
 						headers: {
 							'content-type': 'multipart/form-data',
-							// "content-type": "application/json",
 							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 						},
 					},
@@ -282,7 +281,7 @@ export const saveTask =
 		bodyFormData.append('categories[]', task.category.id)
 		bodyFormData.append('video', task.video)
 
-		photoForm.append('product_id', '183')
+		photoForm.append('product_id', '190')
 
 		photoForm.append('gallery[]', {
 			uri: task.image,
@@ -290,8 +289,9 @@ export const saveTask =
 			name: task.name + '_photo',
 		})
 
-		videoForm.append('product_id', '183')
+		console.log(`img`, task.image)
 
+		videoForm.append('product_id', '190')
 		videoForm.append('gallery[]', {
 			uri: task.video,
 			type: 'video/mov',
@@ -299,43 +299,57 @@ export const saveTask =
 		})
 
 		try {
-			const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
-				headers: {
-					'content-type': 'multipart/form-data',
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
+			let filteredNewPhoto
 
-			const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', videoForm, {
-				headers: {
-					'content-type': 'multipart/form-data',
-					// "content-type": "application/json",
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
+			if (task.image) {
+				const newPhoto = await axios.post(
+					'http://caliboxs.com/api/v1/galleries/upload',
+					photoForm,
+					{
+						headers: {
+							'content-type': 'multipart/form-data',
+							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+						},
+					},
+				)
+				filteredNewPhoto = newPhoto.data.result[0]
+			}
 
-			const filteredNewPhoto = newPhoto.data.result[0]
-			const filteredNewVideo = newVideo.data.result[0]
+			let filteredNewVideo
 
-			// TODO
-			console.log('this is new Video ', newVideo)
+			if (task.video) {
+				const newVideo = await axios.post(
+					'http://caliboxs.com/api/v1/galleries/upload',
+					videoForm,
+					{
+						headers: {
+							'content-type': 'multipart/form-data',
+							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+						},
+					},
+				)
+				filteredNewVideo = newVideo.data.result[0] || undefined
+			}
 
-			bodyFormData.append('video', {
-				uri: task.video,
-				type: 'video/mov',
-				name: `-${filteredNewVideo.product_id}-${filteredNewVideo.id}`,
-			})
+			if (task.video) {
+				bodyFormData.append('video', {
+					uri: task.video,
+					type: 'video/mov',
+					name: `-${filteredNewVideo.product_id}-${filteredNewVideo.id}`,
+				})
+			}
 
-			bodyFormData.append('photo', {
-				uri: task.image,
-				type: 'image/jpeg',
-				name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
-			})
+			if (task.image) {
+				bodyFormData.append('photo', {
+					uri: task.image,
+					type: 'image/jpeg',
+					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+				})
+			}
 
 			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
 				headers: {
 					'content-type': 'multipart/form-data',
-					// "content-type": "application/json",
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
 			})

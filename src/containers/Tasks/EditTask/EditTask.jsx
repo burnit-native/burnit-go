@@ -209,7 +209,7 @@ class EditTask extends Component {
 
 	getRawPhoto = async (photoName) => {
 		try {
-			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/183`, {
+			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/190`, {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},

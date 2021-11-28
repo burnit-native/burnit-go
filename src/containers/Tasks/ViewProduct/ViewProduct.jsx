@@ -201,26 +201,30 @@ class ViewProduct extends Component {
 	}
 
 	getRawPhoto = async (photoName) => {
-		const result = await axios.get(`http://caliboxs.com/api/v1/galleries/183`, {
-			headers: {
-				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-			},
-		})
-
-		const photoArray = result.data.result
-
-		const photoUrl = photoArray.find((photoObj) => {
-			const productId = photoName.split('-').pop()
-			return +photoObj.id === +productId
-		})
-
-		if (photoUrl) {
-			const prevTask = this.state.task
-			prevTask.photo = photoUrl.photo
-
-			this.setState({
-				task: prevTask,
+		try {
+			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/190`, {
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
 			})
+
+			const photoArray = result.data.result
+
+			const photoUrl = photoArray.find((photoObj) => {
+				const productId = photoName.split('-').pop()
+				return +photoObj.id === +productId
+			})
+
+			if (photoUrl) {
+				const prevTask = this.state.task
+				prevTask.photo = photoUrl.photo
+
+				this.setState({
+					task: prevTask,
+				})
+			}
+		} catch (err) {
+			console.log(`viewProd err`, err)
 		}
 	}
 
@@ -545,6 +549,8 @@ class ViewProduct extends Component {
 		const { navigation, theme, settings, translations } = this.props
 		let date
 		let now
+
+		console.log(`photo`, this.state.task.photo)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>

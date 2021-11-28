@@ -41,24 +41,32 @@ const callToGetPhoto = async (list) => {
 		return list
 	}
 
-	const rawPhoto = await axios.get(
-		`http://caliboxs.com/api/v1/galleries/${list.photo.product_id}`,
-		{
-			headers: {
-				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+	try {
+		const rawPhoto = await axios.get(
+			`http://caliboxs.com/api/v1/galleries/${list.photo.product_id}`,
+			{
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
 			},
-		},
-	)
+		)
 
-	const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
-		if (+photoObject.id === +list.photo.id && +photoObject.product_id === +list.photo.product_id) {
-			return true
-		}
-	})
+		const filteredPhoto = rawPhoto.data.result.find((photoObject) => {
+			if (
+				+photoObject.id === +list.photo.id &&
+				+photoObject.product_id === +list.photo.product_id
+			) {
+				return true
+			}
+		})
 
-	list.photo = await filteredPhoto
+		list.photo = await filteredPhoto
 
-	return list
+		return list
+	} catch (err) {
+		console.log(`categories photo error`, err)
+		console.log(`categories photo error`, err.response)
+	}
 }
 
 export const onInitCategories = (categories) => ({
@@ -68,55 +76,56 @@ export const onInitCategories = (categories) => ({
 
 export const initCategories =
 	(callback = () => null) =>
-		async (dispatch) => {
-			
-			try {
-				const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
-					headers: {
-						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-					},
-				})
+	async (dispatch) => {
+		try {
+			const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
+				headers: {
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
 
-				const me = await AsyncStorage.getItem('me')
-				const filteredCategories = rawCategories.data.result.filter(
-					(category) => category.user_id === +me,
-				)
+			const me = await AsyncStorage.getItem('me')
+			const filteredCategories = rawCategories.data.result.filter(
+				(category) => category.user_id === +me,
+			)
 
-				const photoUpdatedCategories = Promise.all(
-					filteredCategories.map((category) => {
-						const updatedList = filterOutPhoto(category)
+			const photoUpdatedCategories = Promise.all(
+				filteredCategories.map((category) => {
+					const updatedList = filterOutPhoto(category)
 
-						callToGetPhoto(updatedList).then((data) => {
+					callToGetPhoto(updatedList)
+						.then((data) => {
 							if (data && data.photo) {
 								return data.photo.photo
 							}
 							data.photo = null
 							return null
 						})
-						return updatedList
-					}),
-				)
+						.catch((err) => console.log(`calltoGetPhoto`, err))
+					return updatedList
+				}),
+			)
 
-				callback()
-				dispatch(onInitCategories(await photoUpdatedCategories))
-			} catch (e) {
-				console.error('Error on initCategories :: ', e)
-			}
+			callback()
+			dispatch(onInitCategories(await photoUpdatedCategories))
+		} catch (e) {
+			console.error('Error on initCategories :: ', e)
 		}
+	}
 
 export const initCategory =
 	(id, callback = () => null) =>
-		() => {
-			db.transaction(
-				(tx) => {
-					tx.executeSql('select * from categories where id = ?', [id], (_, { rows }) => {
-						callback(rows._array[0])
-					})
-				},
-				// eslint-disable-next-line no-console
-				(err) => console.log(err),
-			)
-		}
+	() => {
+		db.transaction(
+			(tx) => {
+				tx.executeSql('select * from categories where id = ?', [id], (_, { rows }) => {
+					callback(rows._array[0])
+				})
+			},
+			// eslint-disable-next-line no-console
+			(err) => console.log(err),
+		)
+	}
 
 export const saveCategory = (category, callback) => async () => {
 	// if (category.id !== false) {
@@ -173,7 +182,7 @@ export const saveCategory = (category, callback) => async () => {
 
 	try {
 		const photoForm = new FormData()
-		photoForm.append('product_id', '183')
+		photoForm.append('product_id', '190')
 		photoForm.append('gallery[]', {
 			uri: category.photo,
 			type: 'image/jpeg',
@@ -247,26 +256,20 @@ export const updateCategory = (category, callback) => async () => {
 }
 
 export const removeCategory = (id) => async (dispatch) => {
-
 	// Takes the incoming object and turns it into form-data
 	// todo
 	console.log('this is id coming into remove category', removeCategory)
 	try {
-		await axios.delete(
-			'http://caliboxs.com/api/v1/categories/' + id,
-			{
-				headers: {
-					"content-type": "application/json",
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
+		await axios.delete('http://caliboxs.com/api/v1/categories/' + id, {
+			headers: {
+				'content-type': 'application/json',
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 			},
-		)
+		})
 
 		// return response.data.result
 		dispatch(initCategories())
-
 	} catch (e) {
 		console.error('Error on saving categories :: ', e)
 	}
-
 }
