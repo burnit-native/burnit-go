@@ -109,6 +109,7 @@ class ConfigTask extends Component {
 			nose: '',
 			structure: '',
 			catalog_id: 0,
+			updatePhoto: false,
 			// ORIGINAL BELOW
 			id: false,
 			name: '',

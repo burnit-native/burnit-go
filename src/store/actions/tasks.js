@@ -176,52 +176,59 @@ const errorParseResult = (errorObj) => {
 export const saveEditTask =
 	(state, callback = () => null) =>
 		async (dispatch) => {
+			const bodyFormData = new FormData()
+			const photoForm = new FormData()
+			const videoForm = new FormData()
+
+			bodyFormData.append('_method', 'put')
+			bodyFormData.append('name', state.task.name)
+			bodyFormData.append('price', state.task.price)
+			bodyFormData.append('stock', state.task.stock)
+			bodyFormData.append('details', state.task.details)
+			bodyFormData.append('nose', state.task.nose)
+			bodyFormData.append('structure', state.task.structure)
+			bodyFormData.append('categories[]', state.task.category.id)
+			bodyFormData.append('video', state.task.video)
+
+			photoForm.append('product_id', '23')
+			photoForm.append('gallery[]', {
+				uri: state.task.image,
+				type: 'image/jpeg',
+				name: state.task.name + '_photo',
+			})
+
+			videoForm.append('product_id', '23')
+			videoForm.append('gallery[]', {
+				uri: state.task.video,
+				type: 'video/mov/mp4',
+				name: state.task.name + "_video",
+			})
+
 			try {
-				const bodyFormData = new FormData()
-				const photoForm = new FormData()
+				const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
+					headers: {
+						'content-type': 'multipart/form-data',
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				})
 
-				bodyFormData.append('_method', 'put')
-				bodyFormData.append('name', state.task.name)
-				bodyFormData.append('price', state.task.price)
-				bodyFormData.append('stock', state.task.stock)
-				bodyFormData.append('details', state.task.details)
-				bodyFormData.append('categories[]', state.task.category.id)
 
-				if (state.updatePhoto) {
-					photoForm.append('product_id', '183')
+				const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', videoForm, {
+					headers: {
+						'content-type': 'multipart/form-data',
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				})
 
-					photoForm.append('gallery[]', {
-						uri: state.task.image,
-						type: 'image/jpeg',
-						name: state.task.name + '_photo',
-					})
+				const filteredNewPhoto = newPhoto.data.result[0]
+				const filteredNewVideo = newVideo.data.result[0]
 
-					const newPhoto = await axios.post(
-						'http://caliboxs.com/api/v1/galleries/upload',
-						photoForm,
-						{
-							headers: {
-								'content-type': 'multipart/form-data',
-								// "content-type": "application/json",
-								authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-							},
-						},
-					)
-
-					const filteredNewPhoto = newPhoto.data.result[0]
-
-					bodyFormData.append('photo', {
-						uri: state.task.image,
-						type: 'image/jpeg',
-						name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
-					})
-				}
-
-				// bodyFormData.append('video', {
-				// 	uri: state.task.video,
-				// 	type: 'video/mov',
-				// 	name: state.task.name + '_photo',
-				// })
+				bodyFormData.append('video', filteredNewVideo.video_path)
+				bodyFormData.append('photo', {
+					uri: filteredNewPhoto.photo,
+					type: 'image/jpeg',
+					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+				})
 
 				const response = await axios.post(
 					`http://caliboxs.com/api/v1/products/${state.task.id}`,
@@ -246,6 +253,7 @@ export const saveEditTask =
 					console.log('nice')
 					dispatch(initToDo())
 				}
+
 			} catch (err) {
 				console.log(`error`, err)
 				console.error(`error editing product`, err.response.data)
@@ -279,26 +287,19 @@ export const saveTask =
 			bodyFormData.append('categories[]', task.category.id)
 			bodyFormData.append('video', task.video)
 
-			photoForm.append('product_id', '183')
-
+			photoForm.append('product_id', '23')
 			photoForm.append('gallery[]', {
 				uri: task.image,
 				type: 'image/jpeg',
 				name: task.name + '_photo',
 			})
 
-			videoForm.append('product_id', '183')
-
+			videoForm.append('product_id', '23')
 			videoForm.append('gallery[]', {
 				uri: task.video,
-				type: 'video/mp4/mov',
-				name: task.video + "_video",
+				type: 'video/mov/mp4',
+				name: task.name + "_video",
 			})
-
-			// videoForm.append('gallery[]', task.video)
-
-			console.log('tbisis task comingn into save task', task)
-
 
 			try {
 				const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
@@ -308,27 +309,20 @@ export const saveTask =
 					},
 				})
 
-				console.log('this is new before new photo ', newPhoto.data.result[0])
 
 				const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', videoForm, {
 					headers: {
 						'content-type': 'multipart/form-data',
-						// "content-type": "application/json",
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				})
-				console.log('this is new before new video ', newVideo.data)
 
 				const filteredNewPhoto = newPhoto.data.result[0]
-				const filteredNewVideo = newVideo.data.result[0].video_path
+				const filteredNewVideo = newVideo.data.result[0]
 
-				// TODO
-				console.log('this is new Video ', newVideo)
-
-				bodyFormData.append('video', filteredNewVideo)
-
+				bodyFormData.append('video', filteredNewVideo.video_path)
 				bodyFormData.append('photo', {
-					uri: task.image,
+					uri: filteredNewPhoto.photo,
 					type: 'image/jpeg',
 					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
 				})
@@ -336,12 +330,10 @@ export const saveTask =
 				const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
 					headers: {
 						'content-type': 'multipart/form-data',
-						// "content-type": "application/json",
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				})
 
-				console.log("THIS IS NEW PRODUCT RESPONSE", response)
 
 				if (response) {
 					console.log(`product`, response)
@@ -352,7 +344,6 @@ export const saveTask =
 							style: 'cancel',
 						},
 					])
-					console.log('nice')
 					dispatch(initToDo())
 				}
 			} catch (err) {
