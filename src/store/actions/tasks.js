@@ -291,9 +291,14 @@ export const saveTask =
 
 			videoForm.append('gallery[]', {
 				uri: task.video,
-				type: 'video/mov',
-				name: task.video + '_video',
+				type: 'video/mp4/mov',
+				name: task.video + "_video",
 			})
+
+			// videoForm.append('gallery[]', task.video)
+
+			console.log('tbisis task comingn into save task', task)
+
 
 			try {
 				const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
@@ -303,6 +308,8 @@ export const saveTask =
 					},
 				})
 
+				console.log('this is new before new photo ', newPhoto.data.result[0])
+
 				const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', videoForm, {
 					headers: {
 						'content-type': 'multipart/form-data',
@@ -310,18 +317,15 @@ export const saveTask =
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				})
+				console.log('this is new before new video ', newVideo.data)
 
 				const filteredNewPhoto = newPhoto.data.result[0]
-				const filteredNewVideo = newVideo.data.result[0]
+				const filteredNewVideo = newVideo.data.result[0].video_path
 
 				// TODO
 				console.log('this is new Video ', newVideo)
 
-				bodyFormData.append('video', {
-					uri: task.video,
-					type: 'video/mov',
-					name: `-${filteredNewVideo.product_id}-${filteredNewVideo.id}`,
-				})
+				bodyFormData.append('video', filteredNewVideo)
 
 				bodyFormData.append('photo', {
 					uri: task.image,
@@ -336,6 +340,8 @@ export const saveTask =
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				})
+
+				console.log("THIS IS NEW PRODUCT RESPONSE", response)
 
 				if (response) {
 					console.log(`product`, response)

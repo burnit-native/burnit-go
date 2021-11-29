@@ -4,14 +4,14 @@ import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import VideoPlayer from '../Video'
 
-export default function VideoRecorderContainer({ getVideoUri }) {
+export default function VideoRecorderContainer({ getVideoUri, task }) {
     const [hasPermission, setHasPermission] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [preview, setPreview] = useState(false);
     const [photo, setPhoto] = useState('')
     const [cameraRef, setCameraRef] = useState(null)
     const [recording, setRecording] = useState(false)
-    const [videoUri, setVideoUri] = useState(null)
+    const [videoUri, setVideoUri] = useState('')
 
     useEffect(() => {
         (async () => {
@@ -111,9 +111,13 @@ export default function VideoRecorderContainer({ getVideoUri }) {
                                 setRecording(true)
                                 let video = await cameraRef.recordAsync();
 
-                                if (video) {
+                                if (video?.uri) {
+                                    // TODO
+                                    console.log('this is video ', video)
                                     getVideoUri(video.uri)
-                                    setVideoUri(video.uri)
+
+                                    console.log('this is after getting video  ', video)
+                                    // setVideoUri(video.uri)
                                 }
 
                                 console.log('video', video);
@@ -148,17 +152,17 @@ export default function VideoRecorderContainer({ getVideoUri }) {
                 </View >
             </Camera >
 
-            {videoUri && <VideoPlayer videoUri={videoUri} />}
-            {
-                videoUri &&
+            {task.video && <VideoPlayer videoUri={task.video} type="mov" />}
+            {/* {
+                task.video &&
                 <View>
                     <TouchableOpacity style={{ alignSelf: 'center', marginTop: 20, borderColor: '#f4511e', backgroundColor: '#fff', height: 30, width: 300, alignItems: 'center', borderWidth: 1, paddingTop: 5 }} onPress={() => {
-                        setVideoUri(null)
+                        // setVideoUri(null)
                     }}>
                         <Text>Press Here To Record Again</Text>
                     </TouchableOpacity>
                 </View>
-            }
+            } */}
         </View >
     );
 }
