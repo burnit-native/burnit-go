@@ -219,6 +219,7 @@ export const saveCategory = (category, callback) => async () => {
 		return response.data.result
 	} catch (e) {
 		console.error('Error on saving categories :: ', e)
+		console.error('Error on saving categories :: ', e.response)
 	}
 }
 export const updateCategory = (category, callback) => async (dispatch) => {
@@ -253,7 +254,7 @@ export const updateCategory = (category, callback) => async (dispatch) => {
 		// dispatch(initCategories())
 		return response.data.result
 	} catch (e) {
-		console.error('Error on saving categories :: ', e)
+		console.error('Error on updating categories :: ', e)
 		return null
 	}
 }

@@ -161,10 +161,10 @@ class MainCategoriesList extends Component {
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
-				if (cate.user_id === +this.state.me) {
-					return true
-				}
-			})
+					if (cate.user_id === +this.state.me) {
+						return true
+					}
+			  })
 			: categories
 
 		return filteredByUserCategories.map((category, index) => (
@@ -345,7 +345,9 @@ class MainCategoriesList extends Component {
 					<ActionButton
 						hidden={bottomHidden}
 						onPress={this.toggleModalHandler}
-						onPress={() => navigation.navigate('QuicklyTaskList', { list: false, edit: false })}
+						onPress={() =>
+							navigation.navigate('QuicklyTaskList', { list: false, edit: false, add: true })
+						}
 						icon='add'
 						style={{
 							container: { backgroundColor: theme.warningColor },
@@ -382,7 +384,6 @@ const mapDispatchToProps = (dispatch) => ({
 	onInitList: (id, callback) => dispatch(actions.initList(id, callback)),
 	onRemoveList: (list_id) => dispatch(actions.removeList(list_id)),
 	onRemoveCategory: (id) => dispatch(actions.removeCategory(id)),
-
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainCategoriesList)
