@@ -52,6 +52,8 @@ class EditTask extends Component {
 			thumbnail: '',
 			file: null,
 			size: '',
+			photo: '',
+			video: '',
 			size_qty: '',
 			size_price: '',
 			color: '',
@@ -156,15 +158,21 @@ class EditTask extends Component {
 
 	componentDidMount() {
 		const { task } = this.state
-
 		const { navigation, onInitTask, onInitFinishedTask, translations } = this.props
 		const taskId = navigation.getParam('task', false)
 		const finished = navigation.getParam('finished', false)
-		// const category = navigation.getParam('category', false)
+		const category = navigation.getParam('category', false)
 		const product = navigation.getParam('product', false)
-		this.setState({ task: product })
 
-		this.getRawPhoto(product.photo)
+		const newTask = {
+			...this.state.task,
+			...product,
+		}
+
+
+		this.getRawPhoto(newTask.photo)
+
+		this.setState({ task: newTask })
 
 		// if (taskId !== false) {
 		// 	if (finished) {
@@ -196,8 +204,18 @@ class EditTask extends Component {
 	}
 
 	getRawPhoto = async (photoName) => {
+
+		const photoId = photoName.split('-')[1]
+
+		console.log('this is photoID', photoId)
+
+		const string = "http://caliboxs.com/api/v1/galleries/" + photoId
+
+		// TOOD this is string
+		console.log('this is string:: ', string)
+
 		try {
-			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/183`, {
+			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/` + photoId, {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
@@ -205,7 +223,9 @@ class EditTask extends Component {
 
 			const photoArray = result.data.result
 
-			const photoUrl = photoArray.find((photoObj) => {
+			console.log('this is photo array from looking up photo', photoArray)
+
+			const photoUrl = await photoArray.find((photoObj) => {
 				const productId = photoName.split('-').pop()
 				return +photoObj.id === +productId
 			}).photo

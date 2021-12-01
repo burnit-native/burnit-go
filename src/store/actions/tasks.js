@@ -190,14 +190,14 @@ export const saveEditTask =
 			bodyFormData.append('categories[]', state.task.category.id)
 			bodyFormData.append('video', state.task.video)
 
-			photoForm.append('product_id', '23')
+			photoForm.append('product_id', '200')
 			photoForm.append('gallery[]', {
 				uri: state.task.image,
 				type: 'image/jpeg',
 				name: state.task.name + '_photo',
 			})
 
-			videoForm.append('product_id', '23')
+			videoForm.append('product_id', '200')
 			videoForm.append('gallery[]', {
 				uri: state.task.video,
 				type: 'video/mov/mp4',
@@ -287,14 +287,14 @@ export const saveTask =
 			bodyFormData.append('categories[]', task.category.id)
 			bodyFormData.append('video', task.video)
 
-			photoForm.append('product_id', '23')
+			photoForm.append('product_id', '200')
 			photoForm.append('gallery[]', {
 				uri: task.image,
 				type: 'image/jpeg',
 				name: task.name + '_photo',
 			})
 
-			videoForm.append('product_id', '23')
+			videoForm.append('product_id', '200')
 			videoForm.append('gallery[]', {
 				uri: task.video,
 				type: 'video/mov/mp4',
@@ -320,6 +320,9 @@ export const saveTask =
 				const filteredNewPhoto = newPhoto.data.result[0]
 				const filteredNewVideo = newVideo.data.result[0]
 
+				// TODO
+				console.log('this is photo saved', filteredNewPhoto)
+
 				bodyFormData.append('video', filteredNewVideo.video_path)
 				bodyFormData.append('photo', {
 					uri: filteredNewPhoto.photo,
@@ -336,7 +339,7 @@ export const saveTask =
 
 
 				if (response) {
-					console.log(`product`, response)
+					console.log(`product:: `, response)
 					Alert.alert('Success', `Your product has been created.`, [
 						{
 							text: 'Ok',

@@ -202,6 +202,7 @@ class ConfigTask extends Component {
 		// 	}
 		// 	return
 		// }
+
 		if (taskId !== false) {
 			onInitTask(taskId, (task) => {
 				this.prepareTask(task)
@@ -594,6 +595,10 @@ class ConfigTask extends Component {
 			date = moment(task.date, dateFormat)
 			now = new Date().setHours(0, 0, 0, 0)
 		}
+
+
+		// TODO
+		console.log('this is TASK coming into config task ', task)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
