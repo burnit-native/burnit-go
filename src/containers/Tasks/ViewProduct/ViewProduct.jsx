@@ -34,6 +34,8 @@ import axios from 'axios'
 
 const defaultNoImage = require('../../../assets/no_image_stock.png')
 
+const testVideo = "https://www.youtube.com/watch?v=zT37DW4SHLk"
+
 class ViewProduct extends Component {
 	state = {
 		task: {
@@ -653,7 +655,7 @@ class ViewProduct extends Component {
 							</View>
 							<View style={styles.dateContainer}>
 								<Subheader text={translations.video} />
-								<VideoPlayer videoUri={this.state.task.video} />
+								<VideoPlayer videoUri={this.state.task.video || testVideo} />
 							</View>
 						</View>
 					</ScrollView>

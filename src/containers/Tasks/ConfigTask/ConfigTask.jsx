@@ -865,7 +865,7 @@ class ConfigTask extends Component {
 						<View style={styles.container}>
 							<Subheader text={translations.videoRecord} />
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
-							<VideoRecorderContainer getVideoUri={this.getVideoUri} setState={this.setState} task={task} />
+							<VideoRecorderContainer getVideoUri={() => this.getVideoUri() || testVideo} setState={this.setState} task={task} />
 						</View>
 					</ScrollView>
 				) : (

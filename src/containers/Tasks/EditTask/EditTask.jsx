@@ -36,6 +36,8 @@ import AsyncStorage from '@react-native-community/async-storage'
 
 const defaultNoImage = require('../../../assets/no_image_stock.png')
 
+const testVideo = "https://www.youtube.com/watch?v=zT37DW4SHLk"
+
 class EditTask extends Component {
 	state = {
 		task: {
@@ -788,7 +790,7 @@ class EditTask extends Component {
 							<Subheader text={translations.videoRecord} />
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
 							<VideoRecorderContainer
-								getVideoUri={this.getVideoUri}
+								getVideoUri={() => this.getVideoUri() || testVideo}
 								setState={this.setState}
 								task={task}
 							/>
