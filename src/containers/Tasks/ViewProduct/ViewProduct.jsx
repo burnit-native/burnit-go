@@ -653,7 +653,7 @@ class ViewProduct extends Component {
 							</View>
 							<View style={styles.dateContainer}>
 								<Subheader text={translations.video} />
-								<VideoPlayer videoUri={this.state.task.video || } />
+								<VideoPlayer videoUri={this.state.task.video} />
 							</View>
 						</View>
 					</ScrollView>
