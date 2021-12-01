@@ -608,10 +608,6 @@ class ConfigTask extends Component {
 			now = new Date().setHours(0, 0, 0, 0)
 		}
 
-
-		// TODO
-		console.log('this is TASK coming into config task ', task)
-
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
 				<Toolbar
@@ -865,7 +861,11 @@ class ConfigTask extends Component {
 						<View style={styles.container}>
 							<Subheader text={translations.videoRecord} />
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
-							<VideoRecorderContainer getVideoUri={this.getVideoUri} setState={this.setState} task={task} />
+							<VideoRecorderContainer
+								getVideoUri={this.getVideoUri}
+								setState={this.setState}
+								task={task}
+							/>
 						</View>
 					</ScrollView>
 				) : (

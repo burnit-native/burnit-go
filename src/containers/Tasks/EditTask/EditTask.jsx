@@ -187,7 +187,6 @@ class EditTask extends Component {
 
 		this.getRawPhoto(newTask.photo)
 
-
 		// if (taskId !== false) {
 		// 	if (finished) {
 		// 		onInitFinishedTask(taskId, (task) => {
@@ -221,13 +220,7 @@ class EditTask extends Component {
 	getRawPhoto = async (photoName) => {
 		const photoId = photoName.split('-')[1]
 
-		console.log('this is photoID', photoId)
-
 		const string = 'http://caliboxs.com/api/v1/galleries/' + photoId
-
-		// TOOD this is string
-		console.log('this is string:: ', string)
-		console.log('this is task :: ', this.state.task)
 
 		try {
 			const result = await axios.get(string, {
@@ -237,8 +230,6 @@ class EditTask extends Component {
 			})
 
 			const photoArray = result.data.result
-
-			console.log('this is photo array from looking up photo', photoArray)
 
 			const photoUrl = await photoArray.find((photoObj) => {
 				const productId = photoName.split('-').pop()
@@ -272,15 +263,11 @@ class EditTask extends Component {
 	updateImage = async (image) => {
 		const prevTask = this.state.task
 		prevTask.image = image
-		console.log(`new imag!!!!`, prevTask.image)
 		this.setState({ task: prevTask, photoMode: false, updatePhoto: true })
-
-		console.log(`update`, this.state.task.image)
 	}
 
 	prepareTask = (task) => {
 		const { categories, translations, settings } = this.props
-		console.log('inside prep')
 
 		const findCate = categories.find((c) => +c.id === +task.category)
 		if (findCate) {
@@ -587,9 +574,6 @@ class EditTask extends Component {
 			quality: 1,
 		})
 
-		// TODO
-		console.log('this is result from picking video', result)
-
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }
@@ -628,7 +612,6 @@ class EditTask extends Component {
 		const { navigation, theme, settings, translations } = this.props
 
 		// TODO
-		console.log('this is task for rendering: ', task)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -768,6 +751,14 @@ class EditTask extends Component {
 								</TouchableOpacity>
 							</View>
 						</View>
+						{this.state.task.photo && (
+							<Image
+								source={{
+									uri: this.state.task.photo || defaultNoImage,
+								}}
+								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
+							/>
+						)}
 						{this.state.task.image && (
 							<Image
 								source={{

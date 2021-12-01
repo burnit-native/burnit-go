@@ -174,7 +174,6 @@ class ViewProduct extends Component {
 
 		this.getRawPhoto(newTask.photo)
 
-
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
 		// 	if (finished) {
@@ -576,8 +575,6 @@ class ViewProduct extends Component {
 		const { navigation, theme, settings, translations } = this.props
 		let date
 		let now
-
-		console.log('this is task for rendering: ', task)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
