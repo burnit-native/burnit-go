@@ -176,62 +176,65 @@ const errorParseResult = (errorObj) => {
 export const saveEditTask =
 	(state, callback = () => null) =>
 	async (dispatch) => {
+		const bodyFormData = new FormData()
+		const photoForm = new FormData()
+		const videoForm = new FormData()
+
+		bodyFormData.append('_method', 'put')
+		bodyFormData.append('name', state.task.name)
+		bodyFormData.append('price', state.task.price)
+		bodyFormData.append('stock', state.task.stock)
+		bodyFormData.append('details', state.task.details)
+		bodyFormData.append('nose', state.task.nose)
+		bodyFormData.append('structure', state.task.structure)
+		bodyFormData.append('categories[]', state.task.category.id)
+		bodyFormData.append('video', state.task.video)
+
+		photoForm.append('product_id', '200')
+		photoForm.append('gallery[]', {
+			uri: state.task.image,
+			type: 'image/jpeg',
+			name: state.task.name + '_photo',
+		})
+
+		videoForm.append('product_id', '200')
+		videoForm.append('gallery[]', {
+			uri: state.task.video,
+			type: 'video/mov/mp4',
+			name: state.task.name + '_video',
+		})
+
 		try {
-			const bodyFormData = new FormData()
-			const photoForm = new FormData()
+			const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
+				headers: {
+					'content-type': 'multipart/form-data',
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
 
-			bodyFormData.append('_method', 'put')
-			bodyFormData.append('name', state.task.name)
-			bodyFormData.append('price', state.task.price)
-			bodyFormData.append('stock', state.task.stock)
-			bodyFormData.append('details', state.task.details)
-			bodyFormData.append('categories[]', state.task.category.id)
-			bodyFormData.append('nose', state.task.nose)
-			bodyFormData.append('structure', state.task.structure)
+			const newVideo = await axios.post('http://caliboxs.com/api/v1/galleries/upload', videoForm, {
+				headers: {
+					'content-type': 'multipart/form-data',
+					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+				},
+			})
 
-			if (state.updatePhoto) {
-				photoForm.append('product_id', '190')
+			const filteredNewPhoto = newPhoto.data.result[0]
+			const filteredNewVideo = newVideo.data.result[0]
 
-				photoForm.append('gallery[]', {
-					uri: state.task.image,
-					type: 'image/jpeg',
-					name: state.task.name + '_photo',
-				})
-
-				const newPhoto = await axios.post(
-					'http://caliboxs.com/api/v1/galleries/upload',
-					photoForm,
-					{
-						headers: {
-							'content-type': 'multipart/form-data',
-							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-						},
-					},
-				)
-
-				const filteredNewPhoto = newPhoto.data.result[0]
-
-				bodyFormData.append('photo', {
-					uri: state.task.image,
-					type: 'image/jpeg',
-					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
-				})
-			}
-
-			// bodyFormData.append('video', {
-			// 	uri: state.task.video,
-			// 	type: 'video/mov',
-			// 	name: state.task.name + '_photo',
-			// })
+			bodyFormData.append('video', filteredNewVideo.video_path)
+			bodyFormData.append('photo', {
+				uri: filteredNewPhoto.photo,
+				type: 'image/jpeg',
+				name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+			})
 
 			const response = await axios.post(
 				`http://caliboxs.com/api/v1/products/${state.task.id}`,
 				bodyFormData,
-
 				{
 					headers: {
-						'content-type': 'multipart/form-data',
-						// "content-type": "application/json",
+						'content-type': 'application/json',
 						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 					},
 				},
@@ -281,25 +284,23 @@ export const saveTask =
 		bodyFormData.append('categories[]', task.category.id)
 		bodyFormData.append('video', task.video)
 
-		photoForm.append('product_id', '190')
-
+		photoForm.append('product_id', '200')
 		photoForm.append('gallery[]', {
 			uri: task.image,
 			type: 'image/jpeg',
 			name: task.name + '_photo',
 		})
 
-		console.log(`img`, task.image)
-
-		videoForm.append('product_id', '190')
+		videoForm.append('product_id', '200')
 		videoForm.append('gallery[]', {
 			uri: task.video,
-			type: 'video/mov',
-			name: task.video + '_video',
+			type: 'video/mov/mp4',
+			name: task.name + '_video',
 		})
 
 		try {
 			let filteredNewPhoto
+			let filteredNewVideo
 
 			if (task.image) {
 				const newPhoto = await axios.post(
@@ -315,8 +316,6 @@ export const saveTask =
 				filteredNewPhoto = newPhoto.data.result[0]
 			}
 
-			let filteredNewVideo
-
 			if (task.video) {
 				const newVideo = await axios.post(
 					'http://caliboxs.com/api/v1/galleries/upload',
@@ -328,35 +327,30 @@ export const saveTask =
 						},
 					},
 				)
-				filteredNewVideo = newVideo.data.result[0] || undefined
+
+				filteredNewVideo = newVideo.data.result[0]
+				bodyFormData.append('video', filteredNewVideo.video_path)
 			}
 
-			if (task.video) {
-				bodyFormData.append('video', {
-					uri: task.video,
-					type: 'video/mov',
-					name: `-${filteredNewVideo.product_id}-${filteredNewVideo.id}`,
-				})
-			}
-
-			if (task.image) {
-				bodyFormData.append('photo', {
-					uri: task.image,
-					type: 'image/jpeg',
-					name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
-				})
-			}
-
-			const response = await axios.post('http://caliboxs.com/api/v1/products', bodyFormData, {
-				headers: {
-					'content-type': 'multipart/form-data',
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
+			bodyFormData.append('photo', {
+				uri: filteredNewPhoto.photo,
+				type: 'image/jpeg',
+				name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
 			})
 
+			const response = await axios.post(
+				`http://caliboxs.com/api/v1/products/${state.task.id}`,
+				bodyFormData,
+				{
+					headers: {
+						'content-type': 'application/json',
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				},
+			)
+
 			if (response) {
-				console.log(`product`, response)
-				Alert.alert('Success', `Your product has been created.`, [
+				Alert.alert('Success', `Your product has been updated.`, [
 					{
 						text: 'Ok',
 						onPress: callback,
@@ -367,8 +361,8 @@ export const saveTask =
 				dispatch(initToDo())
 			}
 		} catch (err) {
-			console.log(`actual`, err)
-			console.error(`error posting new product`, err.response.data)
+			console.log(`error`, err)
+			console.error(`error editing product`, err.response.data)
 			Alert.alert(
 				'Error',
 				`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,

@@ -201,8 +201,17 @@ class ViewProduct extends Component {
 	}
 
 	getRawPhoto = async (photoName) => {
+		const photoId = photoName.split('-')[1]
+
+		console.log('this is photoID', photoId)
+
+		const string = 'http://caliboxs.com/api/v1/galleries/' + photoId
+
+		// TOOD this is string
+		console.log('this is string:: ', string)
+
 		try {
-			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/190`, {
+			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/` + photoId, {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
@@ -210,21 +219,34 @@ class ViewProduct extends Component {
 
 			const photoArray = result.data.result
 
-			const photoUrl = photoArray.find((photoObj) => {
+			console.log('this is photo array from looking up photo', photoArray)
+
+			const photoUrl = await photoArray.find((photoObj) => {
 				const productId = photoName.split('-').pop()
 				return +photoObj.id === +productId
-			})
+			}).photo
 
 			if (photoUrl) {
 				const prevTask = this.state.task
-				prevTask.photo = photoUrl.photo
+
+				prevTask.photo = photoUrl
 
 				this.setState({
 					task: prevTask,
 				})
 			}
 		} catch (err) {
-			console.log(`viewProd err`, err)
+			console.log('failed to get photo', err)
+		}
+	}
+
+	getVideoUri = (videoUri) => {
+		const { task } = this.state
+
+		if (videoUri) {
+			this.setState({
+				task: { ...task, video: videoUri },
+			})
 		}
 	}
 
@@ -619,7 +641,7 @@ class ViewProduct extends Component {
 								<Subheader text={translations.image} />
 								<Image
 									style={{ width: 200, height: 200 }}
-									source={{ url: this.state.task.photo }}
+									source={{ url: this.state.task.image }}
 								/>
 							</View>
 							<View style={styles.dateContainer}>

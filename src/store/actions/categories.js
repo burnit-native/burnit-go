@@ -3,6 +3,7 @@ import * as Analytics from 'expo-firebase-analytics'
 import * as actionTypes from './actionTypes'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Alert } from 'react-native'
 
 const db = openDatabase('maker.db')
 
@@ -220,7 +221,7 @@ export const saveCategory = (category, callback) => async () => {
 		console.error('Error on saving categories :: ', e)
 	}
 }
-export const updateCategory = (category, callback) => async () => {
+export const updateCategory = (category, callback) => async (dispatch) => {
 	// Takes the incoming object and turns it into form-data
 	const form = new FormData()
 	form.append('name', category.name)
@@ -234,6 +235,8 @@ export const updateCategory = (category, callback) => async () => {
 
 	form.append('_method', 'put')
 
+	console.log('this is photo coming in', category)
+
 	try {
 		const response = await axios.post(
 			'http://caliboxs.com/api/v1/categories/' + category.id,
@@ -241,17 +244,17 @@ export const updateCategory = (category, callback) => async () => {
 			{
 				headers: {
 					'content-type': 'multipart/form-data',
-					// "content-type": "application/json",
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
 			},
 		)
 
 		console.log('new category updated: ', response.data.result)
-
+		// dispatch(initCategories())
 		return response.data.result
 	} catch (e) {
 		console.error('Error on saving categories :: ', e)
+		return null
 	}
 }
 
@@ -267,9 +270,25 @@ export const removeCategory = (id) => async (dispatch) => {
 			},
 		})
 
+		Alert.alert('Success', `Your category has been removed.`, [
+			{
+				text: 'Ok',
+				onPress: await dispatch(initCategories()),
+				style: 'confirm',
+			},
+		])
+
 		// return response.data.result
 		dispatch(initCategories())
 	} catch (e) {
-		console.error('Error on saving categories :: ', e)
+		// Alert.alert('Error', `Your category has not been removed.`, [
+		// 	{
+		// 		text: 'Ok',
+		// 		onPress: dispatch(initCategories()),
+		// 		style: 'cancel',
+		// 	},
+		// ])
+		return null
+		// console.error('Error on saving categories :: ', e)
 	}
 }

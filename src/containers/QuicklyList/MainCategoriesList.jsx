@@ -293,19 +293,19 @@ class MainCategoriesList extends Component {
 			<View style={flex}>
 				{/* comment out for now when showing MVP */}
 				<Toolbar
-					searchable={{
-						autoFocus: true,
-						placeholder: translations.search,
-						onChangeText: (value) => this.setState({ searchText: value }),
-						onSearchCloseRequested: () => this.setState({ searchText: '' }),
-					}}
+					// searchable={{
+					// 	autoFocus: true,
+					// 	placeholder: translations.search,
+					// 	onChangeText: (value) => this.setState({ searchText: value }),
+					// 	onSearchCloseRequested: () => this.setState({ searchText: '' }),
+					// }}
 					leftElement='menu'
 					leftElement=''
 					centerElement={translations.MainCategoriesList}
 					onLeftElementPress={() => navigation.navigate('Drawer')}
 				/>
 
-				{searchText.length > 0 && (
+				{/* {searchText.length > 0 && (
 					<View style={foundResults}>
 						<Text style={{ color: theme.thirdTextColor }}>
 							{translations.found}:{' '}
@@ -318,7 +318,7 @@ class MainCategoriesList extends Component {
 							)}
 						</Text>
 					</View>
-				)}
+				)} */}
 
 				<Dialog {...dialog} theme={theme} showDialog={showDialog} />
 

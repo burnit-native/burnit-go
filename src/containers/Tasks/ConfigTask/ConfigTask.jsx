@@ -109,6 +109,7 @@ class ConfigTask extends Component {
 			nose: '',
 			structure: '',
 			catalog_id: 0,
+			updatePhoto: false,
 			// ORIGINAL BELOW
 			id: false,
 			name: '',
@@ -201,6 +202,7 @@ class ConfigTask extends Component {
 		// 	}
 		// 	return
 		// }
+
 		if (taskId !== false) {
 			onInitTask(taskId, (task) => {
 				this.prepareTask(task)
@@ -525,6 +527,24 @@ class ConfigTask extends Component {
 		}
 	}
 
+	pickVideo = async () => {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		})
+
+		// TODO
+		console.log('this is result from picking video', result)
+
+		if (!result.cancelled) {
+			const prevTask = { ...this.state.task }
+			const newTask = { ...prevTask, video: result.uri }
+			this.setState({ task: newTask, updateVideo: true })
+		}
+	}
+
 	saveTask = async () => {
 		let { task, setEvent, setNotification } = this.state
 		const { navigation, theme, onSaveTask, onUndoTask } = this.props
@@ -587,6 +607,10 @@ class ConfigTask extends Component {
 			date = moment(task.date, dateFormat)
 			now = new Date().setHours(0, 0, 0, 0)
 		}
+
+
+		// TODO
+		console.log('this is TASK coming into config task ', task)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -840,7 +864,8 @@ class ConfigTask extends Component {
 						)}
 						<View style={styles.container}>
 							<Subheader text={translations.videoRecord} />
-							<VideoRecorderContainer getVideoUri={this.getVideoUri} />
+							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
+							<VideoRecorderContainer getVideoUri={this.getVideoUri} setState={this.setState} task={task} />
 						</View>
 					</ScrollView>
 				) : (
