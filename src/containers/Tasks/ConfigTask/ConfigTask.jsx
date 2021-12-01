@@ -186,7 +186,7 @@ class ConfigTask extends Component {
 		const { navigation, onInitTask, onInitFinishedTask, translations } = this.props
 		const taskId = navigation.getParam('task', false)
 		const finished = navigation.getParam('finished', false)
-		// const category = navigation.getParam('category', false)
+		const category = navigation.getParam('category', false)
 		const product = navigation.getParam('product', false)
 
 		// if (taskId !== false) {

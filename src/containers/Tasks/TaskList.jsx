@@ -986,7 +986,7 @@ class TaskList extends Component {
 						selectedCategory.name !== translations.finished && (
 							<ActionButton
 								hidden={bottomHidden}
-								onPress={() => navigation.navigate('ConfigTask', { category: selectedCategory })}
+								onPress={() => navigation.navigate('ConfigTask', { category: selectedCategory, product: this.state.task })}
 								icon='add'
 								style={{
 									container: { backgroundColor: theme.warningColor },

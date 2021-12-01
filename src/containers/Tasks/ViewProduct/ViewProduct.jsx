@@ -32,6 +32,8 @@ import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
+const defaultNoImage = require('../../../assets/no_image_stock.png')
+
 class ViewProduct extends Component {
 	state = {
 		task: {
@@ -166,9 +168,13 @@ class ViewProduct extends Component {
 			...product,
 		}
 
-		this.getRawPhoto(newTask.photo)
+		// TODO
+		console.log('this is product  ', product)
 
 		this.setState({ task: newTask })
+
+		this.getRawPhoto(newTask.photo)
+
 
 		// if (taskId !== false) {
 		// 	console.log('THISIS INSIDE TASK ID FALSE')
@@ -211,7 +217,7 @@ class ViewProduct extends Component {
 		console.log('this is string:: ', string)
 
 		try {
-			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/` + photoId, {
+			const result = await axios.get(string, {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
@@ -572,7 +578,7 @@ class ViewProduct extends Component {
 		let date
 		let now
 
-		console.log(`photo`, this.state.task.photo)
+		console.log('this is task for rendering: ', task)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -640,8 +646,10 @@ class ViewProduct extends Component {
 							<View style={styles.imageContainer}>
 								<Subheader text={translations.image} />
 								<Image
-									style={{ width: 200, height: 200 }}
-									source={{ url: this.state.task.image }}
+									source={{
+										uri: task.photo || defaultNoImage,
+									}}
+									style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
 								/>
 							</View>
 							<View style={styles.dateContainer}>

@@ -34,6 +34,8 @@ import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage'
 
+const defaultNoImage = require('../../../assets/no_image_stock.png')
+
 class EditTask extends Component {
 	state = {
 		task: {
@@ -181,10 +183,10 @@ class EditTask extends Component {
 			...this.state.task,
 			...product,
 		}
+		this.setState({ task: newTask })
 
 		this.getRawPhoto(newTask.photo)
 
-		this.setState({ task: newTask })
 
 		// if (taskId !== false) {
 		// 	if (finished) {
@@ -198,6 +200,7 @@ class EditTask extends Component {
 		// 	}
 		// 	return
 		// }
+
 		if (taskId !== false) {
 			onInitTask(taskId, (task) => {
 				this.prepareTask(task)
@@ -224,9 +227,10 @@ class EditTask extends Component {
 
 		// TOOD this is string
 		console.log('this is string:: ', string)
+		console.log('this is task :: ', this.state.task)
 
 		try {
-			const result = await axios.get(`http://caliboxs.com/api/v1/galleries/` + photoId, {
+			const result = await axios.get(string, {
 				headers: {
 					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 				},
@@ -623,7 +627,8 @@ class EditTask extends Component {
 		} = this.state
 		const { navigation, theme, settings, translations } = this.props
 
-		const product = navigation.getParam('product', null)
+		// TODO
+		console.log('this is task for rendering: ', task)
 
 		return (
 			<Template bgColor={theme.secondaryBackgroundColor}>
@@ -763,16 +768,11 @@ class EditTask extends Component {
 								</TouchableOpacity>
 							</View>
 						</View>
-						{this.state.task.image ? (
+						{this.state.task.image && (
 							<Image
 								source={{
-									uri: this.state.task.image && this.state.task.image,
+									uri: this.state.task.image || defaultNoImage,
 								}}
-								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
-							/>
-						) : (
-							<Image
-								source={{ url: this.state.task.photo }}
 								style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
 							/>
 						)}
