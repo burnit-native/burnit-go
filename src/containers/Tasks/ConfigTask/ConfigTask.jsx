@@ -178,6 +178,7 @@ class ConfigTask extends Component {
 		loading: true,
 		modalVisible: false,
 		photoMode: false,
+		videoMode: false,
 	}
 
 	componentDidMount() {
@@ -860,12 +861,17 @@ class ConfigTask extends Component {
 						)}
 						<View style={styles.container}>
 							<Subheader text={translations.videoRecord} />
+
+							{this.state.videoMode ? (
+								<VideoRecorderContainer
+									getVideoUri={this.getVideoUri}
+									setState={this.setState}
+									task={task}
+								/>
+							) : (
+								<Button title='Take a video' onPress={() => this.setState({ videoMode: true })} />
+							)}
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
-							<VideoRecorderContainer
-								getVideoUri={this.getVideoUri}
-								setState={this.setState}
-								task={task}
-							/>
 						</View>
 					</ScrollView>
 				) : (

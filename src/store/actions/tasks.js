@@ -259,11 +259,20 @@ export const saveEditTask =
 				Alert.alert('Success', `Your product has been updated.`, [
 					{
 						text: 'Ok',
-						onPress: callback,
+						onPress: () => {
+							callback()
+							if (state.saveThruDialog) {
+								callback()
+							}
+						},
 						style: 'cancel',
 					},
 				])
-				console.log('nice')
+
+				// if (state.saveThruDialog) {
+				// 	callback()
+				// }
+
 				dispatch(initToDo())
 			}
 		} catch (err) {

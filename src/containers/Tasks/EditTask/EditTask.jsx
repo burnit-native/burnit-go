@@ -169,6 +169,7 @@ class EditTask extends Component {
 		loading: true,
 		updatePhoto: false,
 		photoMode: false,
+		saveThruDialog: false,
 	}
 
 	componentDidMount() {
@@ -325,9 +326,9 @@ class EditTask extends Component {
 		const { translations, navigation } = this.props
 
 		const cancelHandler = () => this.setState({ showDialog: false })
-
 		let dialog
 		if (action === 'exit') {
+			this.setState({ saveThruDialog: true })
 			dialog = generateDialogObject(
 				cancelHandler,
 				translations.defaultTitle,
