@@ -169,7 +169,6 @@ class ViewProduct extends Component {
 		}
 
 		// TODO
-		console.log('this is product  ', product)
 
 		this.setState({ task: newTask })
 
