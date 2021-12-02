@@ -514,7 +514,7 @@ class TaskList extends Component {
 			id: -3,
 			name: translations.newCategory,
 		}
-		dropdownData.push(all, ...categories, finish, newCate)
+		dropdownData.push(all, ...categories)
 		this.setState({ dropdownData })
 	}
 
@@ -986,7 +986,12 @@ class TaskList extends Component {
 						selectedCategory.name !== translations.finished && (
 							<ActionButton
 								hidden={bottomHidden}
-								onPress={() => navigation.navigate('ConfigTask', { category: selectedCategory, product: this.state.task })}
+								onPress={() =>
+									navigation.navigate('ConfigTask', {
+										category: selectedCategory,
+										product: this.state.task,
+									})
+								}
 								icon='add'
 								style={{
 									container: { backgroundColor: theme.warningColor },
