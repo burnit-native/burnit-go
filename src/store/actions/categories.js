@@ -236,8 +236,6 @@ export const updateCategory = (category, callback) => async (dispatch) => {
 
 	form.append('_method', 'put')
 
-	console.log('this is photo coming in', category)
-
 	try {
 		const response = await axios.post(
 			'http://caliboxs.com/api/v1/categories/' + category.id,

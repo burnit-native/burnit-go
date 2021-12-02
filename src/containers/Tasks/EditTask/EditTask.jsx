@@ -762,8 +762,8 @@ class EditTask extends Component {
 									</Text>
 								</TouchableOpacity>
 							</View>
+							<Subheader text={translations.image} />
 						</View>
-						<Subheader text={translations.photos} />
 						{this.state.task.photo && (
 							<Image
 								source={{
