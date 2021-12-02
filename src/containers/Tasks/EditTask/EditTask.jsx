@@ -580,18 +580,13 @@ class EditTask extends Component {
 			quality: 1,
 		})
 
+		// TODO
+		console.log('this is result from picking video', result)
 		this.setState({ videoMode: true })
-
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }
-			this.setState({
-				task: newTask,
-				updateVideo: true,
-				newVideoUri: result.uri,
-				videoMode: true,
-				photoMode: false,
-			})
+			this.setState({ task: newTask, updateVideo: true, newVideoUri: result.uri })
 		}
 	}
 
@@ -834,7 +829,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
 	onInitTask: (id, callback) => dispatch(actions.initTask(id, callback)),
 	onInitFinishedTask: (id, callback) => dispatch(actions.initFinishedTask(id, callback)),
-	onSaveEditTask: (task, callback, navigation) => dispatch(actions.saveEditTask(task, callback, navigation)),
+	onSaveEditTask: (task, callback, navigation) =>
+		dispatch(actions.saveEditTask(task, callback, navigation)),
 	onUndoTask: (task, callback) => dispatch(actions.undoTask(task, callback)),
 	onRemoveTask: (task, finished, callback) =>
 		dispatch(actions.removeTask(task, finished, callback)),

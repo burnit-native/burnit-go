@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera'
 import { Ionicons } from '@expo/vector-icons'
 import VideoPlayer from '../Video'
 
-export default function VideoRecorderContainer({ getVideoUri, task }) {
+export default function VideoRecorderContainer({ getVideoUri, task, setState }) {
 	const [hasPermission, setHasPermission] = useState(null)
 	const [type, setType] = useState(Camera.Constants.Type.back)
 	const [preview, setPreview] = useState(false)
@@ -127,7 +127,7 @@ export default function VideoRecorderContainer({ getVideoUri, task }) {
 										// TODO
 										console.log('this is video ', video)
 										getVideoUri(video.uri)
-
+										setState({ newVideoUri: video.uri })
 										console.log('this is after getting video  ', video)
 										// setVideoUri(video.uri)
 									}
