@@ -129,54 +129,6 @@ export const initCategory =
 		}
 
 export const saveCategory = (category, callback) => async () => {
-	// if (category.id !== false) {
-	// 	db.transaction(
-	// 		(tx) => {
-	// 			tx.executeSql(
-	// 				`update categories
-	//                                set name = ?
-	//                                where id = ?;`,
-	// 				[category.name, category.id],
-	// 				() => {
-	// 					Analytics.logEvent('updatedCategory', {
-	// 						name: 'categoryAction',
-	// 					})
-
-	// 					callback()
-	// 				},
-	// 			)
-	// 		},
-	// 		// eslint-disable-next-line no-console
-	// 		(err) => console.log(err),
-	// 	)
-	// } else {
-	// 	db.transaction(
-	// 		(tx) => {
-	// 			tx.executeSql(
-	// 				'insert into categories (name) values (?)',
-	// 				[category.name],
-	// 				(_, { insertId }) => {
-	// 					Analytics.logEvent('createdCategory', {
-	// 						name: 'categoryAction',
-	// 					})
-
-	// 					callback({ id: insertId, name: category.name })
-	// 				},
-	// 			)
-	// 		},
-	// 		// eslint-disable-next-line no-console
-	// 		(err) => console.log(err),
-	// 	)
-	// }
-
-	// const photoForm = new FormData();
-	// photoForm.append('product_id', '183');
-	// photoForm.append('gallery[]', {
-	// 	uri: category.photo,
-	// 	type: 'image/jpeg',
-	// 	name: category.name + '_photo',
-	// })
-
 	// Takes the incoming object and turns it into form-data
 	const form = new FormData()
 	form.append('name', category.name)
@@ -230,38 +182,63 @@ export const saveCategory = (category, callback) => async () => {
 	}
 }
 export const updateCategory = (category, callback) => async (dispatch) => {
-	// Takes the incoming object and turns it into form-data
 	const form = new FormData()
 	form.append('name', category.name)
-
-	// file object created for post request with axios
-	form.append('photo', {
-		uri: category.photo,
-		type: 'image/jpeg',
-		name: category.name + '_photo',
-	})
-
 	form.append('_method', 'put')
 
-	console.log('this is photo coming in', category)
+	try {
+		const photoForm = new FormData()
+		photoForm.append('product_id', '190')
+		photoForm.append('gallery[]', {
+			uri: category.photo.photo,
+			type: 'image/jpeg',
+			name: category.name + '_photo',
+		})
+
+		console.log('adding new photo')
+
+		const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
+			headers: {
+				'content-type': 'multipart/form-data',
+				// "content-type": "application/json",
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			},
+		})
+
+
+		const filteredNewPhoto = newPhoto.data.result[0]
+		console.log('new photo added', filteredNewPhoto)
+		// file object created for post request with axios
+		form.append('photo', {
+			uri: filteredNewPhoto.photo,
+			type: 'image/jpeg',
+			name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+		})
+	} catch (e) {
+		console.error('Error on uploading category photo :: ', e)
+		return null;
+	}
 
 	try {
-		const response = await axios.post(
-			'http://caliboxs.com/api/v1/categories/' + category.id,
-			form,
-			{
-				headers: {
-					'content-type': 'multipart/form-data',
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			},
-		)
 
-		console.log('new category updated: ', response.data.result)
-		// dispatch(initCategories())
+		const urlString = `http://caliboxs.com/api/v1/categories/${category.id}`
+
+		console.log('this is urlString', urlString)
+
+		console.log('making call to new category FORM : ', form, ' :: category ID; ', category.id)
+		const response = await axios.post(urlString, form, {
+			headers: {
+				'content-type': 'multipart/form-data',
+				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+			},
+		})
+
+		console.log('Updated category STRAIGHT FORM CALL'.response.data.result)
+
 		return response.data.result
 	} catch (e) {
-		console.error('Error on updating categories :: ', e)
+		console.error('Error on saving categories :: ', e)
+		console.error('Error on saving categories :: ', e.response)
 		return null
 	}
 }

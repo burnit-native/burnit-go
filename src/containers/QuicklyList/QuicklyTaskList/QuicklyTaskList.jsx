@@ -226,10 +226,9 @@ class QuicklyTaskList extends Component {
 				photo: this.state.list.photo,
 			}
 
-			const newlyCreatedCategory = await onSaveCategory(newCategory)
+			const newlyUpdatedCategory = await onSaveCategory(newCategory)
 
-			if (newlyCreatedCategory !== null || newlyCreatedCategory !== undefined) {
-				await onInitCategories()
+			if (newlyUpdatedCategory !== null || newlyUpdatedCategory !== undefined) {
 
 				Alert.alert('Success', `Your category has been created.`, [
 					{
@@ -239,6 +238,7 @@ class QuicklyTaskList extends Component {
 					},
 				])
 				this.setState({ spinner: false })
+				await onInitCategories()
 			}
 
 			// onSaveQuicklyTask(newTask, list, (list) => {
@@ -253,28 +253,61 @@ class QuicklyTaskList extends Component {
 	}
 
 	updateCategory = async () => {
-		const { onUpdateCategory } = this.props
+		const { onUpdateCategory, onInitCategories, navigation } = this.props
 
 		const { list } = this.state
 
-		const response = await onUpdateCategory(list)
+		const {
+			input,
+			// list
+		} = this.state
 
-		if (response) {
-			// Alert.alert('Success', `Your category has been updated.`, [
-			// 	{
-			// 		text: 'Ok',
-			// 		onPress: navigation.goBack,
-			// 		style: 'cancel',
-			// 	},
-			// ])
+		if (!input.control.error) {
+			this.setState({ spinner: true })
+			const newCategory = {
+				id: this.state.list.id,
+				name: input.value,
+				photo: this.state.list.photo,
+			}
 
-			this.setState({
-				list: response.data.result,
-				edit: false,
-			})
+			const response = await onUpdateCategory(newCategory)
 
-			this.setState({ spinner: false })
+			if (response !== null || response !== undefined) {
+				console.log('this is newly updated category', response)
+				
+				Alert.alert('Success', `Your category has been updated.`, [
+					{
+						text: 'Ok',
+						onPress: navigation.goBack,
+						style: 'cancel',
+					},
+				])
+				this.setState({ spinner: false })
+				await onInitCategories()
+			}
+
+			// onSaveQuicklyTask(newTask, list, (list) => {
+			// 	this.setState({ input: { ...input, value: null } })
+			// 	this.reloadTasks(list)
+			// })
 		}
+
+		// if (response) {
+		// 	// Alert.alert('Success', `Your category has been updated.`, [
+		// 	// 	{
+		// 	// 		text: 'Ok',
+		// 	// 		onPress: navigation.goBack,
+		// 	// 		style: 'cancel',
+		// 	// 	},
+		// 	// ])
+
+		// 	this.setState({
+		// 		list: response.data.result,
+		// 		edit: false,
+		// 	})
+
+		// 	this.setState({ spinner: false })
+		// }
 		// else
 		// Alert.alert('Error', `Your category could not be updated.`, [
 		// 	{
@@ -568,7 +601,7 @@ class QuicklyTaskList extends Component {
 										</Text>
 									</>
 								)}
-								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
+								{(this.state.edit || this.state.add) && <Button title='Pick an image from camera roll' onPress={this.pickImage} />}
 
 
 								{(this.state.list.photo.photo || navigation.getParam('category')) && (
@@ -583,18 +616,17 @@ class QuicklyTaskList extends Component {
 								{/* <View style={styles.addIcon}> */}
 								{this.state.spinner ? (
 									<Spinner />
-								) : (this.state.edit && !this.state.add) ? (
+								) : this.state.edit ? (
+
 									<Button title="Press Here To Save Category" styles={styles.addIcon} onPress={this.updateCategory} />
 								) : (
 									<Button title="Press Here To Add Category" styles={styles.addIcon} onPress={this.addCategory} />
 								)}
-								{this.state.edit && (
-									<IconToggle
-										styles={styles.addIcon}
-										onPress={() => this.setEditTrue(category)}
-										name='edit'
-									/>
-								)}
+								<IconToggle
+									styles={styles.addIcon}
+									onPress={() => this.setEditTrue(category)}
+									name='edit'
+								/>
 								{/* </View> */}
 							</View>
 						</View>
