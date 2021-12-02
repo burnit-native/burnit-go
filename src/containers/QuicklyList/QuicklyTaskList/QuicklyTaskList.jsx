@@ -274,7 +274,7 @@ class QuicklyTaskList extends Component {
 
 			if (response !== null || response !== undefined) {
 				console.log('this is newly updated category', response)
-				
+
 				Alert.alert('Success', `Your category has been updated.`, [
 					{
 						text: 'Ok',
@@ -408,7 +408,7 @@ class QuicklyTaskList extends Component {
 		})
 
 		if (!result.cancelled) {
-			this.setState({ list: { ...this.state.list, photo: result.uri } })
+			this.setState({ list: { ...this.state.list, photo: { ...this.state.list.photo, photo: result.uri } } })
 		}
 	}
 
