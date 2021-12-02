@@ -800,7 +800,10 @@ class EditTask extends Component {
 									task={task}
 								/>
 							) : (
-								<Button title='Take a video' onPress={() => this.setState({ videoMode: true })} />
+								<Button
+									title='Take a video'
+									onPress={() => this.setState({ videoMode: true, photoMode: false })}
+								/>
 							)}
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
 						</View>
