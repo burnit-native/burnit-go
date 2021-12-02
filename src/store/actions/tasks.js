@@ -229,16 +229,16 @@ export const saveEditTask =
 
 				videoForm.append('gallery[]', {
 					uri: state.task.video,
-					type: 'video/mov/mp4',
-					name: state.task.name + '_video',
+					type: 'video/mov',
+					name: state.task.name + `.${state.task.video.split('.').pop().toString()}`,
 				})
-				console.log('sending request...')
+
 				const newVideo = await axios.post(
 					'http://caliboxs.com/api/v1/galleries/upload',
 					videoForm,
 					{
 						headers: {
-							'content-type': 'multipart/form-data',
+							'content-type': 'application/json',
 							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 						},
 					},
@@ -322,12 +322,12 @@ export const saveTask =
 			type: 'image/jpeg',
 			name: task.name + '_photo',
 		})
-
+		console.log(`file type`, task.video.split('.').pop().toString())
 		videoForm.append('product_id', '200')
 		videoForm.append('gallery[]', {
-			uri: task.video,
-			type: 'video/mov/mp4',
-			name: task.name + '_video',
+			uri: `${task.video}`,
+			type: 'video/mov',
+			name: task.name + `.${task.video.split('.').pop().toString()}`,
 		})
 
 		try {
@@ -354,11 +354,13 @@ export const saveTask =
 					videoForm,
 					{
 						headers: {
-							'content-type': 'multipart/form-data',
+							'content-type': 'application/json',
 							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
 						},
 					},
 				)
+
+				console.log('video', newVideo)
 
 				filteredNewVideo = newVideo.data.result[0]
 				bodyFormData.append('video', filteredNewVideo.video_path)

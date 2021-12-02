@@ -540,7 +540,7 @@ class ConfigTask extends Component {
 
 		// TODO
 		console.log('this is result from picking video', result)
-
+		this.setState({ videoMode: true })
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }

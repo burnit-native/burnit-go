@@ -580,6 +580,8 @@ class EditTask extends Component {
 			quality: 1,
 		})
 
+		this.setState({ videoMode: true })
+
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }

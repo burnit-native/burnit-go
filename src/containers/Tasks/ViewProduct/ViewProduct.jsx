@@ -173,7 +173,7 @@ class ViewProduct extends Component {
 		// TODO
 
 		this.setState({ task: newTask })
-
+		console.log(`video Url`, newTask.video)
 		this.getRawPhoto(newTask.photo)
 
 		// if (taskId !== false) {
