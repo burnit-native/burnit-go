@@ -186,6 +186,7 @@
 		"image": "Photos",
 		"video": "Video",
 		"videoRecord": "Record a video",
+		"photoHeader": "Photos",
 		"priority": "Priority",
 		"priorityNone": "None",
 		"priorityLow": "Low",

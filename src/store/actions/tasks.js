@@ -221,28 +221,34 @@ export const saveEditTask =
 				})
 			}
 
-			// if (state.task.video) {
-			// 	const videoForm = new FormData()
-			// 	bodyFormData.append('video', state.task.video)
-			// 	videoForm.append('product_id', '200')
-			// 	videoForm.append('gallery[]', {
-			// 		uri: state.task.video,
-			// 		type: 'video/mov/mp4',
-			// 		name: state.task.name + '_video',
-			// 	})
-			// 	const newVideo = await axios.post(
-			// 		'http://caliboxs.com/api/v1/galleries/upload',
-			// 		videoForm,
-			// 		{
-			// 			headers: {
-			// 				'content-type': 'multipart/form-data',
-			// 				authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-			// 			},
-			// 		},
-			// 	)
-			// 	filteredNewVideo = newVideo.data.result[0]
-			// 	bodyFormData.append('video', filteredNewVideo.video_path)
-			// }
+			if (state.newVideoUri) {
+				console.log('new video incoming....')
+				const videoForm = new FormData()
+				bodyFormData.append('video', state.task.video)
+				videoForm.append('product_id', '200')
+
+				videoForm.append('gallery[]', {
+					uri: state.task.video,
+					type: 'video/mov/mp4',
+					name: state.task.name + '_video',
+				})
+				console.log('sending request...')
+				const newVideo = await axios.post(
+					'http://caliboxs.com/api/v1/galleries/upload',
+					videoForm,
+					{
+						headers: {
+							'content-type': 'multipart/form-data',
+							authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+						},
+					},
+				)
+
+				console.log('response', newVideo)
+
+				filteredNewVideo = newVideo.data.result[0]
+				bodyFormData.append('video', filteredNewVideo.video_path)
+			}
 
 			const response = await axios.post(
 				`http://caliboxs.com/api/v1/products/${state.task.id}`,

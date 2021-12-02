@@ -170,6 +170,8 @@ class EditTask extends Component {
 		updatePhoto: false,
 		photoMode: false,
 		saveThruDialog: false,
+		videoMode: false,
+		newVideoUri: null,
 	}
 
 	componentDidMount() {
@@ -253,11 +255,14 @@ class EditTask extends Component {
 
 	getVideoUri = (videoUri) => {
 		const { task } = this.state
-
+		console.log('is this being used?')
 		if (videoUri) {
+			console.log('setting new video to state...')
 			this.setState({
 				task: { ...task, video: videoUri },
+				newVideoUri: videoUri,
 			})
+			console.log('finished setting', this.state.newVideoUri)
 		}
 	}
 
@@ -578,7 +583,7 @@ class EditTask extends Component {
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }
-			this.setState({ task: newTask, updateVideo: true })
+			this.setState({ task: newTask, updateVideo: true, newVideoUri: result.uri, videoMode: true })
 		}
 	}
 
@@ -752,6 +757,7 @@ class EditTask extends Component {
 								</TouchableOpacity>
 							</View>
 						</View>
+						<Subheader text={translations.photos} />
 						{this.state.task.photo && (
 							<Image
 								source={{
@@ -778,12 +784,16 @@ class EditTask extends Component {
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 						<View style={styles.container}>
 							<Subheader text={translations.videoRecord} />
+							{this.state.videoMode ? (
+								<VideoRecorderContainer
+									getVideoUri={this.getVideoUri}
+									setState={this.setState}
+									task={task}
+								/>
+							) : (
+								<Button title='Take a video' onPress={() => this.setState({ videoMode: true })} />
+							)}
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
-							<VideoRecorderContainer
-								getVideoUri={this.getVideoUri}
-								setState={this.setState}
-								task={task}
-							/>
 						</View>
 					</ScrollView>
 				) : (
