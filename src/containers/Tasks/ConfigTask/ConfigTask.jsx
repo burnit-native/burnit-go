@@ -23,6 +23,8 @@ import Template from '../../Template/Template'
 import Input from '../../../components/Input/Input'
 import ConfigCategory from '../../Categories/ConfigCategory/ConfigCategory'
 import Camera from '../../../components/Camera'
+import { ImageBrowser } from 'expo-image-picker-multiple'
+
 import {
 	checkValid,
 	convertDaysIndex,
@@ -515,7 +517,7 @@ class ConfigTask extends Component {
 
 	pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
@@ -530,7 +532,7 @@ class ConfigTask extends Component {
 
 	pickVideo = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Videos,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
@@ -843,11 +845,15 @@ class ConfigTask extends Component {
 								</TouchableOpacity>
 								{/* <IconToggle onPress={this.toggleConfigCategory} name='playlist-add' /> */}
 							</View>
+							<Subheader text={translations.image} />
 						</View>
 						{this.state.photoMode ? (
 							<Camera updateImage={this.updateImage} />
 						) : (
-							<Button title='Take a photo' onPress={() => this.setState({ photoMode: true })} />
+							<Button
+								title='Take a photo'
+								onPress={() => this.setState({ photoMode: true, videoMode: false })}
+							/>
 						)}
 
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
@@ -860,6 +866,8 @@ class ConfigTask extends Component {
 							/>
 						)}
 						<View style={styles.container}>
+							<Subheader text={translations.gallery} />
+							<Button title='Add photos to gallery' onPress={() => {}} />
 							<Subheader text={translations.videoRecord} />
 
 							{this.state.videoMode ? (
@@ -869,7 +877,10 @@ class ConfigTask extends Component {
 									task={task}
 								/>
 							) : (
-								<Button title='Take a video' onPress={() => this.setState({ videoMode: true })} />
+								<Button
+									title='Take a video'
+									onPress={() => this.setState({ videoMode: true, photoMode: false })}
+								/>
 							)}
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
 						</View>

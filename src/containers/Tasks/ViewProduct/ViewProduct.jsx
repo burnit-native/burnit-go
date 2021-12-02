@@ -209,8 +209,6 @@ class ViewProduct extends Component {
 	getRawPhoto = async (photoName) => {
 		const photoId = photoName.split('-')[1]
 
-		console.log('this is photoID', photoId)
-
 		const string = 'http://caliboxs.com/api/v1/galleries/' + photoId
 
 		// TOOD this is string
@@ -224,8 +222,6 @@ class ViewProduct extends Component {
 			})
 
 			const photoArray = result.data.result
-
-			console.log('this is photo array from looking up photo', photoArray)
 
 			this.setState({ photoArray: photoArray })
 

@@ -559,7 +559,7 @@ class EditTask extends Component {
 
 	pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
@@ -574,7 +574,7 @@ class EditTask extends Component {
 
 	pickVideo = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Videos,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
@@ -583,7 +583,13 @@ class EditTask extends Component {
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }
-			this.setState({ task: newTask, updateVideo: true, newVideoUri: result.uri, videoMode: true })
+			this.setState({
+				task: newTask,
+				updateVideo: true,
+				newVideoUri: result.uri,
+				videoMode: true,
+				photoMode: false,
+			})
 		}
 	}
 
@@ -756,8 +762,8 @@ class EditTask extends Component {
 									</Text>
 								</TouchableOpacity>
 							</View>
+							<Subheader text={translations.image} />
 						</View>
-						<Subheader text={translations.photos} />
 						{this.state.task.photo && (
 							<Image
 								source={{
@@ -778,7 +784,10 @@ class EditTask extends Component {
 						{this.state.photoMode ? (
 							<Camera updateImage={this.updateImage} />
 						) : (
-							<Button title='Take a photo' onPress={() => this.setState({ photoMode: true })} />
+							<Button
+								title='Take a photo'
+								onPress={() => this.setState({ photoMode: true, videoMode: false })}
+							/>
 						)}
 
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
@@ -791,7 +800,10 @@ class EditTask extends Component {
 									task={task}
 								/>
 							) : (
-								<Button title='Take a video' onPress={() => this.setState({ videoMode: true })} />
+								<Button
+									title='Take a video'
+									onPress={() => this.setState({ videoMode: true, photoMode: false })}
+								/>
 							)}
 							<Button title='Pick a video from camera roll' onPress={this.pickVideo} />
 						</View>
