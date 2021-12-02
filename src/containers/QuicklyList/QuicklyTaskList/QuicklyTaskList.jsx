@@ -42,7 +42,8 @@ class QuicklyTaskList extends Component {
 		selectedTask: false,
 		list: {
 			id: false,
-			name: this.props.translations.listName,
+			name: null,
+			photo: null
 		},
 		newListName: this.props.translations.listName,
 		control: {
@@ -73,19 +74,21 @@ class QuicklyTaskList extends Component {
 
 		const listFromProp = navigation.getParam('list', null)
 
+		console.log('thisis list coming thorugh', listFromProp)
+
 		if (navigation.getParam('add')) {
 			console.log('add mode on')
 			this.setState({ add: true })
 		}
 
 		// if category image is found this will be set the string URI in state.image
-		if (listFromProp && listFromProp.photo) {
+		if (listFromProp) {
 			// const updatedList = filterOutPhoto(listFromProp)
 			// callToGetPhoto(updatedList).then(data => {
 			// 	this.setState({ image: data.photo.photo })
 			// })
 			// TODO
-			this.setState({ image: listFromProp.photo.photo, list: listFromProp.photo.photo })
+			this.setState({ list: this.state.list.name || listFromProp })
 		}
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
@@ -95,11 +98,9 @@ class QuicklyTaskList extends Component {
 			this.keyboardDidShow(false),
 		)
 
-		const list = navigation.getParam('list', false)
-		console.log('thisis list coming thorugh', list)
 
-		if (list && list.id !== false) {
-			this.reloadTasks(list)
+		if (listFromProp&& listFromProp.id !== false) {
+			this.reloadTasks(listFromProp)
 		} else {
 			this.setState({ loading: false })
 		}
@@ -551,7 +552,7 @@ class QuicklyTaskList extends Component {
 									<>
 										<Subheader text='Name:' />
 										<Text>
-											{this.state.list.name || navigation.getParam('name', this.state.list.name)}
+											{this.state.list.name || navigation.getParam('category', { name: '' }).name}
 										</Text>
 									</>
 								)}
@@ -568,11 +569,11 @@ class QuicklyTaskList extends Component {
 								{this.state.spinner ? (
 									<Spinner />
 								) : this.state.edit ? (
-									<IconToggle styles={styles.addIcon} onPress={this.updateCategory} name='add' />
+									<Button title="Press Here To Save Category" styles={styles.addIcon} onPress={this.updateCategory} />
 								) : (
-									<IconToggle styles={styles.addIcon} onPress={this.addCategory} name='add' />
+									<Button title="Press Here To Add Category" styles={styles.addIcon} onPress={this.addCategory} />
 								)}
-								{this.props.navigation.getParam('edit') && (
+								{this.state.edit && (
 									<IconToggle
 										styles={styles.addIcon}
 										onPress={() => this.setEditTrue(category)}
