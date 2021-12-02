@@ -562,7 +562,6 @@ class ViewProduct extends Component {
 	}
 
 	renderCarouselItem = ({ item }) => {
-		console.log(`rendering...`, item)
 		return (
 			<View style={styles.carouselSlide}>
 				<Image
