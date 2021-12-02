@@ -61,4 +61,14 @@ export default StyleSheet.create({
 		fontSize: 14,
 		textAlign: 'center',
 	},
+	carouselSlide: {
+		marginTop: 10,
+		backgroundColor: '#ffc8b4',
+		height: 300,
+		borderStyle: 'solid',
+		borderColor: 'black',
+	},
+	carouselTitle: {
+		fontSize: 30,
+	},
 })

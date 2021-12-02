@@ -31,6 +31,7 @@ import styles from './ViewProduct.styles'
 import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 import axios from 'axios'
+import Carousel from 'react-native-snap-carousel'
 
 const defaultNoImage = require('../../../assets/no_image_stock.png')
 
@@ -153,6 +154,7 @@ class ViewProduct extends Component {
 		isVisibleDate: false,
 		isVisibleTime: false,
 		loading: true,
+		photoArray: [],
 	}
 
 	componentDidMount() {
@@ -224,6 +226,8 @@ class ViewProduct extends Component {
 			const photoArray = result.data.result
 
 			console.log('this is photo array from looking up photo', photoArray)
+
+			this.setState({ photoArray: photoArray })
 
 			const photoUrl = await photoArray.find((photoObj) => {
 				const productId = photoName.split('-').pop()
@@ -557,6 +561,20 @@ class ViewProduct extends Component {
 		// 	.catch((task) => saveTaskCallback(task))
 	}
 
+	renderCarouselItem = ({ item }) => {
+		console.log(`rendering...`, item)
+		return (
+			<View style={styles.carouselSlide}>
+				<Image
+					source={{
+						uri: item.photo || defaultNoImage,
+					}}
+					style={{ width: 300, height: 300, marginLeft: 'auto', marginRight: 'auto' }}
+				/>
+			</View>
+		)
+	}
+
 	render() {
 		const {
 			task,
@@ -646,6 +664,18 @@ class ViewProduct extends Component {
 										uri: task.photo || defaultNoImage,
 									}}
 									style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }}
+								/>
+								<Subheader text={translations.gallery} />
+								<Carousel
+									ref={(c) => {
+										this._carousel = c
+									}}
+									data={this.state.photoArray}
+									renderItem={this.renderCarouselItem}
+									sliderWidth={600}
+									itemWidth={300}
+									layout='stack'
+									layoutCardOffset='20'
 								/>
 							</View>
 							<View style={styles.dateContainer}>
