@@ -867,7 +867,7 @@ class ConfigTask extends Component {
 						)}
 						<View style={styles.container}>
 							<Subheader text={translations.gallery} />
-							<Button title='Add photos to gallery' onPress={() => {}} />
+							<Button title='Add photos to gallery' onPress={() => { }} />
 							<Subheader text={translations.videoRecord} />
 
 							{this.state.videoMode ? (

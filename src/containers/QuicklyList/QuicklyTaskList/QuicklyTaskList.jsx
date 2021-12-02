@@ -226,7 +226,7 @@ class QuicklyTaskList extends Component {
 				photo: this.state.list.photo,
 			}
 
-			const newlyUpdatedCategory = await onSaveCategory(newCategory)
+			const newlyUpdatedCategory = await onSaveCategory(newCategory, navigation.goBack)
 
 			if (newlyUpdatedCategory !== null || newlyUpdatedCategory !== undefined) {
 
@@ -284,6 +284,20 @@ class QuicklyTaskList extends Component {
 				])
 				this.setState({ spinner: false })
 				await onInitCategories()
+			}
+
+			if (response === null || response === undefined) {
+				Alert.alert(
+					'Error',
+					`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+					[
+						{
+							text: 'Ok',
+							onPress: navigation.goBack,
+							style: 'cancel',
+						},
+					],
+				)
 			}
 
 			// onSaveQuicklyTask(newTask, list, (list) => {

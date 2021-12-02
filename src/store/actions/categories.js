@@ -111,6 +111,18 @@ export const initCategories =
 				dispatch(onInitCategories(await photoUpdatedCategories))
 			} catch (e) {
 				console.error('Error on initCategories :: ', e)
+
+				Alert.alert(
+					'Error',
+					`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+					[
+						{
+							text: 'Ok',
+							onPress: callback(),
+							style: 'cancel',
+						},
+					],
+				)
 			}
 		}
 
@@ -163,6 +175,19 @@ export const saveCategory = (category, callback) => async () => {
 		})
 	} catch (e) {
 		console.error('Error on uploading category photo :: ', e)
+
+
+		Alert.alert(
+			'Error',
+			`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+			[
+				{
+					text: 'Ok',
+					onPress: callback(),
+					style: 'cancel',
+				},
+			],
+		)
 	}
 
 	try {
@@ -216,11 +241,11 @@ export const updateCategory = (category, callback) => async (dispatch) => {
 		})
 	} catch (e) {
 		console.error('Error on uploading category photo :: ', e)
+
 		return null;
 	}
 
 	try {
-
 		const urlString = `http://caliboxs.com/api/v1/categories/${category.id}`
 
 		console.log('this is urlString', urlString)
@@ -233,7 +258,7 @@ export const updateCategory = (category, callback) => async (dispatch) => {
 			},
 		})
 
-		console.log('Updated category STRAIGHT FORM CALL'.response.data.result)
+		console.log('Updated category STRAIGHT FORM CALL', response.data.result)
 
 		return response.data.result
 	} catch (e) {
