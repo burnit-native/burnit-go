@@ -42,7 +42,7 @@ class MainCategoriesList extends Component {
 
 	goIntoEdit = (category) => {
 		const { navigation } = this.props
-		navigation.navigate('QuicklyTaskList', { list: category, edit: true, add: false })
+		navigation.navigate('QuicklyTaskList', { list: category, add: false })
 	}
 
 	reloadListsAmount = () => {

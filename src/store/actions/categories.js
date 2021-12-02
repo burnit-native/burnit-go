@@ -77,56 +77,56 @@ export const onInitCategories = (categories) => ({
 
 export const initCategories =
 	(callback = () => null) =>
-	async (dispatch) => {
-		try {
-			const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
-				headers: {
-					authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
-				},
-			})
+		async (dispatch) => {
+			try {
+				const rawCategories = await axios.get('http://caliboxs.com/api/v1/categories', {
+					headers: {
+						authorization: `Bearer ${await AsyncStorage.getItem('accessToken')}`,
+					},
+				})
 
-			const me = await AsyncStorage.getItem('me')
-			const filteredCategories = rawCategories.data.result.filter(
-				(category) => category.user_id === +me,
-			)
+				const me = await AsyncStorage.getItem('me')
+				const filteredCategories = rawCategories.data.result.filter(
+					(category) => category.user_id === +me,
+				)
 
-			const photoUpdatedCategories = Promise.all(
-				filteredCategories.map((category) => {
-					const updatedList = filterOutPhoto(category)
+				const photoUpdatedCategories = Promise.all(
+					filteredCategories.map((category) => {
+						const updatedList = filterOutPhoto(category)
 
-					callToGetPhoto(updatedList)
-						.then((data) => {
-							if (data && data.photo) {
-								return data.photo.photo
-							}
-							data.photo = null
-							return null
-						})
-						.catch((err) => console.log(`calltoGetPhoto`, err))
-					return updatedList
-				}),
-			)
+						callToGetPhoto(updatedList)
+							.then((data) => {
+								if (data && data.photo) {
+									return data.photo.photo
+								}
+								data.photo = null
+								return null
+							})
+							.catch((err) => console.log(`calltoGetPhoto`, err))
+						return updatedList
+					}),
+				)
 
-			callback()
-			dispatch(onInitCategories(await photoUpdatedCategories))
-		} catch (e) {
-			console.error('Error on initCategories :: ', e)
+				callback()
+				dispatch(onInitCategories(await photoUpdatedCategories))
+			} catch (e) {
+				console.error('Error on initCategories :: ', e)
+			}
 		}
-	}
 
 export const initCategory =
 	(id, callback = () => null) =>
-	() => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql('select * from categories where id = ?', [id], (_, { rows }) => {
-					callback(rows._array[0])
-				})
-			},
-			// eslint-disable-next-line no-console
-			(err) => console.log(err),
-		)
-	}
+		() => {
+			db.transaction(
+				(tx) => {
+					tx.executeSql('select * from categories where id = ?', [id], (_, { rows }) => {
+						callback(rows._array[0])
+					})
+				},
+				// eslint-disable-next-line no-console
+				(err) => console.log(err),
+			)
+		}
 
 export const saveCategory = (category, callback) => async () => {
 	// if (category.id !== false) {
@@ -185,10 +185,13 @@ export const saveCategory = (category, callback) => async () => {
 		const photoForm = new FormData()
 		photoForm.append('product_id', '190')
 		photoForm.append('gallery[]', {
-			uri: category.photo,
+			uri: category.photo.photo,
 			type: 'image/jpeg',
 			name: category.name + '_photo',
 		})
+
+		console.log('adding new photo')
+
 		const newPhoto = await axios.post('http://caliboxs.com/api/v1/galleries/upload', photoForm, {
 			headers: {
 				'content-type': 'multipart/form-data',
@@ -197,10 +200,12 @@ export const saveCategory = (category, callback) => async () => {
 			},
 		})
 
+		console.log('new photo added', newPhoto)
+
 		const filteredNewPhoto = newPhoto.data.result[0]
 		// file object created for post request with axios
 		form.append('photo', {
-			uri: category.photo,
+			uri: filteredNewPhoto.photo,
 			type: 'image/jpeg',
 			name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
 		})
@@ -209,6 +214,8 @@ export const saveCategory = (category, callback) => async () => {
 	}
 
 	try {
+
+		console.log('making call to new category')
 		const response = await axios.post('http://caliboxs.com/api/v1/categories', form, {
 			headers: {
 				'content-type': 'multipart/form-data',

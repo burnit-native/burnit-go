@@ -43,7 +43,7 @@ class QuicklyTaskList extends Component {
 		list: {
 			id: false,
 			name: null,
-			photo: null
+			photo: { photo: null }
 		},
 		newListName: this.props.translations.listName,
 		control: {
@@ -53,7 +53,7 @@ class QuicklyTaskList extends Component {
 		},
 		input: {
 			control: {
-				label: this.props.navigation.getParam('name', 'Enter new category name'),
+				label: this.props.navigation.getParam('list', 'Enter new category name').name,
 				required: true,
 				characterRestriction: 40,
 			},
@@ -81,6 +81,11 @@ class QuicklyTaskList extends Component {
 			this.setState({ add: true })
 		}
 
+		if (navigation.getParam('edit')) {
+			console.log('add mode on')
+			this.setState({ edit: true })
+		}
+
 		// if category image is found this will be set the string URI in state.image
 		if (listFromProp) {
 			// const updatedList = filterOutPhoto(listFromProp)
@@ -88,7 +93,7 @@ class QuicklyTaskList extends Component {
 			// 	this.setState({ image: data.photo.photo })
 			// })
 			// TODO
-			this.setState({ list: this.state.list.name || listFromProp })
+			this.setState({ list: listFromProp })
 		}
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
@@ -188,7 +193,7 @@ class QuicklyTaskList extends Component {
 
 	// TODO
 	updateImage = async (image) => {
-		this.setState({ list: { ...this.state.list, photo: image } })
+		this.setState({ list: { ...this.state.list, photo: { ...this.state.list.photo, photo: image } } })
 	}
 
 	addCategory = async () => {
@@ -566,10 +571,10 @@ class QuicklyTaskList extends Component {
 								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
 
 
-								{this.state.list.photo && (
+								{(this.state.list.photo.photo || navigation.getParam('category')) && (
 									<Image
 										source={{
-											uri: this.state.list.photo || navigation.getParam('category').photo,
+											uri: this.state.list.photo.photo || navigation.getParam('category').photo.photo,
 										}}
 										style={{ width: 200, height: 200 }}
 									/>
@@ -578,7 +583,7 @@ class QuicklyTaskList extends Component {
 								{/* <View style={styles.addIcon}> */}
 								{this.state.spinner ? (
 									<Spinner />
-								) : this.state.edit ? (
+								) : (this.state.edit && !this.state.add) ? (
 									<Button title="Press Here To Save Category" styles={styles.addIcon} onPress={this.updateCategory} />
 								) : (
 									<Button title="Press Here To Add Category" styles={styles.addIcon} onPress={this.addCategory} />
