@@ -291,13 +291,13 @@ export const removeCategory = (id) => async (dispatch) => {
 		// return response.data.result
 		dispatch(initCategories())
 	} catch (e) {
-		// Alert.alert('Error', `Your category has not been removed.`, [
-		// 	{
-		// 		text: 'Ok',
-		// 		onPress: dispatch(initCategories()),
-		// 		style: 'cancel',
-		// 	},
-		// ])
+		Alert.alert('Error', `Your category has not been removed.`, [
+			{
+				text: 'Ok',
+				onPress: await dispatch(initCategories()),
+				style: 'cancel',
+			},
+		])
 		return null
 		// console.error('Error on saving categories :: ', e)
 	}
