@@ -583,7 +583,13 @@ class EditTask extends Component {
 		if (!result.cancelled) {
 			const prevTask = { ...this.state.task }
 			const newTask = { ...prevTask, video: result.uri }
-			this.setState({ task: newTask, updateVideo: true, newVideoUri: result.uri, videoMode: true })
+			this.setState({
+				task: newTask,
+				updateVideo: true,
+				newVideoUri: result.uri,
+				videoMode: true,
+				photoMode: false,
+			})
 		}
 	}
 
@@ -778,7 +784,10 @@ class EditTask extends Component {
 						{this.state.photoMode ? (
 							<Camera updateImage={this.updateImage} />
 						) : (
-							<Button title='Take a photo' onPress={() => this.setState({ photoMode: true })} />
+							<Button
+								title='Take a photo'
+								onPress={() => this.setState({ photoMode: true, videoMode: false })}
+							/>
 						)}
 
 						<Button title='Pick an image from camera roll' onPress={this.pickImage} />
