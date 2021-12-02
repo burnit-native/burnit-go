@@ -559,7 +559,7 @@ class EditTask extends Component {
 
 	pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
@@ -574,7 +574,7 @@ class EditTask extends Component {
 
 	pickVideo = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Videos,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
