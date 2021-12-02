@@ -99,7 +99,7 @@ class QuicklyTaskList extends Component {
 		)
 
 
-		if (listFromProp&& listFromProp.id !== false) {
+		if (listFromProp && listFromProp.id !== false) {
 			this.reloadTasks(listFromProp)
 		} else {
 			this.setState({ loading: false })
@@ -374,6 +374,13 @@ class QuicklyTaskList extends Component {
 		}
 	}
 
+	// updateImage = async (image) => {
+	// 	const prevTask = this.state.task
+	// 	prevTask.image = image
+	// 	console.log(`new image`, prevTask.image)
+	// 	this.setState({ task: prevTask, photoMode: false })
+	// }
+
 	renderTaskRow = (item, index) => {
 		const { keyboardDidShow } = this.state
 		const { theme } = this.props
@@ -511,7 +518,7 @@ class QuicklyTaskList extends Component {
 
 				{!loading ? (
 					<ScrollView style={flex}>
-						{this.state.edit && <Camera updateImage={this.updateImage} />}
+						{(this.state.edit || this.state.add) && <Camera updateImage={this.updateImage} />}
 						<View style={styles.quicklyTaskListWrapper}>
 							<FlatList
 								keyboardShouldPersistTaps='handled'
@@ -557,14 +564,17 @@ class QuicklyTaskList extends Component {
 									</>
 								)}
 								<Button title='Pick an image from camera roll' onPress={this.pickImage} />
+
+
 								{this.state.list.photo && (
 									<Image
 										source={{
-											uri: this.state.list.photo && this.state.list.photo,
+											uri: this.state.list.photo || navigation.getParam('category').photo,
 										}}
 										style={{ width: 200, height: 200 }}
 									/>
 								)}
+
 								{/* <View style={styles.addIcon}> */}
 								{this.state.spinner ? (
 									<Spinner />
