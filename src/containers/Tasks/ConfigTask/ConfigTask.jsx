@@ -23,6 +23,8 @@ import Template from '../../Template/Template'
 import Input from '../../../components/Input/Input'
 import ConfigCategory from '../../Categories/ConfigCategory/ConfigCategory'
 import Camera from '../../../components/Camera'
+import { ImageBrowser } from 'expo-image-picker-multiple'
+
 import {
 	checkValid,
 	convertDaysIndex,
@@ -864,6 +866,8 @@ class ConfigTask extends Component {
 							/>
 						)}
 						<View style={styles.container}>
+							<Subheader text={translations.gallery} />
+							<Button title='Add photos to gallery' onPress={() => {}} />
 							<Subheader text={translations.videoRecord} />
 
 							{this.state.videoMode ? (
