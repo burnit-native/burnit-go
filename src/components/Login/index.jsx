@@ -41,6 +41,8 @@ const LoginContainer = ({ onLoginSuccess }) => {
 			// TODO
 			console.log('this is handling login')
 			const response = await axios.post('http://caliboxs.com/api/v1/login', {
+				// email: 'testacct@test.com',
+				// password: '123456',
 				email,
 				password,
 			})
