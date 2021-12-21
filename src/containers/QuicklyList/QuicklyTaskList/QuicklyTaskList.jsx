@@ -636,6 +636,7 @@ class QuicklyTaskList extends Component {
 								) : (
 									<Button title="Press Here To Add Category" styles={styles.addIcon} onPress={this.addCategory} />
 								)}
+
 								<IconToggle
 									styles={styles.addIcon}
 									onPress={() => this.setEditTrue(category)}
