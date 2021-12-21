@@ -829,8 +829,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
 	onInitTask: (id, callback) => dispatch(actions.initTask(id, callback)),
 	onInitFinishedTask: (id, callback) => dispatch(actions.initFinishedTask(id, callback)),
-	onSaveEditTask: (task, callback, navigation) =>
-		dispatch(actions.saveEditTask(task, callback, navigation)),
+	onSaveEditTask: (state, callback, navigation) =>
+		dispatch(actions.saveEditTask(state, callback, navigation)),
 	onUndoTask: (task, callback) => dispatch(actions.undoTask(task, callback)),
 	onRemoveTask: (task, finished, callback) =>
 		dispatch(actions.removeTask(task, finished, callback)),
