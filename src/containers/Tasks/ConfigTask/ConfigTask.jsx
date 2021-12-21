@@ -566,11 +566,21 @@ class ConfigTask extends Component {
 		// 	} else {
 		else {
 			this.setState({ loading: true })
-			onSaveTask(task, navigation.goBack)
-		}
+			const newProduct = await onSaveTask(task, navigation.goBack)
 
-		// 	}
-		// }
+			if (newProduct !== null || newProduct !== undefined) {
+
+				Alert.alert('Success', `Your product has been created.`, [
+					{
+						text: 'Ok',
+						onPress: navigation.goBack,
+						style: 'cancel',
+					},
+				])
+				this.setState({ spinner: false })
+				await this.props.onInitTodo()
+			}
+		}
 	}
 
 	getVideoUri = (videoUri) => {
@@ -907,6 +917,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
+	onInitTodo: () => dispatch(actions.initToDo()),
 	onInitTask: (id, callback) => dispatch(actions.initTask(id, callback)),
 	onInitFinishedTask: (id, callback) => dispatch(actions.initFinishedTask(id, callback)),
 	onSaveTask: (task, callback) => dispatch(actions.saveTask(task, callback)),

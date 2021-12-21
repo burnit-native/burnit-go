@@ -3,7 +3,7 @@
 		"name": "Burnit - Inventory App",
 		"slug": "burnit",
 		"description": "Burnit is an advanced inventory mobile application built with React Native and Expo framework. This app working with Android and iOS.",
-		"githubUrl": "hhttps://github.com/burnit-native/burnit-go",
+		"githubUrl": "https://github.com/burnit-native/burnit-go",
 		"privacy": "public",
 		"version": "1.0.0",
 		"ios": {
@@ -26,7 +26,10 @@
 			"versionCode": 2600,
 			"package": "com.coffee-crew.burnit"
 		},
-		"platforms": ["ios", "android"],
+		"platforms": [
+			"ios",
+			"android"
+		],
 		"primaryColor": "#f4511e",
 		"orientation": "portrait",
 		"icon": "./src/assets/icon_ios.png",
@@ -38,6 +41,8 @@
 		"updates": {
 			"fallbackToCacheTimeout": 0
 		},
-		"assetBundlePatterns": ["**/*"]
+		"assetBundlePatterns": [
+			"**/*"
+		]
 	}
 }
