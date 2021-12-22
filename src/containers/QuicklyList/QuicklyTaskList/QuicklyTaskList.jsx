@@ -43,7 +43,7 @@ class QuicklyTaskList extends Component {
 		list: {
 			id: false,
 			name: null,
-			photo: { photo: null }
+			photo: { photo: null },
 		},
 		newListName: this.props.translations.listName,
 		control: {
@@ -57,13 +57,12 @@ class QuicklyTaskList extends Component {
 				required: true,
 				characterRestriction: 40,
 			},
-			value: '',
+			value: this.props.navigation.getParam('name') || '',
 		},
 		keyboardDidShow: false,
 		visibleData: 16,
 		searchText: '',
 		loading: true,
-		editMode: false,
 		edit: false,
 		spinner: false,
 		add: false,
@@ -102,7 +101,6 @@ class QuicklyTaskList extends Component {
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () =>
 			this.keyboardDidShow(false),
 		)
-
 
 		if (listFromProp && listFromProp.id !== false) {
 			this.reloadTasks(listFromProp)
@@ -193,7 +191,9 @@ class QuicklyTaskList extends Component {
 
 	// TODO
 	updateImage = async (image) => {
-		this.setState({ list: { ...this.state.list, photo: { ...this.state.list.photo, photo: image } } })
+		this.setState({
+			list: { ...this.state.list, photo: { ...this.state.list.photo, photo: image } },
+		})
 	}
 
 	addCategory = async () => {
@@ -229,7 +229,6 @@ class QuicklyTaskList extends Component {
 			const newlyUpdatedCategory = await onSaveCategory(newCategory, navigation.goBack)
 
 			if (newlyUpdatedCategory !== null || newlyUpdatedCategory !== undefined) {
-
 				Alert.alert('Success', `Your category has been created.`, [
 					{
 						text: 'Ok',
@@ -422,7 +421,9 @@ class QuicklyTaskList extends Component {
 		})
 
 		if (!result.cancelled) {
-			this.setState({ list: { ...this.state.list, photo: { ...this.state.list.photo, photo: result.uri } } })
+			this.setState({
+				list: { ...this.state.list, photo: { ...this.state.list.photo, photo: result.uri } },
+			})
 		}
 	}
 
@@ -615,13 +616,15 @@ class QuicklyTaskList extends Component {
 										</Text>
 									</>
 								)}
-								{(this.state.edit || this.state.add) && <Button title='Pick an image from camera roll' onPress={this.pickImage} />}
-
+								{(this.state.edit || this.state.add) && (
+									<Button title='Pick an image from camera roll' onPress={this.pickImage} />
+								)}
 
 								{(this.state.list.photo.photo || navigation.getParam('category')) && (
 									<Image
 										source={{
-											uri: this.state.list.photo.photo || navigation.getParam('category').photo.photo,
+											uri:
+												this.state.list.photo.photo || navigation.getParam('category').photo.photo,
 										}}
 										style={{ width: 200, height: 200 }}
 									/>
@@ -631,17 +634,27 @@ class QuicklyTaskList extends Component {
 								{this.state.spinner ? (
 									<Spinner />
 								) : this.state.edit ? (
-
-									<Button title="Press Here To Save Category" styles={styles.addIcon} onPress={this.updateCategory} />
+									<Button
+										title='Press Here To Save Category'
+										styles={styles.addIcon}
+										onPress={this.updateCategory}
+									/>
 								) : (
-									<Button title="Press Here To Add Category" styles={styles.addIcon} onPress={this.addCategory} />
+									!!this.state.add && (
+										<Button
+											title='Press Here To Add Category'
+											styles={styles.addIcon}
+											onPress={this.addCategory}
+										/>
+									)
 								)}
-								<IconToggle
-									styles={styles.addIcon}
-									onPress={() => this.setEditTrue(category)}
-									name='edit'
-								/>
-								{/* </View> */}
+								{!this.state.add && !this.state.edit && (
+									<IconToggle
+										styles={styles.addIcon}
+										onPress={() => this.setEditTrue(category)}
+										name='edit'
+									/>
+								)}
 							</View>
 						</View>
 					</ScrollView>

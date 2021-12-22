@@ -24,7 +24,7 @@
 				"WRITE_EXTERNAL_STORAGE"
 			],
 			"versionCode": 2600,
-			"package": "com.coffee-crew.burnit"
+			"package": "com.coffeecrew.burnit"
 		},
 		"platforms": [
 			"ios",

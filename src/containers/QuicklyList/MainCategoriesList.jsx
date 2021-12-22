@@ -42,7 +42,11 @@ class MainCategoriesList extends Component {
 
 	goIntoEdit = (category) => {
 		const { navigation } = this.props
-		navigation.navigate('QuicklyTaskList', { list: category, add: false })
+		navigation.navigate('QuicklyTaskList', {
+			list: category,
+			add: false,
+			name: category.name,
+		})
 	}
 
 	reloadListsAmount = () => {
@@ -161,10 +165,10 @@ class MainCategoriesList extends Component {
 
 		const filteredByUserCategories = this.state.me
 			? categories.filter((cate) => {
-				if (cate.user_id === +this.state.me) {
-					return true
-				}
-			})
+					if (cate.user_id === +this.state.me) {
+						return true
+					}
+			  })
 			: categories
 
 		return filteredByUserCategories.map((category, index) => (
