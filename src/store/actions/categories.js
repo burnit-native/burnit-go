@@ -179,7 +179,7 @@ export const saveCategory = (category, callback) => async () => {
 
 		Alert.alert(
 			'Error',
-			`${err.response.data.message} ${errorParseResult(err.response.data.errors)}`,
+			`${e.response.data.message} ${errorParseResult(e.response.data.errors)}`,
 			[
 				{
 					text: 'Ok',
@@ -237,7 +237,7 @@ export const updateCategory = (category, callback) => async (dispatch) => {
 		form.append('photo', {
 			uri: filteredNewPhoto.photo,
 			type: 'image/jpeg',
-			name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}`,
+			name: `-${filteredNewPhoto.product_id}-${filteredNewPhoto.id}.jpg`,
 		})
 	} catch (e) {
 		console.error('Error on uploading category photo :: ', e)
